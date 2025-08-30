@@ -1,20 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "cd Frontend && npm install --legacy-peer-deps && npm run build",
-  "outputDirectory": "Frontend/.next",
+  "buildCommand": "npm install --legacy-peer-deps && npm run build",
+  "outputDirectory": ".next",
   "installCommand": "npm install --legacy-peer-deps",
-  "functions": {
-    "api/index.js": {
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js"
-    }
-  ],
   "env": {
     "NODE_ENV": "production"
   },
