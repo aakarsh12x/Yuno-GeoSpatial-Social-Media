@@ -2,9 +2,11 @@
   "version": 2,
   "buildCommand": "cd Frontend && npm install --legacy-peer-deps && npm run build",
   "outputDirectory": "Frontend/.next",
+  "installCommand": "npm install --legacy-peer-deps",
   "functions": {
     "api/index.js": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "memory": 1024
     }
   },
   "routes": [
@@ -19,5 +21,11 @@
   ],
   "env": {
     "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "https://yuno-geospatial-social-media.vercel.app/api",
+      "NEXT_PUBLIC_SOCKET_URL": "https://yuno-geospatial-social-media.vercel.app"
+    }
   }
 }

@@ -16,27 +16,30 @@ const sparksRoutes = require('./routes/sparks');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
-const server = createServer(app);
 
-// Socket.IO setup
-const io = new Server(server, {
-  cors: {
-    origin: process.env.FRONTEND_URL || "https://yuno-geospatial-social-media.vercel.app",
-    methods: ["GET", "POST"],
-    credentials: true
-  }
-});
+// Socket.IO setup for serverless (will be handled separately)
+let io;
+if (process.env.NODE_ENV !== 'production') {
+  const server = createServer(app);
+  io = new Server(server, {
+    cors: {
+      origin: process.env.FRONTEND_URL || "http://localhost:3000",
+      methods: ["GET", "POST"],
+      credentials: true
+    }
+  });
+}
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100 // limit each IP to 100 requests per windowMs
 });
 
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "https://yuno-geospatial-social-media.vercel.app",
+  origin: process.env.FRONTEND_URL || process.env.CORS_ORIGIN || "http://localhost:3000",
   credentials: true
 }));
 app.use(limiter);
@@ -48,7 +51,8 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    version: '1.0.0'
   });
 });
 
@@ -59,33 +63,35 @@ app.use('/api/discover', discoverRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/sparks', sparksRoutes);
 
-// Socket.IO connection handling
-io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
-  
-  socket.on('join_chat', (data) => {
-    const { chatId } = data;
-    socket.join(`chat_${chatId}`);
-    console.log(`User ${socket.id} joined chat ${chatId}`);
-  });
-  
-  socket.on('send_message', (data) => {
-    const { chatId, message } = data;
-    io.to(`chat_${chatId}`).emit('message', {
-      ...message,
-      timestamp: new Date()
+// Socket.IO connection handling (only for development)
+if (io) {
+  io.on('connection', (socket) => {
+    console.log('User connected:', socket.id);
+    
+    socket.on('join_chat', (data) => {
+      const { chatId } = data;
+      socket.join(`chat_${chatId}`);
+      console.log(`User ${socket.id} joined chat ${chatId}`);
+    });
+    
+    socket.on('send_message', (data) => {
+      const { chatId, message } = data;
+      io.to(`chat_${chatId}`).emit('message', {
+        ...message,
+        timestamp: new Date()
+      });
+    });
+    
+    socket.on('typing', (data) => {
+      const { chatId, isTyping, userId } = data;
+      socket.to(`chat_${chatId}`).emit('user_typing', { userId, isTyping });
+    });
+    
+    socket.on('disconnect', () => {
+      console.log('User disconnected:', socket.id);
     });
   });
-  
-  socket.on('typing', (data) => {
-    const { chatId, isTyping, userId } = data;
-    socket.to(`chat_${chatId}`).emit('user_typing', { userId, isTyping });
-  });
-  
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-  });
-});
+}
 
 // Error handling
 app.use(errorHandler);
@@ -94,7 +100,8 @@ app.use(errorHandler);
 app.use('*', (req, res) => {
   res.status(404).json({ 
     success: false, 
-    message: 'Route not found' 
+    message: 'Route not found',
+    path: req.originalUrl
   });
 });
 
@@ -105,6 +112,7 @@ module.exports = app;
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
   server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📊 Health check: http://localhost:${PORT}/health`);
   });
 }
