@@ -7,7 +7,8 @@
     "dev": "concurrently \"cd Backend && npm run dev\" \"cd Frontend && npm run dev\"",
     "build": "cd Frontend && npm run build",
     "start": "cd Backend && npm start",
-    "install:all": "npm install && cd Backend && npm install && cd Frontend && npm install"
+    "install:all": "npm install && cd Backend && npm install && cd Frontend && npm install",
+    "vercel-build": "cd Frontend && npm install --legacy-peer-deps && npm run build"
   },
   "dependencies": {
     "concurrently": "^8.2.2"

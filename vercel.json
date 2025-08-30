@@ -1,6 +1,27 @@
 {
   "version": 2,
-  "buildCommand": "cd Frontend && npm install --legacy-peer-deps && npm run build",
+  "buildCommand": "npm run vercel-build",
   "outputDirectory": "Frontend/.next",
-  "installCommand": "npm install --legacy-peer-deps"
+  "installCommand": "npm install --legacy-peer-deps",
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 30,
+      "memory": 1024
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "https://yuno-6wddk3x5y-aakarsh12xs-projects.vercel.app/api",
+      "NEXT_PUBLIC_SOCKET_URL": "https://yuno-6wddk3x5y-aakarsh12xs-projects.vercel.app"
+    }
+  }
 }
