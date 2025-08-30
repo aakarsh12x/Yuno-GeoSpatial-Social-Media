@@ -59,7 +59,7 @@ export default function ChatPage() {
   useEffect(() => {
     const loadChatUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/discover?radius=20', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discover?radius=20`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
             'Content-Type': 'application/json'
@@ -194,7 +194,7 @@ export default function ChatPage() {
       return;
     }
 
-    const newSocket = io('http://localhost:5000', {
+            const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000', {
       transports: ['polling', 'websocket'],
       autoConnect: false,
       timeout: 10000,
@@ -382,7 +382,7 @@ export default function ChatPage() {
 
     // Load chat history from backend
     try {
-      const response = await fetch(`http://localhost:5000/api/chat/chats/${chatId}?limit=50`, {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/chats/${chatId}?limit=50`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json'

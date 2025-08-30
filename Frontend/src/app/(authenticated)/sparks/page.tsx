@@ -108,7 +108,7 @@ export default function SparksPage() {
         params.append('longitude', userLocation.longitude.toString())
       }
       
-      const response = await fetch(`http://localhost:5000/api/sparks/nearby?${params}`, {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sparks/nearby?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ export default function SparksPage() {
     }
     
     try {
-      const response = await fetch('http://localhost:5000/api/sparks/pending', {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sparks/pending`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ export default function SparksPage() {
     }
     
     try {
-      const response = await fetch('http://localhost:5000/api/sparks/send', {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sparks/send`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -206,7 +206,7 @@ export default function SparksPage() {
     }
     
     try {
-      const response = await fetch(`http://localhost:5000/api/sparks/${sparkId}/accept`, {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sparks/${sparkId}/accept`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -232,7 +232,7 @@ export default function SparksPage() {
     }
     
     try {
-      const response = await fetch(`http://localhost:5000/api/sparks/${sparkId}/reject`, {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sparks/${sparkId}/reject`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

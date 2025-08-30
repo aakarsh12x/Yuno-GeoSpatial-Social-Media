@@ -39,8 +39,12 @@ const limiter = rateLimit({
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || process.env.CORS_ORIGIN || "http://localhost:3000",
-  credentials: true
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://frontend-nine-orcin-70.vercel.app', 'https://frontend-4m7felg4s-aakarsh12xs-projects.vercel.app', 'https://frontend-9ir8zrqjw-aakarsh12xs-projects.vercel.app', 'https://frontend-gmppctvni-aakarsh12xs-projects.vercel.app', 'https://frontend-ioh1tukxq-aakarsh12xs-projects.vercel.app', 'https://yuno-backend.onrender.com']
+    : process.env.FRONTEND_URL || process.env.CORS_ORIGIN || "http://localhost:3000",
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
