@@ -632,7 +632,7 @@ export default function ChatPage() {
                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
                    <MessageCircle className="w-8 h-8 text-primary" />
                  </div>
-                 <h2 className="text-xl font-bold text-text-primary mb-1">
+                 <h2 className="text-xl font-bold text-text-primary mb-1 italic font-light">
                    Welcome to Yuno Chat
                  </h2>
                  <p className="text-sm text-text-secondary">

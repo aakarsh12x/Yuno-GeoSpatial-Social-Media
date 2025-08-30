@@ -55,7 +55,7 @@ export default function LoginPage() {
               priority
             />
           </div>
-          <h1 className="text-4xl font-bold text-gradient mb-2">
+          <h1 className="text-4xl font-bold text-gradient mb-2 italic font-light">
             Welcome to Yuno
           </h1>
           <p className="text-text-secondary text-lg">
