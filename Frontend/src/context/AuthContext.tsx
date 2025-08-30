@@ -14,6 +14,15 @@ interface User {
   interests: string[]
   latitude?: number
   longitude?: number
+  bio?: string
+  username?: string
+  profession?: string
+  languages?: string
+  skills?: string
+  clubs?: string
+  favoriteShows?: string
+  favoriteMovies?: string
+  favoriteMusic?: string
 }
 
 interface AuthContextType {

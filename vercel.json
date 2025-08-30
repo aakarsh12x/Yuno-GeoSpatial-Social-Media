@@ -21,11 +21,5 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "build": {
-    "env": {
-      "NEXT_PUBLIC_API_URL": "https://yuno-geospatial-social-media.vercel.app/api",
-      "NEXT_PUBLIC_SOCKET_URL": "https://yuno-geospatial-social-media.vercel.app"
-    }
   }
 }
