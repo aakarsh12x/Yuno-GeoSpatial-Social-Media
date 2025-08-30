@@ -12,7 +12,7 @@ export default function Home() {
           <h1 className="text-4xl md:text-5xl font-bold mb-2 text-text-primary flex items-center justify-center gap-4">
             <TextGenerateEffect 
               words="Welcome to"
-              className="text-text-secondary italic font-light"
+              className="text-text-secondary"
             />
             <Logo size="xl" className="w-28 h-28" />
           </h1>
