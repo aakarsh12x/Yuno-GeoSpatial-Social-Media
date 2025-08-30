@@ -31,7 +31,7 @@ export default function ProfilePage() {
     school: '',
     workplace: '',
     profession: '',
-    hobbies: [],
+    hobbies: [] as string[],
     bio: '',
     
     // Optional Info
