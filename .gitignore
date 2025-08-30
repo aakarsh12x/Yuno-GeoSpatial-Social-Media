@@ -153,3 +153,4 @@ playwright/.cache/
 # Misc
 *.tgz
 *.tar.gz
+.vercel
