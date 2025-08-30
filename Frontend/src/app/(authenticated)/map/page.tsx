@@ -25,6 +25,9 @@ interface User {
   id: number
   name: string
   city?: string
+  school?: string
+  workplace?: string
+  interests?: string[]
   latitude?: number
   longitude?: number
   distance?: { km: number; miles: number }
