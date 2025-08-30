@@ -28,8 +28,9 @@
   },
   "build": {
     "env": {
-      "NEXT_PUBLIC_API_URL": "https://yuno-fde632a9y-aakarsh12xs-projects.vercel.app/api",
-      "NEXT_PUBLIC_SOCKET_URL": "https://yuno-fde632a9y-aakarsh12xs-projects.vercel.app"
+      "NEXT_PUBLIC_API_URL": "https://yuno-7y7lmuooz-aakarsh12xs-projects.vercel.app/api",
+      "NEXT_PUBLIC_SOCKET_URL": "https://yuno-7y7lmuooz-aakarsh12xs-projects.vercel.app"
     }
-  }
+  },
+  "installCommand": "npm install --legacy-peer-deps"
 }
