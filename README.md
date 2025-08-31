@@ -1,6 +1,8 @@
 # Yuno - GeoSpatial Social Media Platform
 
 A modern social media platform that connects people based on their location and shared interests. Built with Next.js, Node.js, PostgreSQL, and Socket.IO.
+<img width="1902" height="910" alt="Screenshot 2025-08-31 123155" src="https://github.com/user-attachments/assets/e78e43d9-01fc-4a7c-bfc2-86666fdabccd" />
+
 
 ## 🌟 Features
 
