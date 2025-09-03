@@ -12,7 +12,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 const io = socketIo(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "*",
+    origin: ["https://frontend-phq7cizpc-aakarsh12xs-projects.vercel.app", "https://frontend-4oqhcvw6k-aakarsh12xs-projects.vercel.app", "*"],
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -27,7 +27,7 @@ const limiter = rateLimit({
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || process.env.FRONTEND_URL || "*",
+  origin: ["https://frontend-phq7cizpc-aakarsh12xs-projects.vercel.app", "https://frontend-4oqhcvw6k-aakarsh12xs-projects.vercel.app", "*"],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
