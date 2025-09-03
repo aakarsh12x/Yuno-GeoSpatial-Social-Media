@@ -3,8 +3,20 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const http = require('http');
+const socketIo = require('socket.io');
 
 const app = express();
+const server = http.createServer(app);
+
+// Initialize Socket.IO
+const io = socketIo(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "*",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
 
 // Rate limiting
 const limiter = rateLimit({
@@ -15,7 +27,7 @@ const limiter = rateLimit({
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: ['https://frontend-nine-orcin-70.vercel.app', 'https://frontend-4m7felg4s-aakarsh12xs-projects.vercel.app', 'https://frontend-9ir8zrqjw-aakarsh12xs-projects.vercel.app', 'https://frontend-gmppctvni-aakarsh12xs-projects.vercel.app', 'https://frontend-ioh1tukxq-aakarsh12xs-projects.vercel.app'],
+  origin: process.env.CORS_ORIGIN || process.env.FRONTEND_URL || "*",
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -24,146 +36,54 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// Import routes
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/users');
+const chatRoutes = require('./routes/chat');
+const sparksRoutes = require('./routes/sparks');
+const discoverRoutes = require('./routes/discover');
+
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/sparks', sparksRoutes);
+app.use('/api/discover', discoverRoutes);
+
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
     version: '1.0.0',
-    message: 'Backend is running on Render!'
+    message: 'Backend is running!'
   });
 });
 
-// Test auth login endpoint
-app.post('/api/auth/login', (req, res) => {
-  console.log('Login attempt:', req.body);
-  res.json({
-    success: true,
-    message: 'Login successful',
-    data: {
-      token: 'render-token-' + Date.now(),
-      user: {
-        id: 1,
-        name: 'Test User',
-        email: req.body.email || 'test@example.com',
-        latitude: 19.0760,
-        longitude: 72.8777
-      }
-    }
-  });
-});
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
 
-// Test auth register endpoint
-app.post('/api/auth/register', (req, res) => {
-  console.log('Register attempt:', req.body);
-  res.json({
-    success: true,
-    message: 'Registration successful',
-    data: {
-      token: 'render-token-' + Date.now(),
-      user: {
-        id: 2,
-        name: req.body.name || 'New User',
-        email: req.body.email || 'new@example.com',
-        latitude: 19.0760,
-        longitude: 72.8777
-      }
-    }
+  socket.on('join', (userId) => {
+    socket.join(userId);
+    console.log(`User ${userId} joined room`);
   });
-});
 
-// Test discover endpoint
-app.get('/api/discover', (req, res) => {
-  console.log('Discover request:', req.query);
-  res.json({
-    success: true,
-    data: [
-      {
-        id: 1,
-        name: 'Priya Sharma',
-        email: 'priya@example.com',
-        latitude: 19.0760,
-        longitude: 72.8777,
-        interests: ['Design', 'Music', 'Travel'],
-        common_interests: ['Design', 'Music']
-      },
-      {
-        id: 2,
-        name: 'Aisha Khan',
-        email: 'aisha@example.com',
-        latitude: 19.0760,
-        longitude: 72.8777,
-        interests: ['Technology', 'Reading', 'Cooking'],
-        common_interests: ['Technology']
-      },
-      {
-        id: 3,
-        name: 'Meera Patel',
-        email: 'meera@example.com',
-        latitude: 19.0760,
-        longitude: 72.8777,
-        interests: ['Art', 'Photography', 'Travel'],
-        common_interests: ['Art', 'Travel']
-      }
-    ]
+  socket.on('sendMessage', (data) => {
+    // Handle real-time messaging
+    socket.to(data.receiverId).emit('receiveMessage', data);
   });
-});
 
-// Test sparks endpoint
-app.get('/api/sparks/nearby', (req, res) => {
-  console.log('Sparks nearby request:', req.query);
-  res.json({
-    success: true,
-    data: [
-      {
-        id: 1,
-        name: 'Priya Sharma',
-        email: 'priya@example.com',
-        latitude: 19.0760,
-        longitude: 72.8777,
-        interests: ['Design', 'Music', 'Travel'],
-        common_interests: ['Design', 'Music']
-      },
-      {
-        id: 2,
-        name: 'Aisha Khan',
-        email: 'aisha@example.com',
-        latitude: 19.0760,
-        longitude: 72.8777,
-        interests: ['Technology', 'Reading', 'Cooking'],
-        common_interests: ['Technology']
-      }
-    ]
-  });
-});
-
-// Test chat endpoint
-app.get('/api/chat/chats', (req, res) => {
-  console.log('Chat request');
-  res.json({
-    success: true,
-    data: [
-      {
-        id: 1,
-        name: 'Priya Sharma',
-        lastMessage: 'Hey! How are you?',
-        timestamp: new Date().toISOString()
-      },
-      {
-        id: 2,
-        name: 'Aisha Khan',
-        lastMessage: 'Nice to meet you!',
-        timestamp: new Date().toISOString()
-      }
-    ]
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
   });
 });
 
 // 404 handler
 app.use('*', (req, res) => {
-  res.status(404).json({ 
-    success: false, 
+  res.status(404).json({
+    success: false,
     message: 'Route not found',
     path: req.originalUrl
   });
@@ -171,8 +91,9 @@ app.use('*', (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🔌 Socket.IO enabled`);
 });

@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "build": "npm install",
     "dev": "nodemon server.js",
     "setup": "node setup-db-simple.js",
     "setup:neon": "node setup-neon-db.js",

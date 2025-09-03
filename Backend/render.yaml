@@ -2,14 +2,14 @@ services:
   - type: web
     name: yuno-backend
     env: node
-    buildCommand: npm install
-    startCommand: node server.js
+    buildCommand: npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
       - key: FRONTEND_URL
-        value: https://frontend-nine-orcin-70.vercel.app
+        value: https://frontend-4oqhcvw6k-aakarsh12xs-projects.vercel.app
       - key: CORS_ORIGIN
-        value: https://frontend-nine-orcin-70.vercel.app
+        value: https://frontend-4oqhcvw6k-aakarsh12xs-projects.vercel.app

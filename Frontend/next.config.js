@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://api-9eqoj1vnv-aakarsh12xs-projects.vercel.app/api',
-    NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL || 'https://api-9eqoj1vnv-aakarsh12xs-projects.vercel.app',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://yuno-backend.onrender.com/api',
+    NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL || 'https://yuno-backend.onrender.com',
   },
   images: {
-    domains: ['localhost', 'vercel.app'],
+    domains: ['localhost', 'vercel.app', 'onrender.com'],
   },
   async headers() {
     return [
