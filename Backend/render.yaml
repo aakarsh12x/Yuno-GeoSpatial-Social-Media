@@ -9,7 +9,7 @@ services:
         value: production
       - key: PORT
         value: 10000
-                   - key: FRONTEND_URL
-               value: https://frontend-phq7cizpc-aakarsh12xs-projects.vercel.app
-             - key: CORS_ORIGIN
-               value: https://frontend-phq7cizpc-aakarsh12xs-projects.vercel.app
+      - key: FRONTEND_URL
+        value: https://frontend-phq7cizpc-aakarsh12xs-projects.vercel.app
+      - key: CORS_ORIGIN
+        value: https://frontend-phq7cizpc-aakarsh12xs-projects.vercel.app
