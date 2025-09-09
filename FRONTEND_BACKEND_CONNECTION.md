@@ -57,3 +57,6 @@ After updating environment variables:
 - No CORS errors in browser console
 
 Your full-stack application will be fully integrated! 🚀
+
+
+

@@ -2,25 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "Frontend/package.json",
+      "src": "Yuno-FullStack/package.json",
       "use": "@vercel/next"
-    },
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/Frontend/$1"
     }
   ],
   "env": {
