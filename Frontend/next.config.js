@@ -1,35 +1,31 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const isProd = process.env.NODE_ENV === 'production';
+
+module.exports = {
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://yuno-geospatial-social-media-1.onrender.com/api',
-    NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL || 'https://yuno-geospatial-social-media-1.onrender.com',
+    NEXT_PUBLIC_API_URL: isProd ? 'https://yuno-geospatial-social-media-1.onrender.com/api' : 'http://localhost:5000/api',
+    NEXT_PUBLIC_SOCKET_URL: isProd ? 'https://yuno-geospatial-social-media-1.onrender.com' : 'http://localhost:5000',
   },
   images: {
-    domains: ['localhost', 'vercel.app', 'onrender.com'],
-  },
-  async headers() {
-    return [
+    remotePatterns: [
       {
-        source: '/api/:path*',
-        headers: [
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET, POST, PUT, DELETE, OPTIONS' },
-          { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
-        ],
+        protocol: 'https',
+        hostname: 'img.clerk.com',
       },
-    ]
+      {
+        protocol: 'https',
+        hostname: 'images.clerk.dev',
+      },
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+    ],
   },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-      }
-    }
-    return config
+  experimental: {
+    serverComponentsExternalPackages: ['@react-google-maps/api'],
   },
-}
-
-module.exports = nextConfig
+};

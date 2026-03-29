@@ -39,7 +39,12 @@ export default function DiscoverPage() {
       setLoading(true)
       setError('')
       try {
-        const { data } = await DiscoverAPI.nearby({ radius })
+        const location = await geospatialService.getBrowserLocation();
+        const { data } = await DiscoverAPI.nearby({ 
+          radius, 
+          latitude: location.latitude, 
+          longitude: location.longitude 
+        });
         setUsers(data.data.users || [])
       } catch (e: unknown) {
         const errorMessage = e && typeof e === 'object' && 'response' in e 

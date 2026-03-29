@@ -20,6 +20,8 @@ import {
 } from 'lucide-react'
 import { useSidebar } from '@/context/SidebarContext'
 import { useAuth } from '@/context/AuthContext'
+import { DiscoverAPI } from '@/lib/api'
+import { geospatialService } from '@/lib/geospatialService'
 
 interface NearbyUser {
   id: number
@@ -87,55 +89,30 @@ export default function SparksPage() {
     
     setIsLoading(true)
     try {
-      // Get user's location from localStorage or use default
-      const savedUser = localStorage.getItem('user')
-      let userLocation = null
-      if (savedUser) {
-        try {
-          const userData = JSON.parse(savedUser)
-          if (userData.latitude && userData.longitude) {
-            userLocation = { latitude: userData.latitude, longitude: userData.longitude }
-          }
-        } catch (e) {
-          console.error('Error parsing user data:', e)
-        }
-      }
-      
-      // Build query parameters
-      const params = new URLSearchParams({ radius: radius.toString() })
-      if (userLocation) {
-        params.append('latitude', userLocation.latitude.toString())
-        params.append('longitude', userLocation.longitude.toString())
-      }
-      
-              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sparks/nearby?${params}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-      const data = await response.json()
+      const location = await geospatialService.getBrowserLocation();
+      const { data } = await DiscoverAPI.nearby({ 
+        radius, 
+        latitude: location.latitude, 
+        longitude: location.longitude 
+      });
       if (data.success) {
-        // Ensure arrays are defined
         const usersWithDefaults = data.data.map((user: any) => ({
           ...user,
           common_interests: user.common_interests || [],
           common_attributes: user.common_attributes || [],
           interests: user.interests || []
-        }))
-        setNearbyUsers(usersWithDefaults)
+        }));
+        setNearbyUsers(usersWithDefaults);
       } else {
-        // Fallback to example users if API fails
-        setNearbyUsers(getExampleUsers())
+        setNearbyUsers(getExampleUsers());
       }
     } catch (error) {
-      console.error('Error loading nearby users:', error)
-      // Fallback to example users on error
-      setNearbyUsers(getExampleUsers())
+      console.error('Error loading nearby users:', error);
+      setNearbyUsers(getExampleUsers());
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const loadPendingSparks = async () => {
     if (!isAuthenticated) {
