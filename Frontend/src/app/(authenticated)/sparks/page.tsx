@@ -96,7 +96,7 @@ export default function SparksPage() {
         longitude: location.longitude 
       });
       if (data.success) {
-        const usersWithDefaults = data.data.map((user: any) => ({
+        const usersWithDefaults = data.data.users.map((user: any) => ({
           ...user,
           common_interests: user.common_interests || [],
           common_attributes: user.common_attributes || [],

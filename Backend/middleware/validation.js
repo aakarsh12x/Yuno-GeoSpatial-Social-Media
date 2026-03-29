@@ -6,7 +6,7 @@ const Joi = require('joi');
 const schemas = {
   register: Joi.object({
     name: Joi.string().min(2).max(100).required(),
-    email: Joi.string().email().max(255).required(),
+    email: Joi.string().email({ tlds: { allow: false } }).max(255).required(),
     password: Joi.string().min(6).max(128).required()
       .messages({
         'string.min': 'Password must be at least 6 characters long'
@@ -22,12 +22,13 @@ const schemas = {
   }),
 
   login: Joi.object({
-    email: Joi.string().email().required(),
+    email: Joi.string().email({ tlds: { allow: false } }).required(),
     password: Joi.string().required()
   }),
 
   updateProfile: Joi.object({
     name: Joi.string().min(2).max(100).optional(),
+    email: Joi.string().email({ tlds: { allow: false } }).max(255).optional(),
     age: Joi.number().integer().min(13).max(120).optional(),
     city: Joi.string().max(100).optional(),
     school: Joi.string().max(200).optional(),
