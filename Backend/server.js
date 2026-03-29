@@ -1,4 +1,5 @@
 require('dotenv').config();
+const cron = require('node-cron');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -96,4 +97,24 @@ server.listen(PORT, () => {
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔌 Socket.IO enabled`);
+
+  // ── Keep-alive cron job for Render free tier ──────────────────────────────
+  // Render spins down free instances after 15 min of inactivity.
+  // We self-ping /health every 14 minutes to prevent that.
+  const SELF_URL = process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL;
+  if (SELF_URL) {
+    const axios = require('axios');
+    cron.schedule('*/14 * * * *', async () => {
+      try {
+        const res = await axios.get(`${SELF_URL}/health`, { timeout: 10000 });
+        console.log(`🏓 Keep-alive ping OK — ${res.data.timestamp}`);
+      } catch (err) {
+        console.error('❌ Keep-alive ping failed:', err.message);
+      }
+    });
+    console.log(`⏰ Keep-alive cron started — pinging ${SELF_URL}/health every 14 min`);
+  } else {
+    console.log('ℹ️  Keep-alive cron disabled (set RENDER_EXTERNAL_URL or BACKEND_URL to enable)');
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 });
