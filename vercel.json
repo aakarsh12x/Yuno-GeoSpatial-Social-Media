@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "Yuno-FullStack/package.json",
+      "src": "Frontend/package.json",
       "use": "@vercel/next"
     }
   ],
