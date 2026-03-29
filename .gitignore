@@ -5,11 +5,15 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Next.js
+.next/
+out/
+build/
+dist/
+
 # Production builds
 dist/
 build/
-.next/
-out/
 
 # Environment variables
 .env
@@ -18,24 +22,29 @@ out/
 .env.test.local
 .env.production.local
 
-# IDE and editor files
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+playwright/.cache/
+
+# IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
 
-# OS generated files
+# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
 # Logs
-logs
 *.log
 
 # Runtime data
@@ -43,16 +52,6 @@ pids
 *.pid
 *.seed
 *.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
 
 # Optional npm cache directory
 .npm
@@ -75,19 +74,9 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# parcel-bundler cache (https://parceljs.org/)
+# parcel-bundler cache
 .cache
 .parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-
-# Gatsby files
-.cache/
-public
 
 # Storybook build outputs
 .out
@@ -97,60 +86,4 @@ public
 tmp/
 temp/
 
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-
-# Backup files
-*.bak
-*.backup
-
-# Local configuration files
-config.local.js
-config.local.json
-
-# Socket files
-*.sock
-
-# Package manager lock files (uncomment if you want to ignore them)
-# package-lock.json
-# yarn.lock
-
-# Frontend specific
-Frontend/.next/
-Frontend/out/
-Frontend/build/
-Frontend/dist/
-
-# Backend specific
-Backend/dist/
-Backend/build/
-Backend/uploads/
-Backend/temp/
-Backend/logs/
-
-# Database dumps
-*.dump
-*.sql
-
-# SSL certificates
-*.pem
-*.key
-*.crt
-
-# Docker
-.dockerignore
-docker-compose.override.yml
-
-# Testing
-coverage/
-.nyc_output/
-test-results/
-playwright-report/
-playwright/.cache/
-
-# Misc
-*.tgz
-*.tar.gz
 .vercel

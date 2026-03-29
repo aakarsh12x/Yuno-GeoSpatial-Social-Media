@@ -1,19 +1,41 @@
 {
-  "name": "yuno-geospatial-social-media",
-  "version": "1.0.0",
-  "description": "A modern social media platform that connects people based on their location and shared interests",
+  "name": "yuno-nextjs",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"cd Backend && npm run dev\" \"cd Frontend && npm run dev\"",
-    "build": "cd Frontend && npm run build",
-    "start": "cd Backend && npm start",
-    "install:all": "cd Backend && npm install --legacy-peer-deps && cd Frontend && npm install --legacy-peer-deps",
-    "vercel-build": "cd Frontend && npm install --legacy-peer-deps && npm run build"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "axios": "^1.11.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.0.0",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.542.0",
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-leaflet": "^4.2.1",
+    "socket.io-client": "^4.8.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7"
   },
-  "engines": {
-    "node": ">=18.0.0"
+  "devDependencies": {
+    "@types/leaflet": "^1.9.12",
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.6.3"
+  },
+  "overrides": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }
