@@ -10,11 +10,22 @@ const socketIo = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 
+// CORS Configuration
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://frontend-nine-orcin-70.vercel.app",
+  "https://frontend-6sa6005p4-aakarsh12xs-projects.vercel.app",
+  "https://frontend-1bb4xlg0f-aakarsh12xs-projects.vercel.app",
+  "https://frontend-phq7cizpc-aakarsh12xs-projects.vercel.app",
+  process.env.FRONTEND_URL,
+  "*" // Optional but kept for broad compatibility
+].filter(Boolean);
+
 // Initialize Socket.IO
 const io = socketIo(server, {
   cors: {
-    origin: ["https://frontend-nine-orcin-70.vercel.app", "https://frontend-6sa6005p4-aakarsh12xs-projects.vercel.app", "https://frontend-1bb4xlg0f-aakarsh12xs-projects.vercel.app", "https://frontend-phq7cizpc-aakarsh12xs-projects.vercel.app", "*"],
-    methods: ["GET", "POST"],
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "OPTIONS"],
     credentials: true
   }
 });
@@ -28,10 +39,10 @@ const limiter = rateLimit({
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: ["https://frontend-nine-orcin-70.vercel.app", "https://frontend-6sa6005p4-aakarsh12xs-projects.vercel.app", "https://frontend-1bb4xlg0f-aakarsh12xs-projects.vercel.app", "https://frontend-phq7cizpc-aakarsh12xs-projects.vercel.app", "*"],
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
 app.use(limiter);
 app.use(express.json({ limit: '10mb' }));

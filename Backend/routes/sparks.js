@@ -196,8 +196,6 @@ router.get('/nearby',
     // Get nearby users with commonalities
     const nearbyUsers = await User.findNearbyWithCommonalities({
       userId,
-      searchLat: currentUser.latitude,
-      searchLng: currentUser.longitude,
       radiusKm: parseFloat(radius),
       limit: parseInt(limit),
       offset: parseInt(offset)

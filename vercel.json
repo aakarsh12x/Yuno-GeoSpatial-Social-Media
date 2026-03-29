@@ -1,18 +1,12 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "Yuno-FullStack/package.json",
-      "use": "@vercel/next"
-    }
-  ],
   "env": {
     "NODE_ENV": "production"
   },
   "build": {
     "env": {
-      "NEXT_PUBLIC_API_URL": "https://yuno-7y7lmuooz-aakarsh12xs-projects.vercel.app/api",
-      "NEXT_PUBLIC_SOCKET_URL": "https://yuno-7y7lmuooz-aakarsh12xs-projects.vercel.app"
+      "NEXT_PUBLIC_API_URL": "https://yuno-geospatial-social-media-1.onrender.com/api",
+      "NEXT_PUBLIC_SOCKET_URL": "https://yuno-geospatial-social-media-1.onrender.com"
     }
   },
   "installCommand": "npm install --legacy-peer-deps"
