@@ -91,22 +91,22 @@ export default function MapView({ users, className = '' }: MapViewProps) {
             className: 'custom-marker',
             html: `<div style="
               background: ${color}; 
-              width: 20px; 
-              height: 20px; 
+              width: 12px; 
+              height: 12px; 
               border-radius: 50%; 
-              border: 2px solid white; 
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+              border: 2px solid #FFFFFF; 
+              box-shadow: 0 1px 4px rgba(0,0,0,0.2);
             "></div>`,
-            iconSize: [20, 20],
-            iconAnchor: [10, 20]
+            iconSize: [12, 12],
+            iconAnchor: [6, 6]
           })
         }
 
         // Add radius circles for discovery ranges
         const radiusColors = {
-          5: '#8B4513',    // Primary color for 5km
-          10: '#D4A574',   // Accent color for 10km  
-          20: '#E8E0D8'    // Light color for 20km
+          5: '#5D4037',    // Primary brown
+          10: '#8B4513',   // Accent leather
+          20: '#D4C4B8'    // Muted border
         }
 
         // Add radius circles
@@ -122,71 +122,76 @@ export default function MapView({ users, className = '' }: MapViewProps) {
         })
 
         // Add current user marker
-        L.marker(userLocation, { icon: createMarkerIcon('#8B4513') })
+        // Add current user marker
+        L.marker(userLocation, { icon: createMarkerIcon('#5D4037') })
           .addTo(map)
           .bindPopup(`
-            <div style="text-align: center; padding: 8px;">
-              <strong>You are here</strong>
-              <br><small>Discovery radius: 5km, 10km, 20km</small>
+            <div style="text-align: center; padding: 12px; font-family: Inter, sans-serif;">
+              <strong style="color: #1A0F0A; display: block; margin-bottom: 4px;">My Location</strong>
+              <span style="color: #795548; font-size: 11px;">Discovery active within 20km</span>
             </div>
           `)
 
         // Add nearby user markers
         users.forEach(user => {
-          L.marker([user.lat, user.lng], { icon: createMarkerIcon('#D4A574') })
+          L.marker([user.lat, user.lng], { icon: createMarkerIcon('#8B4513') })
             .addTo(map)
             .bindPopup(`
-              <div style="padding: 10px; min-width: 180px;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <div style="padding: 12px; min-width: 200px; font-family: Inter, sans-serif;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
                   <div style="
-                    width: 30px; 
-                    height: 30px; 
+                    width: 32px; 
+                    height: 32px; 
                     border-radius: 50%; 
-                    background: #8B4513; 
+                    background: #5D4037; 
                     color: white; 
                     display: flex; 
                     align-items: center; 
                     justify-content: center;
-                    font-weight: bold;
+                    font-weight: 700;
+                    font-size: 14px;
                   ">
                     ${user.name[0].toUpperCase()}
                   </div>
                   <div>
-                    <strong>${user.name}</strong>
-                    ${user.distance ? `<br><small>${user.distance}km away</small>` : ''}
+                    <strong style="color: #1A0F0A; font-size: 14px;">${user.name}</strong>
+                    ${user.distance ? `<br><span style="color: #795548; font-size: 11px;">${user.distance}km away</span>` : ''}
                   </div>
                 </div>
                 
                 ${user.common.length > 0 ? `
-                  <div style="margin-bottom: 8px;">
-                    <small><strong>Common interests:</strong></small>
-                    <div style="margin-top: 4px;">
+                  <div style="margin-bottom: 12px;">
+                    <div style="color: #1A0F0A; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">Common Ground</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 4px;">
                       ${user.common.map(item => 
                         `<span style="
                           display: inline-block;
                           padding: 2px 6px; 
-                          background: #F0EBE3; 
-                          color: #8B4513; 
-                          border-radius: 8px; 
+                          background: #F5F2EE; 
+                          color: #5D4037; 
+                          border: 1px solid #E0D7D0;
+                          border-radius: 4px; 
                           font-size: 10px;
-                          margin: 1px;
+                          font-weight: 600;
                         ">${item}</span>`
                       ).join('')}
                     </div>
                   </div>
                 ` : ''}
                 
-                <button onclick="alert('Chat feature coming soon!')" style="
+                <button style="
                   width: 100%; 
-                  background: #8B4513; 
+                  background: #5D4037; 
                   color: white; 
-                  padding: 6px; 
+                  padding: 8px; 
                   border: none; 
-                  border-radius: 4px; 
+                  border-radius: 6px; 
                   cursor: pointer;
                   font-size: 12px;
+                  font-weight: 600;
+                  transition: background 0.2s;
                 ">
-                  Start Chat
+                  Send Spark
                 </button>
               </div>
             `)
@@ -205,18 +210,18 @@ export default function MapView({ users, className = '' }: MapViewProps) {
             div.style.fontFamily = 'Inter, sans-serif'
             
             div.innerHTML = `
-              <h4 style="margin: 0 0 8px 0; color: #2D1810; font-weight: 600;">Discovery Radius</h4>
-              <div style="display: flex; align-items: center; margin: 4px 0;">
-                <div style="width: 12px; height: 12px; background: #8B4513; border-radius: 50%; margin-right: 8px;"></div>
-                <span>5km - Close connections</span>
+              <h4 style="margin: 0 0 12px 0; color: #1A0F0A; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">Map Legend</h4>
+              <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                <div style="width: 10px; height: 10px; background: #5D4037; border-radius: 50%; margin-right: 10px; border: 1px solid white;"></div>
+                <span style="color: #3E2723; font-weight: 500;">Inner Circle (5km)</span>
               </div>
-              <div style="display: flex; align-items: center; margin: 4px 0;">
-                <div style="width: 12px; height: 12px; background: #D4A574; border-radius: 50%; margin-right: 8px;"></div>
-                <span>10km - Nearby area</span>
+              <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                <div style="width: 10px; height: 10px; background: #8B4513; border-radius: 50%; margin-right: 10px; border: 1px solid white;"></div>
+                <span style="color: #3E2723; font-weight: 500;">Middle Range (10km)</span>
               </div>
-              <div style="display: flex; align-items: center; margin: 4px 0;">
-                <div style="width: 12px; height: 12px; background: #E8E0D8; border-radius: 50%; margin-right: 8px;"></div>
-                <span>20km - Extended reach</span>
+              <div style="display: flex; align-items: center;">
+                <div style="width: 10px; height: 10px; background: #C6B8AF; border-radius: 50%; margin-right: 10px; border: 1px solid white;"></div>
+                <span style="color: #3E2723; font-weight: 500;">Extended Area (20km)</span>
               </div>
             `
             return div

@@ -1,3 +1,0 @@
-@echo off
-echo Starting Yuno Mock Backend Server...
-node mock-server.js
