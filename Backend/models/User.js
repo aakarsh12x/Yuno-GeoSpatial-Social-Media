@@ -171,12 +171,12 @@ const User = {
   /**
    * Create a new session for a user
    */
-  async createSession(userId, userAgent, ipAddress) {
+  async createSession(userId, userAgent, ipAddress, refreshToken) {
     try {
       await query(
-        `INSERT INTO user_sessions (user_id, user_agent, ip_address, created_at, expires_at)
-         VALUES ($1, $2, $3, NOW(), NOW() + INTERVAL '7 days')`,
-        [userId, userAgent || 'Unknown', ipAddress || 'Unknown']
+        `INSERT INTO user_sessions (user_id, refresh_token, user_agent, ip_address, created_at, expires_at)
+         VALUES ($1, $2, $3, $4, NOW(), NOW() + INTERVAL '7 days')`,
+        [userId, refreshToken || 'none', userAgent || 'Unknown', ipAddress || 'Unknown']
       );
     } catch {
       // Sessions table may not exist in all environments — fail silently

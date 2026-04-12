@@ -54,6 +54,7 @@ const userRoutes = require('./routes/users');
 const chatRoutes = require('./routes/chat');
 const sparksRoutes = require('./routes/sparks');
 const discoverRoutes = require('./routes/discover');
+const activitiesRoutes = require('./routes/activities');
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -61,6 +62,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/sparks', sparksRoutes);
 app.use('/api/discover', discoverRoutes);
+app.use('/api/activities', activitiesRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

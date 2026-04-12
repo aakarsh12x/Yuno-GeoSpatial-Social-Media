@@ -13,7 +13,7 @@ const router = express.Router();
  * @access  Public (Development Mode)
  */
 router.get('/',
-  // authenticateToken, // Temporarily disabled for development
+  authenticateToken,
   validateRequest('discover', 'query'),
   asyncHandler(async (req, res) => {
     const {
@@ -24,35 +24,18 @@ router.get('/',
       offset = 0
     } = req.query;
 
-          // For development, use a default user ID that exists in the database
-      const currentUserId = req.user?.id || 1; // We'll use user ID 1, but first let's create it
+    const currentUserId = req.user.id;
 
-      try {
-        // First, ensure we have a current user for comparison
-        let currentUser = await User.findById(currentUserId);
-        if (!currentUser) {
-          // Create a default current user if none exists
-          await query(`
-            INSERT INTO users (name, email, password_hash, age, city, school, college, workplace, interests, latitude, longitude, location) 
-            VALUES ('Current User', 'current@test.com', 'hash000', 24, 'Mumbai', 'Mumbai University', 'Mumbai University', 'Tech Company', ARRAY['coding', 'music', 'sports'], 19.0760, 72.8777, ST_SetSRID(ST_MakePoint(72.8777, 19.0760), 4326))
-            ON CONFLICT (id) DO NOTHING
-          `);
-          currentUser = await User.findById(currentUserId);
-        }
-
-        // Use Mumbai coordinates as default if no coordinates provided
-        const defaultLatitude = 19.0760; // Mumbai
-        const defaultLongitude = 72.8777; // Mumbai
-
-              // Find nearby users with commonalities using real database query
-        const nearbyUsers = await User.findNearbyWithCommonalities({
-          userId: currentUserId,
-          latitude: latitude ? parseFloat(latitude) : defaultLatitude,
-          longitude: longitude ? parseFloat(longitude) : defaultLongitude,
-          radiusKm: parseFloat(radius),
-          limit: parseInt(limit),
-          offset: parseInt(offset)
-        });
+    try {
+      // Find nearby users with commonalities using real database query
+      const nearbyUsers = await User.findNearbyWithCommonalities({
+        userId: currentUserId,
+        latitude: latitude ? parseFloat(latitude) : (req.user.latitude || 19.0760), // Use user lat or Mumbai default
+        longitude: longitude ? parseFloat(longitude) : (req.user.longitude || 72.8777), // Use user lng or Mumbai default
+        radiusKm: parseFloat(radius),
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      });
 
       // Format the response
       const formattedUsers = nearbyUsers.map(user => ({
@@ -132,10 +115,9 @@ router.get('/',
  * @access  Public (Development Mode)
  */
 router.get('/stats',
-  // authenticateToken, // Temporarily disabled for development
+  authenticateToken,
   asyncHandler(async (req, res) => {
-    // For development, use a default user ID
-    const currentUserId = req.user?.id || 1;
+    const currentUserId = req.user.id;
     const currentUser = await User.findById(currentUserId);
 
     if (!currentUser || !currentUser.latitude || !currentUser.longitude) {
@@ -197,11 +179,10 @@ router.get('/stats',
  * @access  Public (Development Mode)
  */
 router.get('/popular-interests',
-  // authenticateToken, // Temporarily disabled for development
+  authenticateToken,
   asyncHandler(async (req, res) => {
     const { radius = 10 } = req.query;
-    // For development, use a default user
-    const currentUser = req.user || { id: 1, latitude: 0, longitude: 0 };
+    const currentUser = req.user;
 
     if (!currentUser.latitude || !currentUser.longitude) {
       return res.status(400).json({

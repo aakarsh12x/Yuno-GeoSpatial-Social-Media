@@ -3,8 +3,19 @@ const User = require('../models/User');
 const { generateAccessToken, generateRefreshToken } = require('../utils/auth');
 const { validateRequest, validateCoordinates } = require('../middleware/validation');
 const { asyncHandler } = require('../middleware/errorHandler');
+const rateLimit = require('express-rate-limit');
 
 const router = express.Router();
+
+// Stricter rate limit for authentication routes
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 login/register attempts per 15 minutes
+  message: {
+    success: false,
+    message: 'Too many authentication attempts, please try again after 15 minutes.'
+  }
+});
 
 /**
  * @route   POST /auth/register
@@ -12,6 +23,7 @@ const router = express.Router();
  * @access  Public
  */
 router.post('/register', 
+  authLimiter,
   validateRequest('register'),
   asyncHandler(async (req, res) => {
     const {
@@ -67,7 +79,7 @@ router.post('/register',
     const userAgent = req.get('User-Agent') || 'Unknown';
     const ipAddress = req.ip || req.connection.remoteAddress;
     
-    await User.createSession(user.id, userAgent, ipAddress);
+    await User.createSession(user.id, userAgent, ipAddress, refreshToken);
 
     res.status(201).json({
       success: true,
@@ -102,6 +114,7 @@ router.post('/register',
  * @access  Public
  */
 router.post('/login',
+  authLimiter,
   validateRequest('login'),
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
@@ -130,7 +143,7 @@ router.post('/login',
     const userAgent = req.get('User-Agent') || 'Unknown';
     const ipAddress = req.ip || req.connection.remoteAddress;
     
-    await User.createSession(user.id, userAgent, ipAddress);
+    await User.createSession(user.id, userAgent, ipAddress, refreshToken);
 
     res.json({
       success: true,
