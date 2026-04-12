@@ -90,7 +90,8 @@ const Spark = {
       `SELECT s.*,
         sender.name AS sender_name, sender.email AS sender_email,
         sender.city AS sender_city, sender.age AS sender_age,
-        receiver.name AS receiver_name, receiver.email AS receiver_email
+        receiver.name AS receiver_name, receiver.email AS receiver_email,
+        receiver.city AS receiver_city, receiver.age AS receiver_age
        FROM sparks s
        JOIN users sender ON sender.id = s.sender_id
        JOIN users receiver ON receiver.id = s.receiver_id

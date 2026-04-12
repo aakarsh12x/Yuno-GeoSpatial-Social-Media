@@ -56,13 +56,23 @@ interface PendingSpark {
   created_at: string
   status: string
 }
+interface AcceptedSpark {
+  id: number
+  other_user_id: number
+  other_name: string
+  other_email: string
+  other_city: string
+  other_age: number
+  created_at: string
+}
 
 export default function SparksPage() {
   const { isCollapsed } = useSidebar()
-  const { token, isAuthenticated } = useAuth()
+  const { token, isAuthenticated, user } = useAuth()
   const [nearbyUsers, setNearbyUsers] = useState<NearbyUser[]>([])
   const [pendingSparks, setPendingSparks] = useState<PendingSpark[]>([])
-  const [activeTab, setActiveTab] = useState<'nearby' | 'pending'>('nearby')
+  const [acceptedSparks, setAcceptedSparks] = useState<AcceptedSpark[]>([])
+  const [activeTab, setActiveTab] = useState<'nearby' | 'pending' | 'accepted'>('nearby')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedUser, setSelectedUser] = useState<NearbyUser | null>(null)
   const [sparkMessage, setSparkMessage] = useState('')
@@ -74,10 +84,12 @@ export default function SparksPage() {
     loadNearbyUsers()
   }, [radius])
 
-  // Load pending sparks
+  // Load pending or accepted sparks
   useEffect(() => {
     if (activeTab === 'pending') {
       loadPendingSparks()
+    } else if (activeTab === 'accepted') {
+      loadAcceptedSparks()
     }
   }, [activeTab])
 
@@ -138,6 +150,40 @@ export default function SparksPage() {
       }
     } catch (error) {
       console.error('Error loading pending sparks:', error)
+    }
+  }
+
+  const loadAcceptedSparks = async () => {
+    if (!isAuthenticated) {
+      return
+    }
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sparks`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      const data = await response.json()
+      if (data.success) {
+        const accepted = data.data.filter((s: any) => s.status === 'accepted')
+        const formatted = accepted.map((s: any) => {
+          const isSender = s.sender_id === user?.id
+          return {
+            id: s.id,
+            other_user_id: isSender ? s.receiver_id : s.sender_id,
+            other_name: isSender ? s.receiver_name : s.sender_name,
+            other_email: isSender ? s.receiver_email : s.sender_email,
+            other_city: isSender ? s.receiver_city : s.sender_city,
+            other_age: isSender ? s.receiver_age : s.sender_age,
+            created_at: s.created_at
+          }
+        })
+        setAcceptedSparks(formatted)
+      }
+    } catch (error) {
+      console.error('Error loading accepted sparks:', error)
     }
   }
 
@@ -427,15 +473,10 @@ export default function SparksPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex absolute inset-0 top-16">
-        {/* Main Content */}
-        <div className={`flex-1 flex flex-col absolute top-0 bottom-0 ${
-          isCollapsed ? 'left-16' : 'left-64'
-        } right-0`}>
-          {/* Header */}
-          <div className="bg-surface/90 backdrop-blur-md border-b border-border-medium p-4">
-            <div className="flex items-center justify-between">
+    <div className="flex-1 flex flex-col bg-background min-h-[calc(100vh-8rem)] rounded-xl overflow-hidden border border-border-medium shadow-sm">
+      {/* Header */}
+      <div className="bg-surface/90 backdrop-blur-md border-b border-border-medium p-4">
+        <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-text-primary flex items-center space-x-2">
                   <Zap className="w-6 h-6 text-primary" />
@@ -500,6 +541,23 @@ export default function SparksPage() {
                   </span>
                 )}
               </button>
+
+              <button
+                onClick={() => setActiveTab('accepted')}
+                className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium transition-colors ${
+                  activeTab === 'accepted'
+                    ? 'text-primary border-b-2 border-primary bg-primary/5'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <Check className="w-4 h-4" />
+                <span>Accepted Sparks</span>
+                {acceptedSparks.length > 0 && (
+                  <span className="bg-green-500 text-white text-xs rounded-full px-2 py-0.5">
+                    {acceptedSparks.length}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
 
@@ -509,7 +567,7 @@ export default function SparksPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-muted" />
               <input
                 type="text"
-                placeholder={activeTab === 'nearby' ? "Search nearby people..." : "Search pending sparks..."}
+                placeholder={activeTab === 'nearby' ? "Search nearby people..." : activeTab === 'pending' ? "Search pending sparks..." : "Search accepted sparks..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-surface border border-border-medium rounded-lg text-text-primary placeholder-text-muted focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
@@ -519,7 +577,7 @@ export default function SparksPage() {
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-4">
-            {activeTab === 'nearby' ? (
+            {activeTab === 'nearby' && (
               <>
                 {/* Loading State */}
                 {isLoading && (
@@ -672,7 +730,9 @@ export default function SparksPage() {
               </div>
             )}
               </>
-            ) : (
+            )}
+
+            {activeTab === 'pending' && (
               <div className="space-y-4">
                 <AnimatePresence>
                   {pendingSparks.map((spark) => (
@@ -754,9 +814,65 @@ export default function SparksPage() {
                 )}
               </div>
             )}
+
+            {activeTab === 'accepted' && (
+              <div className="space-y-4">
+                <AnimatePresence>
+                  {acceptedSparks
+                    .filter(spark => spark.other_name.toLowerCase().includes(searchQuery.toLowerCase()))
+                    .map((spark) => (
+                    <motion.div
+                      key={spark.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="bg-surface border border-border-medium rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
+                          <User className="w-6 h-6 text-green-600" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-text-primary">{spark.other_name}</h3>
+                          <div className="flex flex-wrap items-center gap-2 text-sm text-text-muted mt-1">
+                            {spark.other_age && <span>{spark.other_age} years old</span>}
+                            {spark.other_age && spark.other_city && <span>•</span>}
+                            {spark.other_city && (
+                              <span className="flex items-center gap-1">
+                                <MapPin className="w-3 h-3" /> {spark.other_city}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3">
+                        <span className="text-xs text-text-muted hidden md:inline">
+                          Connected {formatTimeAgo(spark.created_at)}
+                        </span>
+                        <button
+                          onClick={() => window.location.href = '/chat'}
+                          className="flex items-center space-x-1 px-4 py-2 bg-primary text-white text-sm rounded-lg hover:bg-primary/90 transition-colors"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          <span>Message</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+                
+                {acceptedSparks.length === 0 && (
+                  <div className="text-center py-8">
+                    <Heart className="w-12 h-12 text-text-muted mx-auto mb-3" />
+                    <h3 className="text-lg font-semibold text-text-primary mb-1">No Accepted Sparks yet</h3>
+                    <p className="text-sm text-text-secondary">Keep sending and accepting sparks to build connections!</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        </div>
-      </div>
+
 
       {/* Spark Modal */}
       <AnimatePresence>
