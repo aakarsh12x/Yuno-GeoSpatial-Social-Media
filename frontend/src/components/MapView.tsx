@@ -85,20 +85,49 @@ export default function MapView({ users, className = '' }: MapViewProps) {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map)
 
-        // Create simple marker icon
-        const createMarkerIcon = (color: string) => {
+        // Create avatar marker icon with initial inside and name label
+        const createAvatarMarker = (color: string, name: string) => {
+          const initial = name ? name.charAt(0).toUpperCase() : '?';
           return L.divIcon({
             className: 'custom-marker',
-            html: `<div style="
-              background: ${color}; 
-              width: 12px; 
-              height: 12px; 
-              border-radius: 50%; 
-              border: 2px solid #FFFFFF; 
-              box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-            "></div>`,
-            iconSize: [12, 12],
-            iconAnchor: [6, 6]
+            html: `
+              <div style="position: relative; width: 36px; height: 36px;">
+                <div style="
+                  background: ${color}; 
+                  width: 36px; 
+                  height: 36px; 
+                  border-radius: 50%; 
+                  border: 2px solid #FFFFFF; 
+                  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: white;
+                  font-weight: bold;
+                  font-size: 16px;
+                  font-family: Inter, sans-serif;
+                  z-index: 10;
+                ">${initial}</div>
+                <div style="
+                  position: absolute;
+                  top: 40px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  background: rgba(255, 255, 255, 0.95);
+                  padding: 2px 8px;
+                  border-radius: 12px;
+                  font-size: 11px;
+                  font-weight: 700;
+                  color: #3E2723;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+                  white-space: nowrap;
+                  z-index: 5;
+                ">${name}</div>
+              </div>
+            `,
+            iconSize: [36, 36],
+            iconAnchor: [18, 18],
+            popupAnchor: [0, -18]
           })
         }
 
@@ -122,8 +151,7 @@ export default function MapView({ users, className = '' }: MapViewProps) {
         })
 
         // Add current user marker
-        // Add current user marker
-        L.marker(userLocation, { icon: createMarkerIcon('#5D4037') })
+        L.marker(userLocation, { icon: createAvatarMarker('#5D4037', 'You') })
           .addTo(map)
           .bindPopup(`
             <div style="text-align: center; padding: 12px; font-family: Inter, sans-serif;">
@@ -134,7 +162,7 @@ export default function MapView({ users, className = '' }: MapViewProps) {
 
         // Add nearby user markers
         users.forEach(user => {
-          L.marker([user.lat, user.lng], { icon: createMarkerIcon('#8B4513') })
+          L.marker([user.lat, user.lng], { icon: createAvatarMarker('#8B4513', user.name) })
             .addTo(map)
             .bindPopup(`
               <div style="padding: 12px; min-width: 200px; font-family: Inter, sans-serif;">

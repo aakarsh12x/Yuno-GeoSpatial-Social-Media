@@ -92,7 +92,99 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });
+
+  // ── Geospatial Events ───────────────────────────────────────────────────
+
+  socket.on('update_location', async (data) => {
+    const { userId, latitude, longitude, userData } = data;
+    if (!userId || latitude === undefined || longitude === undefined) return;
+
+    // Update location in database (async, don't wait)
+    User.update(userId, { latitude, longitude }).catch(err => 
+      console.error(`Failed to update location for user ${userId}:`, err.message)
+    );
+
+    // Store in socket for proximity checks
+    socket.userId = userId;
+    socket.location = { latitude, longitude };
+    socket.userData = userData;
+
+    console.log(`📍 Real-time location update for ${userData?.name} (${userId}): ${latitude}, ${longitude}`);
+
+    // Notify other users who are "discovering" this area
+    // In a production app, we would use a more efficient spatial indexing (like Redis Geo)
+    // For now, we'll iterate through connected sockets
+    const sockets = await io.fetchSockets();
+    for (const s of sockets) {
+      if (s.id !== socket.id && s.discoveryParams) {
+        const { lat: dLat, lng: dLng, radius: dRadius } = s.discoveryParams;
+        
+        // Simple Haversine distance check
+        const distance = calculateDistance(latitude, longitude, dLat, dLng);
+        if (distance <= dRadius) {
+          s.emit('nearby_user_update', {
+            userId,
+            latitude,
+            longitude,
+            userData,
+            timestamp: new Date()
+          });
+        }
+      }
+    }
+  });
+
+  socket.on('discover_nearby', async (data) => {
+    const { latitude, longitude, radius = 10 } = data;
+    if (latitude === undefined || longitude === undefined) return;
+
+    // Store discovery parameters in socket session
+    socket.discoveryParams = { lat: latitude, lng: longitude, radius };
+
+    console.log(`🔍 User ${socket.id} discovering nearby in ${radius}km radius at ${latitude}, ${longitude}`);
+
+    // Find all currently "active" users in the area from connected sockets
+    const nearbyUsers = [];
+    const sockets = await io.fetchSockets();
+    
+    for (const s of sockets) {
+      if (s.id !== socket.id && s.location) {
+        const distance = calculateDistance(latitude, longitude, s.location.latitude, s.location.longitude);
+        if (distance <= radius) {
+          nearbyUsers.push({
+            socketId: s.id,
+            userId: s.userId,
+            userData: s.userData,
+            distance: Math.round(distance * 100) / 100,
+            latitude: s.location.latitude,
+            longitude: s.location.longitude
+          });
+        }
+      }
+    }
+
+    socket.emit('nearby_users', {
+      users: nearbyUsers,
+      radius,
+      timestamp: new Date()
+    });
+  });
 });
+
+/**
+ * Helper: Calculate Haversine distance in km
+ */
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
 
 // 404 handler
 app.use('*', (req, res) => {
