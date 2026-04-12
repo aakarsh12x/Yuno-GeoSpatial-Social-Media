@@ -11,12 +11,13 @@ const schemas = {
       .messages({
         'string.min': 'Password must be at least 6 characters long'
       }),
+    username: Joi.string().min(3).max(50).optional(),
     age: Joi.number().integer().min(13).max(120).optional(),
     city: Joi.string().max(100).optional(),
     school: Joi.string().max(200).optional(),
     college: Joi.string().max(200).optional(),
     workplace: Joi.string().max(200).optional(),
-    interests: Joi.array().items(Joi.string().max(50)).max(20).optional(),
+    interests: Joi.array().items(Joi.string().max(50)).max(50).optional(),
     latitude: Joi.number().min(-90).max(90).optional(),
     longitude: Joi.number().min(-180).max(180).optional()
   }),
@@ -29,12 +30,21 @@ const schemas = {
   updateProfile: Joi.object({
     name: Joi.string().min(2).max(100).optional(),
     email: Joi.string().email({ tlds: { allow: false } }).max(255).optional(),
+    username: Joi.string().min(3).max(50).optional(),
     age: Joi.number().integer().min(13).max(120).optional(),
     city: Joi.string().max(100).optional(),
     school: Joi.string().max(200).optional(),
     college: Joi.string().max(200).optional(),
     workplace: Joi.string().max(200).optional(),
-    interests: Joi.array().items(Joi.string().max(50)).max(20).optional(),
+    interests: Joi.array().items(Joi.string().max(50)).max(50).optional(),
+    bio: Joi.string().max(1000).optional(),
+    profession: Joi.string().max(100).optional(),
+    languages: Joi.array().items(Joi.string()).optional(),
+    skills: Joi.array().items(Joi.string()).optional(),
+    clubs: Joi.array().items(Joi.string()).optional(),
+    favorite_shows: Joi.array().items(Joi.string()).optional(),
+    favorite_movies: Joi.array().items(Joi.string()).optional(),
+    favorite_music: Joi.array().items(Joi.string()).optional(),
     latitude: Joi.number().min(-90).max(90).optional(),
     longitude: Joi.number().min(-180).max(180).optional()
   }).min(1), // At least one field required

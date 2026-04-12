@@ -29,23 +29,26 @@ const User = {
   /**
    * Create a new user
    */
-  async create({ name, email, password, age, city, school, college, workplace, interests, latitude, longitude }) {
+  async create({ name, email, password, username, age, city, school, college, workplace, interests, bio, profession, latitude, longitude }) {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     const result = await query(
       `INSERT INTO users
-        (name, email, password_hash, age, city, school, college, workplace, interests, latitude, longitude)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        (name, email, password_hash, username, age, city, school, college, workplace, interests, bio, profession, latitude, longitude)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
        RETURNING *`,
       [
         name,
         email,
         hashedPassword,
+        username || null,
         age || null,
         city || null,
         school || null,
         college || null,
         workplace || null,
         interests || [],
+        bio || null,
+        profession || null,
         latitude || null,
         longitude || null,
       ]
@@ -57,10 +60,15 @@ const User = {
    * Update a user's profile fields
    */
   async update(userId, updates) {
-    const allowed = ['name', 'age', 'city', 'school', 'college', 'workplace', 'interests', 'latitude', 'longitude'];
+    const allowed = [
+      'name', 'email', 'username', 'age', 'city', 'school', 'college', 'workplace', 
+      'interests', 'bio', 'profession', 'languages', 'skills', 'clubs', 
+      'favorite_shows', 'favorite_movies', 'favorite_music',
+      'latitude', 'longitude'
+    ];
     const fields = Object.keys(updates).filter(k => allowed.includes(k));
 
-    if (fields.length === 0) return null;
+    if (fields.length === 0) return await this.findById(userId);
 
     const setClauses = fields.map((f, i) => `${f} = $${i + 2}`).join(', ');
     const values = fields.map(f => updates[f]);

@@ -16,6 +16,18 @@ CREATE TABLE IF NOT EXISTS users (
     latitude DECIMAL(10, 8), -- Latitude with high precision
     longitude DECIMAL(11, 8), -- Longitude with high precision
     location GEOGRAPHY(POINT, 4326), -- PostGIS geography point for efficient spatial queries
+    
+    -- New fields for extended profile
+    username VARCHAR(50) UNIQUE,
+    bio TEXT,
+    profession VARCHAR(100),
+    languages TEXT[],
+    skills TEXT[],
+    clubs TEXT[],
+    favorite_shows TEXT[],
+    favorite_movies TEXT[],
+    favorite_music TEXT[],
+    
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
