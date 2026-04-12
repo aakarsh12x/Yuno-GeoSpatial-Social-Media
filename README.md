@@ -1,6 +1,6 @@
 # Yuno - Geospatial Social Media Platform
 
-Live: https://frontend-6sa6005p4-aakarsh12xs-projects.vercel.app/
+Live: https://frontend-nine-orcin-70.vercel.app/
 
 ## Preview
 
