@@ -95,11 +95,15 @@
   }
   
   .card-surface {
-    @apply bg-surface/80 backdrop-blur border border-border-light rounded-xl shadow-soft;
+    @apply bg-white border border-border-light rounded-xl shadow-soft;
   }
   
-  .text-gradient {
-    @apply text-primary;
+  .text-premium {
+    @apply text-text-primary font-bold;
+  }
+
+  .font-serif {
+    font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   }
   
   /* Ensure navbar stays above Leaflet map elements */
@@ -120,27 +124,7 @@
     z-index: 3 !important;
   }
   
-  .animate-gradient-x {
-    animation: gradient-x 4s ease-in-out infinite;
-  }
-  
-  @keyframes gradient-x {
-    0% {
-      background-position: 0% 50%;
-    }
-    25% {
-      background-position: 100% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    75% {
-      background-position: 0% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
+  /* Generic animations only - no gradients */
   
   /* Slider styles */
   .slider {

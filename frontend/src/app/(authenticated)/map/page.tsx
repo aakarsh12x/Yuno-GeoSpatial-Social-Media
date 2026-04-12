@@ -98,10 +98,10 @@ export default function MapPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2 text-gradient">
-            Discover Nearby People
+          <h1 className="text-3xl font-bold mb-2 text-text-primary tracking-tight">
+            Discover Nearby Connections
           </h1>
-          <p className="text-text-secondary">Find people near you and see what you have in common</p>
+          <p className="text-text-muted font-medium">Find people near you and see what you have in common</p>
         </div>
         
         {/* Radius Filter */}
@@ -220,9 +220,9 @@ function ProfileCard({ user }: { user: User }) {
   const hasCommonalities = commonAttributes.length > 0 || commonInterests.length > 0
 
   return (
-    <div className="card-surface p-5 hover:shadow-elegant transition-all duration-300 hover:scale-[1.02] hover:border-primary/30">
+    <div className="card-surface p-6 border-border-medium hover:border-primary transition-all duration-300 shadow-soft hover:shadow-elegant">
       <div className="flex items-center gap-4 mb-4">
-        <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-accent grid place-items-center text-lg font-semibold text-white shadow-soft">
+        <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-lg font-bold text-white shadow-soft">
           {user.name?.[0] || '?'}
         </div>
         <div className="flex-1">
@@ -273,10 +273,10 @@ function ProfileCard({ user }: { user: User }) {
           {commonAttributes.length > 0 && (
             <div className="mb-3">
               <div className="text-xs text-text-muted mb-2">Same attributes:</div>
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1.5">
                 {commonAttributes.map((attr, idx) => (
-                  <span key={idx} className="px-2 py-1 rounded-lg bg-primary/10 border border-primary/20 text-primary text-xs font-medium">
-                    same {attr}
+                  <span key={idx} className="px-2.5 py-1 rounded-md bg-hover-light border border-border-medium text-primary text-[11px] font-bold uppercase tracking-wider">
+                    {attr}
                   </span>
                 ))}
               </div>
@@ -287,9 +287,9 @@ function ProfileCard({ user }: { user: User }) {
           {commonInterests.length > 0 && (
             <div>
               <div className="text-xs text-text-muted mb-2">Shared interests:</div>
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1.5">
                 {commonInterests.map((interest, idx) => (
-                  <span key={idx} className="px-2 py-1 rounded-lg bg-accent/10 border border-accent/20 text-accent text-xs font-medium">
+                  <span key={idx} className="px-2.5 py-1 rounded-md bg-primary text-white text-[11px] font-bold uppercase tracking-wider">
                     {interest}
                   </span>
                 ))}

@@ -21,6 +21,17 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error('API Error:', error.response?.data || error.message);
+
+    // If we get a 401, the token is expired/invalid — clear it and redirect to login
+    if (error.response?.status === 401 && typeof window !== 'undefined') {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+      // Only redirect if we're not already on the login page
+      if (!window.location.pathname.match(/^\/(login|register)?$/)) {
+        window.location.href = '/';
+      }
+    }
+
     return Promise.reject(error);
   }
 );
@@ -42,4 +53,8 @@ export const DiscoverAPI = {
   nearby: (params: any) => api.get('/discover', { params }),
   stats: () => api.get('/discover/stats'),
   popularInterests: (params: any) => api.get('/discover/popular-interests', { params }),
+};
+
+export const ActivitiesAPI = {
+  getLocal: (city?: string) => api.get('/activities', { params: city ? { city } : {} }),
 };
