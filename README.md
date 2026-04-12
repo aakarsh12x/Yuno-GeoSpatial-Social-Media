@@ -4,8 +4,7 @@ Live: https://frontend-nine-orcin-70.vercel.app/
 
 ## Preview
 
-![Yuno UI 1](https://github.com/user-attachments/assets/8593fec5-b255-482b-bbc3-b657316a15f6)
-![Yuno UI 2](https://github.com/user-attachments/assets/e78e43d9-01fc-4a7c-bfc2-86666fdabccd)
+<img width="1902" height="907" alt="image" src="https://github.com/user-attachments/assets/d90037af-cd37-49aa-9ccf-b14d8529d846" />
 
 ## About
 
