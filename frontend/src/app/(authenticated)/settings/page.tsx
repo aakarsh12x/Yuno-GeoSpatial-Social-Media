@@ -16,14 +16,10 @@ import {
   Download,
   Upload
 } from 'lucide-react'
+import { UserAPI } from '@/lib/api'
+import { toast } from 'react-hot-toast'
 
 interface SettingsState {
-  // Profile Settings
-  name: string
-  email: string
-  bio: string
-  city: string
-  
   // Privacy Settings
   showLocation: boolean
   showProfile: boolean
@@ -44,17 +40,11 @@ interface SettingsState {
 
 export default function SettingsPage() {
   const { user, logout } = useAuth()
-  const [activeTab, setActiveTab] = useState('profile')
+  const [activeTab, setActiveTab] = useState('privacy')
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   
   const [settings, setSettings] = useState<SettingsState>({
-    // Profile Settings
-    name: user?.name || '',
-    email: user?.email || '',
-    bio: user?.bio || '',
-    city: user?.city || '',
-    
     // Privacy Settings
     showLocation: true,
     showProfile: true,
@@ -83,12 +73,18 @@ export default function SettingsPage() {
   const handleSaveSettings = async () => {
     setIsLoading(true)
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      console.log('Settings saved:', settings)
-      // Here you would make an API call to save settings
-    } catch (error) {
+      const payload = {
+        // Here you would add other global settings if needed
+      }
+      
+      const { data } = await UserAPI.updateProfile(payload)
+      
+      if (data.success) {
+        toast.success('Settings saved successfully!')
+      }
+    } catch (error: any) {
       console.error('Error saving settings:', error)
+      toast.error(error.response?.data?.message || 'Failed to save settings')
     } finally {
       setIsLoading(false)
     }
@@ -106,7 +102,6 @@ export default function SettingsPage() {
   }
 
   const tabs = [
-    { id: 'profile', name: 'Profile', icon: User },
     { id: 'privacy', name: 'Privacy', icon: Shield },
     { id: 'notifications', name: 'Notifications', icon: Bell },
     { id: 'app', name: 'App Settings', icon: Settings }
@@ -144,65 +139,6 @@ export default function SettingsPage() {
 
         {/* Settings Content */}
         <div className="bg-card-surface rounded-lg p-6 shadow-elegant">
-          {activeTab === 'profile' && (
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">Profile Settings</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-text-primary mb-2">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.name}
-                    onChange={(e) => handleSettingChange('name', e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-md bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Enter your full name"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-text-primary mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={settings.email}
-                    onChange={(e) => handleSettingChange('email', e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-md bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Enter your email"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">
-                  Bio
-                </label>
-                <textarea
-                  value={settings.bio}
-                  onChange={(e) => handleSettingChange('bio', e.target.value)}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-border rounded-md bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Tell us about yourself..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">
-                  City
-                </label>
-                <input
-                  type="text"
-                  value={settings.city}
-                  onChange={(e) => handleSettingChange('city', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-md bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Enter your city"
-                />
-              </div>
-            </div>
-          )}
 
           {activeTab === 'privacy' && (
             <div className="space-y-6">

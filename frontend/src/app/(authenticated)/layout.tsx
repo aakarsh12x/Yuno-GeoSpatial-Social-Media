@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Sidebar from '@/components/Sidebar'
 import MainContent from '@/components/MainContent'
+import { Toaster } from 'react-hot-toast'
 
 export default function AuthenticatedLayout({
   children,
@@ -73,6 +74,7 @@ export default function AuthenticatedLayout({
       <MainContent>
         {children}
       </MainContent>
+      <Toaster position="top-right" />
     </div>
   )
 }

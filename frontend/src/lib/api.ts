@@ -44,9 +44,9 @@ export const AuthAPI = {
 };
 
 export const UserAPI = {
-  me: () => api.get('/user/profile/me'),
-  updateProfile: (data: any) => api.put('/user/profile', data),
-  getById: (id: string) => api.get(`/user/${id}`),
+  me: () => api.get('/users/profile/me'),
+  updateProfile: (data: any) => api.put('/users/profile', data),
+  getById: (id: string) => api.get(`/users/${id}`),
 };
 
 export const DiscoverAPI = {
