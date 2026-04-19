@@ -1,5 +1,51 @@
 # Yuno - Geospatial Social Media Platform
 
+---
+
+## 
+
+---
+
+## System Design
+
+```mermaid
+graph TB
+    subgraph Client["Client Layer (Next.js + Leaflet)"]
+        UI[React UI / Map View]
+        GPS[GPS / Location API]
+    end
+
+    subgraph API["API Gateway (Express.js)"]
+        AUTH[Auth Service\nJWT + bcrypt]
+        GEO[Geo-Query Engine\nPostGIS Radius Search]
+        MATCH[Spark Matching Engine\nInterest Filter]
+        MSG[Messaging Controller]
+    end
+
+    subgraph Realtime["Real-time Layer"]
+        SOCK[Socket.IO Server]
+    end
+
+    subgraph DB["Data Layer"]
+        PG[(PostgreSQL + PostGIS\nUser Profiles & Locations)]
+        CACHE[In-Memory Cache\nActive Sessions]
+    end
+
+    GPS -->|Coordinates| UI
+    UI -->|REST API Calls| AUTH
+    AUTH -->|Validated Token| GEO
+    AUTH -->|Validated Token| MATCH
+    AUTH -->|Validated Token| MSG
+    GEO -->|ST_DWithin Query| PG
+    MATCH -->|Filter by Interests| PG
+    PG -->|Nearby Users| GEO
+    GEO -->|User List| UI
+    MSG -->|Read/Write| PG
+    SOCK <-->|WebSocket| UI
+    SOCK <-->|Emit Events| MSG
+    AUTH -->|Session| CACHE
+```
+
 Live: https://frontend-nine-orcin-70.vercel.app/
 
 ## Preview
