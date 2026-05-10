@@ -58,3 +58,20 @@ export const DiscoverAPI = {
 export const ActivitiesAPI = {
   getLocal: (city?: string) => api.get('/activities', { params: city ? { city } : {} }),
 };
+
+export const SparksAPI = {
+  send: (receiverId: number, message?: string) =>
+    api.post('/sparks/send', { receiverId, message }),
+  accept: (sparkId: number) => api.post(`/sparks/${sparkId}/accept`),
+  reject: (sparkId: number) => api.post(`/sparks/${sparkId}/reject`),
+  getPending: () => api.get('/sparks/pending'),
+  getAll: () => api.get('/sparks'),
+  getStats: () => api.get('/sparks/stats'),
+};
+
+export const ChatAPI = {
+  getUserChats: () => api.get('/chat/user/chats'),
+  getChatMessages: (chatId: number, limit = 50, offset = 0) =>
+    api.get(`/chat/chats/${chatId}`, { params: { limit, offset } }),
+  markRead: (chatId: number) => api.post(`/chat/chats/${chatId}/read`),
+};
