@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Zap, 
@@ -13,14 +14,13 @@ import {
   Check, 
   X,
   Search,
-  Filter,
   Users,
   Clock,
   MessageCircle
 } from 'lucide-react'
 import { useSidebar } from '@/context/SidebarContext'
 import { useAuth } from '@/context/AuthContext'
-import { DiscoverAPI } from '@/lib/api'
+import { DiscoverAPI, SparksAPI } from '@/lib/api'
 import { geospatialService } from '@/lib/geospatialService'
 
 interface NearbyUser {
@@ -64,9 +64,11 @@ interface AcceptedSpark {
   other_city: string
   other_age: number
   created_at: string
+  chatId?: number | null
 }
 
 export default function SparksPage() {
+  const router = useRouter()
   const { isCollapsed } = useSidebar()
   const { token, isAuthenticated, user } = useAuth()
   const [nearbyUsers, setNearbyUsers] = useState<NearbyUser[]>([])
@@ -116,11 +118,11 @@ export default function SparksPage() {
         }));
         setNearbyUsers(usersWithDefaults);
       } else {
-        setNearbyUsers(getExampleUsers());
+        setNearbyUsers([]);
       }
     } catch (error) {
       console.error('Error loading nearby users:', error);
-      setNearbyUsers(getExampleUsers());
+      setNearbyUsers([]);
     } finally {
       setIsLoading(false);
     }
@@ -154,30 +156,40 @@ export default function SparksPage() {
   }
 
   const loadAcceptedSparks = async () => {
-    if (!isAuthenticated) {
-      return
-    }
-    
+    if (!isAuthenticated) return
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sparks`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-      const data = await response.json()
-      if (data.success) {
-        const accepted = data.data.filter((s: any) => s.status === 'accepted')
+      // Load accepted sparks
+      const { data: sparksData } = await SparksAPI.getAll()
+      if (sparksData.success) {
+        const accepted = sparksData.data.filter((s: any) => s.status === 'accepted')
+        // Load chat rooms to resolve chatId for each connection
+        let chatsByParticipant: Record<string, number> = {}
+        try {
+          const chatRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/user/chats`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+          const chatData = await chatRes.json()
+          if (chatData.success) {
+            // Map other_user_id -> chatId
+            chatData.data.forEach((chat: any) => {
+              const other = (chat.participants || []).find((p: any) => p.id !== user?.id)
+              if (other) chatsByParticipant[other.id] = chat.id
+            })
+          }
+        } catch {}
+
         const formatted = accepted.map((s: any) => {
           const isSender = s.sender_id === user?.id
+          const otherUserId = isSender ? s.receiver_id : s.sender_id
           return {
             id: s.id,
-            other_user_id: isSender ? s.receiver_id : s.sender_id,
+            other_user_id: otherUserId,
             other_name: isSender ? s.receiver_name : s.sender_name,
             other_email: isSender ? s.receiver_email : s.sender_email,
             other_city: isSender ? s.receiver_city : s.sender_city,
             other_age: isSender ? s.receiver_age : s.sender_age,
-            created_at: s.created_at
+            created_at: s.created_at,
+            chatId: chatsByParticipant[otherUserId] || null,
           }
         })
         setAcceptedSparks(formatted)
@@ -223,25 +235,18 @@ export default function SparksPage() {
   }
 
   const acceptSpark = async (sparkId: number) => {
-    if (!isAuthenticated) {
-      console.log('User not authenticated')
-      return
-    }
-    
+    if (!isAuthenticated) return
     try {
-              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sparks/${sparkId}/accept`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-      
-      const data = await response.json()
+      const { data } = await SparksAPI.accept(sparkId)
       if (data.success) {
-        // Remove from pending sparks
         setPendingSparks(prev => prev.filter(spark => spark.id !== sparkId))
-        // You could also navigate to the new chat here
+        const chatId = data.data?.chatId
+        // Navigate directly to the new chat
+        if (chatId) {
+          router.push(`/chat?chatId=${chatId}`)
+        } else {
+          setActiveTab('accepted')
+        }
       }
     } catch (error) {
       console.error('Error accepting spark:', error)
@@ -301,147 +306,6 @@ export default function SparksPage() {
     return `${Math.floor(diffInHours / 24)}d ago`
   }
 
-  // Example users with Indian names for demonstration
-  const getExampleUsers = (): NearbyUser[] => {
-    return [
-      {
-        id: 1,
-        name: 'Priya Sharma',
-        email: 'priya.sharma@example.com',
-        age: 24,
-        city: 'Mumbai',
-        school: 'St. Xavier College',
-        college: 'Mumbai University',
-        workplace: 'Tech Solutions',
-        interests: ['music', 'travel', 'tech', 'reading', 'yoga'],
-        distance_km: 2.3,
-        commonality_score: 85,
-        common_attributes: ['same city', 'same age group'],
-        common_interests: ['music', 'tech', 'travel'],
-        hasSpark: false,
-        sparkStatus: null
-      },
-      {
-        id: 2,
-        name: 'Ananya Patel',
-        email: 'ananya.patel@example.com',
-        age: 22,
-        city: 'Bangalore',
-        school: 'Christ University',
-        college: 'Christ University',
-        workplace: 'Innovation Labs',
-        interests: ['gaming', 'tech', 'travel', 'movies', 'photography'],
-        distance_km: 5.7,
-        commonality_score: 72,
-        common_attributes: ['same interests'],
-        common_interests: ['tech', 'travel', 'gaming'],
-        hasSpark: true,
-        sparkStatus: 'pending'
-      },
-      {
-        id: 3,
-        name: 'Arjun Singh',
-        email: 'arjun.singh@example.com',
-        age: 26,
-        city: 'Delhi',
-        school: 'Delhi Public School',
-        college: 'Delhi University',
-        workplace: 'StartupXYZ',
-        interests: ['sports', 'tech', 'cooking', 'gaming', 'fitness'],
-        distance_km: 8.1,
-        commonality_score: 68,
-        common_attributes: ['same workplace type'],
-        common_interests: ['tech', 'gaming'],
-        hasSpark: false,
-        sparkStatus: null
-      },
-      {
-        id: 4,
-        name: 'Zara Khan',
-        email: 'zara.khan@example.com',
-        age: 23,
-        city: 'Hyderabad',
-        school: 'Osmania University',
-        college: 'Osmania University',
-        workplace: 'Creative Studio',
-        interests: ['art', 'photography', 'travel', 'music', 'design'],
-        distance_km: 3.2,
-        commonality_score: 91,
-        common_attributes: ['same age group', 'same interests'],
-        common_interests: ['music', 'travel', 'photography'],
-        hasSpark: true,
-        sparkStatus: 'accepted'
-      },
-      {
-        id: 5,
-        name: 'Kavya Reddy',
-        email: 'kavya.reddy@example.com',
-        age: 25,
-        city: 'Chennai',
-        school: 'Chennai University',
-        college: 'Chennai University',
-        workplace: 'Digital Solutions',
-        interests: ['dance', 'music', 'tech', 'fashion', 'fitness'],
-        distance_km: 6.8,
-        commonality_score: 78,
-        common_attributes: ['same age group'],
-        common_interests: ['music', 'tech', 'fitness'],
-        hasSpark: false,
-        sparkStatus: null
-      },
-      {
-        id: 6,
-        name: 'Rahul Verma',
-        email: 'rahul.verma@example.com',
-        age: 27,
-        city: 'Pune',
-        school: 'Pune University',
-        college: 'Pune University',
-        workplace: 'Tech Innovations',
-        interests: ['cricket', 'tech', 'music', 'travel', 'reading'],
-        distance_km: 4.5,
-        commonality_score: 82,
-        common_attributes: ['same city', 'same age group'],
-        common_interests: ['tech', 'music', 'travel'],
-        hasSpark: true,
-        sparkStatus: 'pending'
-      },
-      {
-        id: 7,
-        name: 'Meera Kapoor',
-        email: 'meera.kapoor@example.com',
-        age: 21,
-        city: 'Mumbai',
-        school: 'Mumbai University',
-        college: 'Mumbai University',
-        workplace: 'Design Studio',
-        interests: ['art', 'design', 'photography', 'travel', 'coffee'],
-        distance_km: 1.8,
-        commonality_score: 89,
-        common_attributes: ['same city', 'same age group'],
-        common_interests: ['art', 'photography', 'travel'],
-        hasSpark: false,
-        sparkStatus: null
-      },
-      {
-        id: 8,
-        name: 'Aditya Malhotra',
-        email: 'aditya.malhotra@example.com',
-        age: 28,
-        city: 'Bangalore',
-        school: 'Bangalore University',
-        college: 'Bangalore University',
-        workplace: 'AI Research Lab',
-        interests: ['tech', 'ai', 'reading', 'travel', 'chess'],
-        distance_km: 7.3,
-        commonality_score: 75,
-        common_attributes: ['same interests'],
-        common_interests: ['tech', 'reading', 'travel'],
-        hasSpark: false,
-        sparkStatus: null
-      }
-    ]
-  }
 
   // Show login form if not authenticated
   if (!isAuthenticated) {
@@ -851,7 +715,7 @@ export default function SparksPage() {
                           Connected {formatTimeAgo(spark.created_at)}
                         </span>
                         <button
-                          onClick={() => window.location.href = '/chat'}
+                          onClick={() => router.push(spark.chatId ? `/chat?chatId=${spark.chatId}` : '/chat')}
                           className="flex items-center space-x-1 px-4 py-2 bg-primary text-white text-sm rounded-lg hover:bg-primary/90 transition-colors"
                         >
                           <MessageCircle className="w-4 h-4" />
