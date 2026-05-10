@@ -79,9 +79,52 @@ app.get('/health', (req, res) => {
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
+  // Decode auth token to store user info on socket (used by send_message handler)
+  try {
+    const token = socket.handshake.auth?.token;
+    if (token) {
+      const jwt = require('jsonwebtoken');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production', {
+        issuer: 'yuno-backend',
+        audience: 'yuno-frontend'
+      });
+      socket.userId = decoded.id || decoded.userId;
+      socket.userData = { name: decoded.name || decoded.email || 'User', id: socket.userId };
+    }
+  } catch { /* ignore invalid tokens — socket still works, just without name */ }
+
   socket.on('join', (userId) => {
     socket.join(userId);
     console.log(`User ${userId} joined room`);
+  });
+
+  // Chat room join — used by the chat page
+  socket.on('join_chat', (chatId) => {
+    // Leave other chat rooms first (stay in user-id rooms)
+    socket.rooms.forEach(room => {
+      if (room !== socket.id && room.startsWith('chat_')) {
+        socket.leave(room);
+      }
+    });
+    const roomName = `chat_${chatId}`;
+    socket.join(roomName);
+    console.log(`User ${socket.id} joined chat room: ${roomName}`);
+  });
+
+  // Real-time message delivery between two users in the same chat room
+  socket.on('send_message', (data) => {
+    const { chatId, message } = data;
+    if (!chatId || !message?.text) return;
+    const roomName = `chat_${chatId}`;
+    // Broadcast to everyone else in the room
+    socket.to(roomName).emit('message', {
+      id: Date.now().toString(),
+      text: message.text,
+      sender: socket.userData?.name || 'User',
+      timestamp: message.timestamp || new Date(),
+      isOwn: false,
+      chatId: chatId.toString(),
+    });
   });
 
   socket.on('sendMessage', (data) => {
