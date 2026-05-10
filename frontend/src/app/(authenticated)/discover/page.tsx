@@ -38,7 +38,7 @@ export default function DiscoverPage() {
   const [sparkTarget, setSparkTarget] = useState<User | null>(null)
   const [sparkMessage, setSparkMessage] = useState('')
   const [sparkSending, setSparkSending] = useState(false)
-  const [sentIds, setSentIds] = useState<Set<number>>(new Set())
+  const [sentIds, setSentIds] = useState<number[]>([])
 
   useEffect(() => {
     const load = async () => {
@@ -150,7 +150,7 @@ export default function DiscoverPage() {
     setSparkSending(true)
     try {
       await SparksAPI.send(sparkTarget.id, sparkMessage || undefined)
-      setSentIds((prev) => new Set([...prev, sparkTarget.id]))
+      setSentIds((prev) => [...prev, sparkTarget.id])
       setSparkTarget(null)
       setSparkMessage('')
     } catch {
@@ -228,7 +228,7 @@ export default function DiscoverPage() {
             ...(u?.commonalities?.attributes || []).map((a) => `same ${a}`),
             ...(u?.commonalities?.interests || []),
           ].slice(0, 4)
-          const alreadySent = sentIds.has(u.id)
+          const alreadySent = sentIds.includes(u.id)
 
           return (
             <div
