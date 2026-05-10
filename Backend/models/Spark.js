@@ -109,7 +109,10 @@ const Spark = {
     const result = await query(
       `SELECT s.*,
         u.name AS sender_name, u.email AS sender_email,
-        u.city AS sender_city, u.age AS sender_age
+        u.city AS sender_city, u.age AS sender_age,
+        u.school AS sender_school, u.college AS sender_college,
+        u.workplace AS sender_workplace,
+        u.interests AS sender_interests
        FROM sparks s
        JOIN users u ON u.id = s.sender_id
        WHERE s.receiver_id = $1 AND s.status = 'pending'
