@@ -67,12 +67,14 @@ router.post('/register',
     // Generate tokens
     const accessToken = generateAccessToken({
       userId: user.id,
-      email: user.email
+      email: user.email,
+      name: user.name
     });
 
     const refreshToken = generateRefreshToken({
       userId: user.id,
-      email: user.email
+      email: user.email,
+      name: user.name
     });
 
     // Create session
@@ -131,12 +133,14 @@ router.post('/login',
     // Generate tokens
     const accessToken = generateAccessToken({
       userId: user.id,
-      email: user.email
+      email: user.email,
+      name: user.name
     });
 
     const refreshToken = generateRefreshToken({
       userId: user.id,
-      email: user.email
+      email: user.email,
+      name: user.name
     });
 
     // Create session
