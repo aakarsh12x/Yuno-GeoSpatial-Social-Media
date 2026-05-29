@@ -247,12 +247,19 @@ server.listen(PORT, () => {
   console.log(`🔌 Socket.IO enabled`);
 
   // ── Keep-alive cron job for Render free tier ──────────────────────────────
-  // Render spins down free instances after 15 min of inactivity.
-  // We self-ping /health every 14 minutes to prevent that.
-  const SELF_URL = process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL;
+  // Pings /health every 25 min ONLY between 09:00–23:00 IST
+  // (03:30–17:30 UTC) so the service sleeps 11 PM–9 AM IST every night.
+  // This saves ~10 hrs/day (~300 hrs/month) vs a 24/7 ping.
+  //
+  // Cron: "*/25 3-17 * * *" = every 25 min during UTC hours 3–17
+  // (covers 03:00–17:59 UTC ≈ 08:30–23:29 IST)
+  const SELF_URL = (process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL || '')
+    .replace(/\/api$/, '')   // strip trailing /api if present
+    .replace(/\/$/, '');     // strip trailing slash
+
   if (SELF_URL) {
     const axios = require('axios');
-    cron.schedule('*/14 * * * *', async () => {
+    cron.schedule('*/25 3-17 * * *', async () => {
       try {
         const res = await axios.get(`${SELF_URL}/health`, { timeout: 10000 });
         console.log(`🏓 Keep-alive ping OK — ${res.data.timestamp}`);
@@ -260,9 +267,9 @@ server.listen(PORT, () => {
         console.error('❌ Keep-alive ping failed:', err.message);
       }
     });
-    console.log(`⏰ Keep-alive cron started — pinging ${SELF_URL}/health every 14 min`);
+    console.log(`⏰ Keep-alive cron started — pinging ${SELF_URL}/health every 25 min (active 09:00–23:00 IST, sleeps 23:00–09:00 IST)`);
   } else {
-    console.log('ℹ️  Keep-alive cron disabled (set RENDER_EXTERNAL_URL or BACKEND_URL to enable)');
+    console.log('ℹ️  Keep-alive cron disabled — set RENDER_EXTERNAL_URL or BACKEND_URL to enable');
   }
   // ─────────────────────────────────────────────────────────────────────────
 });
