@@ -11,10 +11,10 @@ export default function MainContent({ children }: MainContentProps) {
   const { isCollapsed } = useSidebar()
 
   return (
-    <main className={`pt-20 transition-all duration-300 ${
+    <main className={`pt-16 transition-all duration-300 ${
       isCollapsed ? 'pl-0 md:pl-16' : 'pl-0 md:pl-64'
     }`}>
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 pt-3 pb-8">
         {children}
       </div>
     </main>
