@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-01T11:17:00Z",
+  "title": "Design System: Yuno",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Deep Sophisticated Brown", "canonical": "#5d4037", "tonalRamp": ["#271b17", "#392722", "#4b332c", "#5d4037", "#7f5d52", "#a17e73", "#c4a296", "#e7c9bf"] },
+      "accent": { "role": "accent", "displayName": "Rich Leather Brown", "canonical": "#8b4513", "tonalRamp": ["#3b1b04", "#552808", "#70360d", "#8b4513", "#b06633", "#d28a57", "#efb082", "#ffd7b8"] },
+      "neutral-bg": { "role": "neutral", "displayName": "Tactile Warm Cream", "canonical": "#f8f6f0", "tonalRamp": ["#cfcbc1", "#dedad0", "#ede9e0", "#f8f6f0", "#faf9f6", "#fcfbfa", "#fdfdfc", "#ffffff"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headlines only." },
+      "body": { "displayName": "Body Text", "purpose": "Prose, descriptions, and messages." }
+    },
+    "shadows": [
+      { "name": "glow", "value": "0 0 15px rgba(93, 64, 55, 0.1)", "purpose": "Soft amber glow for active card components." },
+      { "name": "soft", "value": "0 1px 4px rgba(26, 15, 10, 0.05)", "purpose": "Rest shadow for default components." },
+      { "name": "elegant", "value": "0 4px 12px rgba(26, 15, 10, 0.08)", "purpose": "Active shadow during interactions and hover states." }
+    ],
+    "motion": [
+      { "name": "ease-out-quint", "value": "cubic-bezier(0.23, 1, 0.32, 1)", "purpose": "Smooth exponential exit transition." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Standard action trigger.",
+      "html": "<button class=\"ds-btn-primary\">START EXPLORING</button>",
+      "css": ".ds-btn-primary { background-color: #5d4037; color: #ffffff; padding: 12px 32px; border-radius: 8px; border: none; font-weight: 600; font-size: 14px; cursor: pointer; transition: background-color 0.25s cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-primary:hover { background-color: #8b4513; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-text",
+      "description": "Form input field.",
+      "html": "<input type=\"text\" class=\"ds-input\" placeholder=\"you@example.com\" />",
+      "css": ".ds-input { background-color: #fdfaf6; border: 1px solid #ede3d7; border-radius: 8px; padding: 14px 16px; color: #1a0f0a; font-size: 14px; width: 100%; box-sizing: border-box; transition: border-color 0.25s, box-shadow 0.25s; } .ds-input:focus { outline: none; border-color: #5d4037; box-shadow: 0 0 0 3px rgba(93, 64, 55, 0.06); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Cartographer's Hearth",
+    "overview": "Yuno is a geospatial social network designed to evoke the feeling of a warm, tactile field notebook or a physical map spread across a wood-grain table. The interface rejects sterile, generic SaaS-cream layouts and cyber-neon hues in favor of organic textures, leather anchors, and pulsing amber highlights that call attention to real-time human activity.",
+    "keyCharacteristics": [
+      "Earthy, high-contrast color scheme anchored in deep leather browns and warm neutrals.",
+      "Tight information density suitable for mobile coordinates and map controls.",
+      "Micro-interactions emphasizing live city activity with pulsing orange amber tones."
+    ],
+    "rules": [
+      { "name": "The Rarity of Pulse Rule", "body": "Pulsing amber orange is exclusively used for live real-time activities. No other button, label, indicator, or border may use this hue.", "section": "colors" },
+      { "name": "The Ink Contrast Rule", "body": "Never use light gray or low-contrast text on cream/sand surfaces. Body text must always use Almost Black-Brown (#1a0f0a) or Dark Cocoa (#3e2723) to guarantee WCAG AA contrast.", "section": "colors" },
+      { "name": "The Fixed Ratio Rule", "body": "Heading sizes are set in fixed pixel values or standard rem increments, never fluid viewport width values, preventing text overflow and clipping on mobile screens.", "section": "typography" }
+    ],
+    "dos": [
+      "Do check contrast using a contrast checker for every text element.",
+      "Do wrap descriptions and captions in text-wrap: pretty to avoid lone words on single lines.",
+      "Do collapse navigation bars and panels cleanly on mobile viewports."
+    ],
+    "donts": [
+      "Don't use side-stripe borders (e.g. border-left thicker than 1px) on alerts or cards.",
+      "Don't pair high-saturation neon gradients behind body copy.",
+      "Don't use generic card grids repeating the same layout elements with generic icons.",
+      "Don't place tiny tracked uppercase text Kickers (eyebrows) above headings on every section."
+    ]
+  }
+}
