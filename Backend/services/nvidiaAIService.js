@@ -7,7 +7,7 @@ const axios = require('axios');
 class NvidiaAIService {
   constructor() {
     this.baseUrl = 'https://integrate.api.nvidia.com/v1';
-    this.model = 'meta/llama-3.3-70b-instruct';
+    this.model = 'meta/llama-3.1-8b-instruct';
   }
 
   /**
