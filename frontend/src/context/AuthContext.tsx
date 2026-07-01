@@ -30,6 +30,7 @@ interface AuthContextType {
   token: string | null
   login: (email: string, password: string) => Promise<boolean>
   logout: () => void
+  updateUser: (updates: Partial<User>) => void
   isAuthenticated: boolean
   loading: boolean
 }
@@ -40,6 +41,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const updateUser = (updates: Partial<User>) => {
+    setUser((prev) => {
+      if (!prev) return null
+      const updated = { ...prev, ...updates }
+      localStorage.setItem('user', JSON.stringify(updated))
+      return updated
+    })
+  }
 
   useEffect(() => {
     // Check for existing token on mount
@@ -131,6 +141,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     token,
     login,
     logout,
+    updateUser,
     isAuthenticated,
     loading,
   }
