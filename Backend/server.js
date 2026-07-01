@@ -55,6 +55,11 @@ const chatRoutes = require('./routes/chat');
 const sparksRoutes = require('./routes/sparks');
 const discoverRoutes = require('./routes/discover');
 const activitiesRoutes = require('./routes/activities');
+const eventsRoutes = require('./routes/events');
+const vibeRoutes = require('./routes/vibe');
+
+// City Pulse AI Agent
+const eventPinAgent = require('./services/eventPinAgent');
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -63,6 +68,8 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/sparks', sparksRoutes);
 app.use('/api/discover', discoverRoutes);
 app.use('/api/activities', activitiesRoutes);
+app.use('/api/events', eventsRoutes);
+app.use('/api/vibe', vibeRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -245,6 +252,22 @@ server.listen(PORT, () => {
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔌 Socket.IO enabled`);
+
+  // ── City Pulse: AI Event Pin pipeline ────────────────────────────────────
+  // Runs every 30 min. Fetches Reddit → NIM extraction → geocodes → pins map.
+  // Cities list mirrors the Reddit subreddit map in redditService.js
+  const PULSE_CITIES = ['Mumbai', 'Bangalore', 'Delhi', 'Hyderabad', 'Pune'];
+  const runCityPulse = async () => {
+    for (const city of PULSE_CITIES) {
+      await eventPinAgent.run(city, io);
+    }
+  };
+  // DISABLED FOR PERSONAL PROJECT: Run once on boot (non-blocking), then every 30 min
+  // runCityPulse().catch(err => console.error('City Pulse boot run failed:', err.message));
+  // cron.schedule('*/30 * * * *', () => {
+  //   runCityPulse().catch(err => console.error('City Pulse cron failed:', err.message));
+  // });
+  console.log('🧠 City Pulse AI Agent disabled for personal project (API limits)');
 
   // ── Keep-alive cron job for Render free tier ──────────────────────────────
   // Pings /health every 25 min ONLY between 09:00–23:00 IST
