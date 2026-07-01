@@ -82,25 +82,53 @@ class RedditService {
   }
 
   /**
-   * Fetch hot/trending posts from a subreddit
+   * Fetch event-focused or hot posts from a subreddit
    */
   async fetchSubredditPosts(subreddit, limit = 10) {
     try {
       const token = await this.authenticate();
 
-      const response = await axios.get(
-        `https://oauth.reddit.com/r/${subreddit}/hot`,
-        {
-          params: {
-            limit,
-            raw_json: 1
-          },
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'User-Agent': 'YunoApp/1.0 (by /u/' + process.env.REDDIT_USERNAME + ')'
+      // Search query targeting local events, meetups, gigs, and community happenings
+      const searchQuery = 'event OR festival OR concert OR gig OR meetup OR exhibition OR happening OR weekend OR party OR workshop OR pop-up';
+      
+      let response;
+      try {
+        response = await axios.get(
+          `https://oauth.reddit.com/r/${subreddit}/search`,
+          {
+            params: {
+              q: searchQuery,
+              restrict_sr: 'true',
+              sort: 'new',
+              limit,
+              raw_json: 1
+            },
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'User-Agent': 'YunoApp/1.0 (by /u/' + process.env.REDDIT_USERNAME + ')'
+            }
           }
-        }
-      );
+        );
+      } catch (searchErr) {
+        console.warn(`[RedditService] Search failed for r/${subreddit}, falling back to hot:`, searchErr.message);
+      }
+
+      // If search failed, returned nothing, or was empty, fall back to generic hot posts
+      if (!response || !response.data?.data?.children || response.data.data.children.length === 0) {
+        response = await axios.get(
+          `https://oauth.reddit.com/r/${subreddit}/hot`,
+          {
+            params: {
+              limit,
+              raw_json: 1
+            },
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'User-Agent': 'YunoApp/1.0 (by /u/' + process.env.REDDIT_USERNAME + ')'
+            }
+          }
+        );
+      }
 
       return response.data.data.children
         .filter(post => !post.data.stickied) // Skip pinned posts
