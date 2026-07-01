@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ActivitiesAPI } from '@/lib/api'
+import { ActivitiesAPI, UserAPI } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { 
   Utensils, Calendar, Palette, Trees, Moon, Users, 
   Cpu, Trophy, ShoppingBag, Newspaper, ExternalLink,
-  Sparkles, RefreshCw, TrendingUp, Flame
+  RefreshCw, TrendingUp, Flame
 } from 'lucide-react'
+import { CelestialStar } from './VintageIcons'
 
 interface Activity {
   title: string
@@ -44,7 +45,7 @@ const vibeLabels: Record<string, string> = {
 }
 
 export default function LocalActivities() {
-  const { user } = useAuth()
+  const { user, updateUser } = useAuth()
   const [activities, setActivities] = useState<Activity[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -54,11 +55,47 @@ export default function LocalActivities() {
     setLoading(true)
     setError('')
     try {
-      const userCity = user?.city || ''
-      const { data } = await ActivitiesAPI.getLocal(userCity)
+      let resolvedCity = '';
+
+      // 1. Try to get geolocation
+      if ('geolocation' in navigator) {
+        try {
+          const coords = await new Promise<GeolocationCoordinates>((res, rej) => {
+            navigator.geolocation.getCurrentPosition(
+              (pos) => res(pos.coords),
+              (err) => rej(err),
+              { timeout: 6000, enableHighAccuracy: false }
+            );
+          });
+          
+          // 2. Reverse geocode via Nominatim
+          const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.latitude}&lon=${coords.longitude}&zoom=10`;
+          const geoRes = await fetch(geoUrl, { headers: { 'User-Agent': 'YunoApp/1.0' } });
+          const geoData = await geoRes.json();
+          const parsedCity = geoData.address?.city || geoData.address?.town || geoData.address?.village || geoData.address?.suburb || geoData.address?.state_district || '';
+          if (parsedCity) {
+            resolvedCity = parsedCity;
+            localStorage.setItem('yuno_cached_city', parsedCity);
+            updateUser({ city: parsedCity });
+            // Dynamic update user profile in background
+            UserAPI.updateProfile({ city: parsedCity }).catch(() => {});
+          }
+        } catch (e) {
+          console.log('Home geolocation failed, falling back to cache/profile:', e);
+        }
+      }
+
+      // Fallbacks
+      if (!resolvedCity) {
+        resolvedCity = localStorage.getItem('yuno_cached_city') || user?.city || 'Mumbai';
+      }
+
+      setCity(resolvedCity);
+
+      const { data } = await ActivitiesAPI.getLocal(resolvedCity)
       if (data.success) {
         setActivities(data.data.activities || [])
-        setCity(data.data.city || userCity)
+        setCity(data.data.city || resolvedCity)
       }
     } catch (err: any) {
       console.error('Error loading activities:', err)
@@ -76,7 +113,7 @@ export default function LocalActivities() {
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <Sparkles className="w-5 h-5 text-primary" />
+          <CelestialStar className="w-5 h-5 text-[#D4453A]" />
           <h2 className="text-xl font-bold text-text-primary">What's Happening Nearby</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -116,8 +153,8 @@ export default function LocalActivities() {
       {/* Section Header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Sparkles className="w-5 h-5 text-primary" />
+          <div className="p-2 bg-[#EDE7E0] border border-[#D4C3B3]/45 rounded-lg flex items-center justify-center">
+            <CelestialStar className="w-5 h-5 text-[#D4453A]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -140,43 +177,49 @@ export default function LocalActivities() {
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
-
       {/* Activity Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {activities.map((activity, idx) => {
           const config = categoryConfig[activity.category] || categoryConfig.community
           const Icon = config.icon
+          const isFeatured = idx === 0 && activities.length > 1
 
           return (
             <div
               key={idx}
-              className="bg-white border border-border-light rounded-xl p-4 hover:border-border-medium transition-colors group"
+              className={`bg-white border border-border-light rounded-xl p-5 hover:border-border-medium hover:shadow-soft transition-all duration-300 group flex flex-col justify-between ${
+                isFeatured ? 'md:col-span-2 shadow-soft border-border-medium/80 min-h-[180px]' : 'min-h-[160px]'
+              }`}
             >
-              {/* Top Row: Category + Vibe */}
-              <div className="flex items-center justify-between mb-3">
-                <div className={`flex items-center gap-2 px-2.5 py-1 rounded-md ${config.bg}`}>
-                  <Icon className={`w-3.5 h-3.5 ${config.color}`} />
-                  <span className={`text-[11px] font-bold uppercase tracking-wider ${config.color}`}>
-                    {activity.category}
+              <div>
+                {/* Top Row: Category + Vibe */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`flex items-center gap-2 px-2.5 py-1 rounded-md ${config.bg}`}>
+                    <Icon className={`w-3.5 h-3.5 ${config.color}`} />
+                    <span className={`text-[10px] font-bold uppercase tracking-wider ${config.color}`}>
+                      {activity.category}
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-text-muted">
+                    {vibeLabels[activity.vibe] || activity.vibe}
                   </span>
                 </div>
-                <span className="text-[11px] text-text-muted">
-                  {vibeLabels[activity.vibe] || activity.vibe}
-                </span>
+
+                {/* Title */}
+                <h3 className={`font-bold text-text-primary leading-snug mb-2 line-clamp-2 ${
+                  isFeatured ? 'text-base md:text-lg' : 'text-sm'
+                }`}>
+                  {activity.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-xs text-text-muted leading-relaxed mb-4 line-clamp-2">
+                  {activity.description}
+                </p>
               </div>
 
-              {/* Title */}
-              <h3 className="text-sm font-bold text-text-primary leading-tight mb-2 line-clamp-2">
-                {activity.title}
-              </h3>
-
-              {/* Description */}
-              <p className="text-xs text-text-muted leading-relaxed mb-3 line-clamp-2">
-                {activity.description}
-              </p>
-
               {/* Footer */}
-              <div className="flex items-center justify-between pt-2 border-t border-border-light">
+              <div className="flex items-center justify-between pt-2 border-t border-border-light mt-auto">
                 <div className="flex items-center gap-3">
                   {activity.subreddit && (
                     <span className="text-[10px] text-text-muted font-medium">
@@ -186,7 +229,7 @@ export default function LocalActivities() {
                   {activity.score > 0 && (
                     <span className="flex items-center gap-1 text-[10px] text-text-muted">
                       <TrendingUp className="w-3 h-3" />
-                      {activity.score > 999 ? `${(activity.score / 1000).toFixed(1)}k` : activity.score}
+                      {activity.score > 999 ? `${(activity.score / 1000).toFixed(1)}k` : activity.score} trending
                     </span>
                   )}
                 </div>
@@ -195,8 +238,9 @@ export default function LocalActivities() {
                     href={activity.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-text-muted hover:text-primary transition-colors"
+                    className="text-text-muted hover:text-primary transition-colors inline-flex items-center gap-1 text-xs"
                   >
+                    {isFeatured && <span className="font-medium">View thread</span>}
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 )}
