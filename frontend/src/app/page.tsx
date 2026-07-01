@@ -143,7 +143,7 @@ export default function LoginPage() {
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(160deg, #1A0F0A 0%, #2D1810 30%, #3D1F12 60%, #4A2515 100%)',
+            background: 'linear-gradient(160deg, #1A0F0A 0%, #1E1616 30%, #3D1F12 60%, #4A2515 100%)',
           }}
         />
 
@@ -214,27 +214,20 @@ export default function LoginPage() {
                 <span className="text-[#D4453A]">Right where you are.</span>
               </h1>
               <p className="text-[#A08878] text-lg font-light leading-relaxed max-w-md">
-                Connect with nearby people who share your passions, start conversations that matter, and build your local community.
+                Connect with nearby explorers, engage with live AI weather vibes, embark on historical landmark quests, and start conversations that matter.
               </p>
             </div>
-
           </div>
 
-          {/* Bottom — Stats */}
-          <div className="pt-8 border-t border-white/[0.06]">
-            <div className="flex items-end gap-10">
-              <div>
-                <p className="text-white text-2xl font-bold tracking-tight">2,400+</p>
-                <p className="text-[#6B584E] text-xs mt-0.5 uppercase tracking-widest">People nearby</p>
-              </div>
-              <div>
-                <p className="text-white text-2xl font-bold tracking-tight">18k</p>
-                <p className="text-[#6B584E] text-xs mt-0.5 uppercase tracking-widest">Sparks sent</p>
-              </div>
-              <div>
-                <p className="text-white text-2xl font-bold tracking-tight">40+</p>
-                <p className="text-[#6B584E] text-xs mt-0.5 uppercase tracking-widest">Cities</p>
-              </div>
+          {/* Bottom — Editorial description and coordinate anchor */}
+          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <p className="text-[#8B6F5E] text-xs leading-relaxed max-w-sm font-light">
+              Yuno is an agentic location-based social graph. We integrate real-time weather vibe metrics, historical OSM landmark quests, and LLM matching suggestions to build tactile community discovery.
+            </p>
+            <div className="shrink-0 text-left md:text-right font-mono text-[10px] text-[#A08878]/60 tracking-wider">
+              <span>LOC // 18.9724° N, 72.8258° E</span>
+              <br />
+              <span>REF // CARTOGRAPHERS_HEARTH</span>
             </div>
           </div>
         </div>
@@ -246,7 +239,7 @@ export default function LoginPage() {
         <div
           className="absolute inset-0 opacity-[0.02] pointer-events-none"
           style={{
-            backgroundImage: 'radial-gradient(circle, #2D1810 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, #1E1616 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }}
         />
@@ -271,7 +264,7 @@ export default function LoginPage() {
           </div>
 
           {/* Form card */}
-          <div className="bg-white rounded-2xl border border-[#F0E6DA]/60 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_8px_32px_-8px_rgba(45,24,16,0.08)] p-7 lg:p-8">
+          <div className="bg-white rounded-2xl border border-[#F0E6DA]/60 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_8px_32px_-8px_rgba(30,22,22,0.08)] p-7 lg:p-8">
             {/* Header */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
@@ -283,8 +276,8 @@ export default function LoginPage() {
               </h2>
               <p className="text-[#8B6F5E] text-sm mt-1.5 font-light">
                 {isSignup
-                  ? 'Start discovering people near you'
-                  : 'Sign in to continue exploring'}
+                  ? 'Start discovering people and quests near you'
+                  : 'Sign in to activate your AI weather vibes & landmark quest guides'}
               </p>
             </div>
 
@@ -292,7 +285,7 @@ export default function LoginPage() {
               {/* Name field (signup only) */}
               {isSignup && (
                 <div style={{ animation: 'field-appear 0.4s ease-out' }}>
-                  <label htmlFor="name" className="block text-[11px] font-semibold text-[#8B6F5E] uppercase tracking-[0.12em] mb-2">
+                  <label htmlFor="name" className="block text-xs font-medium text-[#795548] mb-1.5">
                     Full Name
                   </label>
                   <div className="relative group">
@@ -302,7 +295,7 @@ export default function LoginPage() {
                       id="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full pl-11 pr-4 py-3.5 bg-[#FDFAF6] border border-[#EDE3D7] rounded-xl text-[#2D1810] text-sm placeholder:text-[#C4A882]/70 focus:outline-none focus:border-[#D4453A]/40 focus:bg-white focus:shadow-[0_0_0_3px_rgba(212,69,58,0.06)] transition-all duration-300"
+                      className="w-full pl-11 pr-4 py-3.5 bg-[#FDFAF6] border border-[#EDE3D7] rounded-xl text-[#1E1616] text-sm placeholder:text-[#C4A882]/70 focus:outline-none focus:border-[#D4453A]/40 focus:bg-white focus:shadow-[0_0_0_3px_rgba(212,69,58,0.06)] transition-all duration-300"
                       placeholder="Enter your full name"
                       required={isSignup}
                     />
@@ -312,8 +305,8 @@ export default function LoginPage() {
 
               {/* Email field */}
               <div>
-                <label htmlFor="email" className="block text-[11px] font-semibold text-[#8B6F5E] uppercase tracking-[0.12em] mb-2">
-                  Email
+                <label htmlFor="email" className="block text-xs font-medium text-[#795548] mb-1.5">
+                  Email address
                 </label>
                 <div className="relative group">
                   <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#C4A882] group-focus-within:text-[#D4453A] transition-colors duration-300" />
@@ -322,7 +315,7 @@ export default function LoginPage() {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 bg-[#FDFAF6] border border-[#EDE3D7] rounded-xl text-[#2D1810] text-sm placeholder:text-[#C4A882]/70 focus:outline-none focus:border-[#D4453A]/40 focus:bg-white focus:shadow-[0_0_0_3px_rgba(212,69,58,0.06)] transition-all duration-300"
+                    className="w-full pl-11 pr-4 py-3.5 bg-[#FDFAF6] border border-[#EDE3D7] rounded-xl text-[#1E1616] text-sm placeholder:text-[#C4A882]/70 focus:outline-none focus:border-[#D4453A]/40 focus:bg-white focus:shadow-[0_0_0_3px_rgba(212,69,58,0.06)] transition-all duration-300"
                     placeholder="you@example.com"
                     required
                   />
@@ -331,7 +324,7 @@ export default function LoginPage() {
 
               {/* Password field */}
               <div>
-                <label htmlFor="password" className="block text-[11px] font-semibold text-[#8B6F5E] uppercase tracking-[0.12em] mb-2">
+                <label htmlFor="password" className="block text-xs font-medium text-[#795548] mb-1.5">
                   Password
                 </label>
                 <div className="relative group">
@@ -341,7 +334,7 @@ export default function LoginPage() {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-11 pr-12 py-3.5 bg-[#FDFAF6] border border-[#EDE3D7] rounded-xl text-[#2D1810] text-sm placeholder:text-[#C4A882]/70 focus:outline-none focus:border-[#D4453A]/40 focus:bg-white focus:shadow-[0_0_0_3px_rgba(212,69,58,0.06)] transition-all duration-300"
+                    className="w-full pl-11 pr-12 py-3.5 bg-[#FDFAF6] border border-[#EDE3D7] rounded-xl text-[#1E1616] text-sm placeholder:text-[#C4A882]/70 focus:outline-none focus:border-[#D4453A]/40 focus:bg-white focus:shadow-[0_0_0_3px_rgba(212,69,58,0.06)] transition-all duration-300"
                     placeholder="Enter your password"
                     required
                   />
