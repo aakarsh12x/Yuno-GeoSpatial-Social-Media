@@ -59,6 +59,16 @@ export const ActivitiesAPI = {
   getLocal: (city?: string) => api.get('/activities', { params: city ? { city } : {} }),
 };
 
+export const EventsAPI = {
+  getNearby: (lat: number, lng: number, radius = 15) =>
+    api.get('/events/nearby', { params: { lat, lng, radius } }),
+};
+
+export const PlacesAPI = {
+  getNearby: (lat: number, lng: number, radius = 10) =>
+    api.get('/events/places', { params: { lat, lng, radius } }),
+};
+
 export const SparksAPI = {
   send: (receiverId: number, message?: string) =>
     api.post('/sparks/send', { receiverId, message }),
@@ -74,4 +84,11 @@ export const ChatAPI = {
   getChatMessages: (chatId: number, limit = 50, offset = 0) =>
     api.get(`/chat/chats/${chatId}`, { params: { limit, offset } }),
   markRead: (chatId: number) => api.post(`/chat/chats/${chatId}/read`),
+};
+
+export const VibeAPI = {
+  getWeather: (lat: number, lng: number, city?: string) =>
+    api.get('/vibe/weather', { params: { lat, lng, city } }),
+  getLandmarkQuest: (lat: number, lng: number, city?: string) =>
+    api.get('/vibe/landmark-quest', { params: { lat, lng, city } }),
 };
