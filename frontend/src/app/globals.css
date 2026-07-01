@@ -39,6 +39,13 @@
   animation: slideUp 1.5s ease-out 0.6s both;
 }
 
+/* City Pulse: pulsing ring for AI event pin markers on the map */
+@keyframes cityPulsePing {
+  0%   { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.6); }
+  70%  { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+}
+
 /* Leaflet CSS */
 @import 'leaflet/dist/leaflet.css';
 
