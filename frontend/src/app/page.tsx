@@ -177,7 +177,7 @@ export default function LoginPage() {
             <p className="text-[#A08878] text-xs font-mono uppercase tracking-widest mt-1">GeoSpatial Social Graph</p>
           </div>
 
-          {/* Impeccable Glassmorphic Card */}
+          {/* Glassmorphic Login Card */}
           <div className="bg-[#18110D]/75 backdrop-blur-2xl rounded-3xl border border-white/[0.06] shadow-[0_30px_100px_rgba(0,0,0,0.7),inset 0 1px 1px rgba(255,255,255,0.05)] p-8 lg:p-10 relative overflow-hidden group">
             
             {/* Card corner accent sparkles */}
