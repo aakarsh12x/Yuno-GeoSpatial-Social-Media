@@ -259,26 +259,28 @@ export default function MapView({ users, className = '' }: MapViewProps) {
           return L.divIcon({
             className: 'custom-marker',
             html: `
-              <div style="position: relative; width: 36px; height: 36px;">
+              <div style="position: relative; width: 44px; height: 44px;">
                 <div style="
                   background: ${color}; 
-                  width: 36px; 
-                  height: 36px; 
+                  background-image: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 100%);
+                  width: 40px; 
+                  height: 40px; 
                   border-radius: 50%; 
-                  border: 2px solid #FFFFFF; 
-                  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                  border: 3px solid #FFFFFF; 
+                  box-shadow: 0 8px 16px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.5), inset 0 -4px 4px rgba(0,0,0,0.2);
                   display: flex;
                   align-items: center;
                   justify-content: center;
                   color: white;
                   font-weight: bold;
-                  font-size: 16px;
+                  font-size: 18px;
                   font-family: Inter, sans-serif;
                   z-index: 10;
+                  transform: perspective(100px) rotateX(10deg);
                 ">${initial}</div>
                 <div style="
                   position: absolute;
-                  top: 40px;
+                  top: 48px;
                   left: 50%;
                   transform: translateX(-50%);
                   background: rgba(255, 255, 255, 0.95);
@@ -293,9 +295,9 @@ export default function MapView({ users, className = '' }: MapViewProps) {
                 ">${name}</div>
               </div>
             `,
-            iconSize: [36, 36],
-            iconAnchor: [18, 18],
-            popupAnchor: [0, -18]
+            iconSize: [44, 44],
+            iconAnchor: [22, 22],
+            popupAnchor: [0, -22]
           })
         }
 
@@ -409,27 +411,65 @@ export default function MapView({ users, className = '' }: MapViewProps) {
             div.style.fontFamily = 'Inter, sans-serif'
             
             div.innerHTML = `
-              <h4 style="margin: 0 0 10px 0; color: #1A0F0A; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;">Map Legend</h4>
-              <div style="display: flex; align-items: center; margin-bottom: 7px;">
-                <div style="width: 10px; height: 10px; background: #f97316; border-radius: 50%; margin-right: 8px; border: 2px solid white; box-shadow: 0 0 0 2px rgba(249,115,22,0.3);"></div>
-                <span style="color: #3E2723; font-size: 11px; font-weight: 500;">City Pulse Events</span>
+              <h4 style="margin: 0 0 10px 0; color: #1A0F0A; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;">Map Legend</h4>
+              
+              <div style="display: grid; grid-template-columns: 1fr; gap: 4px; font-size: 10px;">
+                <div style="display: flex; align-items: center; margin-bottom: 3px;">
+                  <div style="width: 12px; height: 12px; background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); border-radius: 50%; margin-right: 6px; border: 1.5px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.15);"></div>
+                  <span style="color: #3E2723; font-weight: 600;">City Pulse Events</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 3px;">
+                  <span style="font-size: 12px; margin-right: 6px;">🛕</span>
+                  <span style="color: #3E2723;">Temples & Worship</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 3px;">
+                  <span style="font-size: 12px; margin-right: 6px;">🛍️</span>
+                  <span style="color: #3E2723;">Malls & Shopping</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 3px;">
+                  <span style="font-size: 12px; margin-right: 6px;">☕</span>
+                  <span style="color: #3E2723;">Cafes & Dining</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 3px;">
+                  <span style="font-size: 12px; margin-right: 6px;">🌳</span>
+                  <span style="color: #3E2723;">Parks & Nature</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 3px;">
+                  <span style="font-size: 12px; margin-right: 6px;">🏛️</span>
+                  <span style="color: #3E2723;">Historic & Museum</span>
+                </div>
+
+                <div style="display: flex; align-items: center; margin-bottom: 3px;">
+                  <span style="font-size: 12px; margin-right: 6px;">🏫</span>
+                  <span style="color: #3E2723;">Schools & Colleges</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 3px;">
+                  <span style="font-size: 12px; margin-right: 6px;">📍</span>
+                  <span style="color: #3E2723;">Other Places</span>
+                </div>
               </div>
-              <div style="display: flex; align-items: center; margin-bottom: 7px;">
-                <div style="width: 10px; height: 10px; background: #5D4037; border-radius: 2px; margin-right: 8px; border: 1px solid white;"></div>
-                <span style="color: #3E2723; font-size: 11px; font-weight: 500;">Landmarks &amp; Places</span>
-              </div>
-              <div style="border-top: 1px solid #EDE7E0; margin: 8px 0;"></div>
-              <div style="display: flex; align-items: center; margin-bottom: 7px;">
-                <div style="width: 10px; height: 10px; background: #5D4037; border-radius: 50%; margin-right: 8px; border: 1px solid white;"></div>
-                <span style="color: #3E2723; font-size: 11px;">Inner Circle (5km)</span>
-              </div>
-              <div style="display: flex; align-items: center; margin-bottom: 7px;">
-                <div style="width: 10px; height: 10px; background: #D4453A; border-radius: 50%; margin-right: 8px; border: 1px solid white;"></div>
-                <span style="color: #3E2723; font-size: 11px;">Middle (10km)</span>
-              </div>
-              <div style="display: flex; align-items: center;">
-                <div style="width: 10px; height: 10px; background: #C6B8AF; border-radius: 50%; margin-right: 8px; border: 1px solid white;"></div>
-                <span style="color: #3E2723; font-size: 11px;">Extended (20km)</span>
+
+              <div style="border-top: 1px solid #EDE7E0; margin: 6px 0;"></div>
+              
+              <div style="display: flex; flex-direction: column; gap: 3px; font-size: 9px; color: #5D4037;">
+                <div style="display: flex; align-items: center;">
+                  <div style="width: 8px; height: 8px; background: #5D4037; border-radius: 50%; margin-right: 6px; opacity: 0.6;"></div>
+                  <span>Inner Circle (5km)</span>
+                </div>
+                <div style="display: flex; align-items: center;">
+                  <div style="width: 8px; height: 8px; background: #D4453A; border-radius: 50%; margin-right: 6px; opacity: 0.6;"></div>
+                  <span>Middle (10km)</span>
+                </div>
+                <div style="display: flex; align-items: center;">
+                  <div style="width: 8px; height: 8px; background: #C6B8AF; border-radius: 50%; margin-right: 6px; opacity: 0.6;"></div>
+                  <span>Extended (20km)</span>
+                </div>
               </div>
             `
             return div
@@ -489,13 +529,36 @@ export default function MapView({ users, className = '' }: MapViewProps) {
         const eventIcon = L.divIcon({
           className: '',
           html: `
-            <div style="position:relative;width:18px;height:18px;">
+            <div style="position:relative;width:40px;height:40px;display:flex;flex-direction:column;align-items:center;">
               <div style="
-                width:18px;height:18px;border-radius:50%;
-                background:#f97316;border:2px solid #fff;
-                box-shadow:0 0 0 0 rgba(249,115,22,0.6);
+                width:24px;height:24px;border-radius:50%;
+                background: linear-gradient(135deg, #f97316 0%, #c2410c 100%);
+                border: 2.5px solid #fff;
+                box-shadow: 0 6px 12px rgba(194,65,12,0.4), inset 0 2px 4px rgba(255,255,255,0.6), inset 0 -3px 4px rgba(0,0,0,0.2);
                 animation:cityPulsePing 1.8s ease-out infinite;
-              "></div>
+                transform: perspective(100px) rotateX(10deg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+              ">
+                <span style="width: 8px; height: 8px; background: white; border-radius: 50%; display: block; box-shadow: inset 0 -1px 2px rgba(0,0,0,0.3);"></span>
+              </div>
+              <div style="
+                margin-top: 6px;
+                background: rgba(255, 255, 255, 0.95);
+                padding: 3px 8px;
+                border-radius: 12px;
+                font-size: 10px;
+                font-weight: 700;
+                color: #c2410c;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+                white-space: nowrap;
+                z-index: 5;
+                font-family: Inter, sans-serif;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+              ">${pin.category}</div>
             </div>`,
           iconSize: [18, 18],
           iconAnchor: [9, 9],
@@ -543,35 +606,94 @@ export default function MapView({ users, className = '' }: MapViewProps) {
       const layer = (mapInstance as any)._placesLayer
 
       placePins.forEach(place => {
-        // Diamond-shaped landmark marker in the brand brown
+        const getPlaceMarkerDetails = (name: string, category: string) => {
+          const n = name.toLowerCase();
+          const c = category.toLowerCase();
+          
+          if (c.includes('worship') || c.includes('temple') || n.includes('temple') || n.includes('mandir') || n.includes('ashram') || n.includes('math')) {
+            return { emoji: '🛕', color: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)', label: 'Temple / Worship' };
+          }
+          if (c.includes('mosque') || n.includes('mosque') || n.includes('masjid')) {
+            return { emoji: '🕌', color: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)', label: 'Mosque / Worship' };
+          }
+          if (c.includes('church') || n.includes('church') || n.includes('cathedral')) {
+            return { emoji: '⛪', color: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)', label: 'Church / Worship' };
+          }
+          if (c.includes('mall') || c.includes('shop') || n.includes('mall') || n.includes('shopping') || n.includes('mart') || n.includes('bazaar') || c.includes('retail')) {
+            return { emoji: '🛍️', color: 'linear-gradient(135deg, #E91E63 0%, #C2185B 100%)', label: 'Mall / Shopping' };
+          }
+          if (c.includes('cafe') || c.includes('restaurant') || c.includes('food') || n.includes('cafe') || n.includes('restaurant') || n.includes('hotel') || n.includes('dhaba') || n.includes('bistro') || n.includes('sweet') || c.includes('bar') || c.includes('pub')) {
+            return { emoji: '☕', color: 'linear-gradient(135deg, #795548 0%, #5D4037 100%)', label: 'Cafe / Dining' };
+          }
+          if (c.includes('park') || c.includes('garden') || c.includes('forest') || n.includes('park') || n.includes('garden') || n.includes('lake') || n.includes('talab') || c.includes('leisure')) {
+            return { emoji: '🌳', color: 'linear-gradient(135deg, #8BC34A 0%, #689F38 100%)', label: 'Park / Nature' };
+          }
+          if (c.includes('museum') || c.includes('monument') || c.includes('attraction') || n.includes('museum') || n.includes('fort') || n.includes('palace') || n.includes('monument') || n.includes('statue') || c.includes('historic') || c.includes('tourism')) {
+            return { emoji: '🏛️', color: 'linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%)', label: 'Attraction / Historic' };
+          }
+          if (c.includes('college') || c.includes('university') || c.includes('school') || n.includes('college') || n.includes('university') || n.includes('school') || n.includes('institute') || c.includes('education')) {
+            return { emoji: '🏫', color: 'linear-gradient(135deg, #00BCD4 0%, #0097A7 100%)', label: 'Education' };
+          }
+          if (c.includes('hospital') || c.includes('health') || n.includes('hospital') || n.includes('clinic') || c.includes('medical')) {
+            return { emoji: '🏥', color: 'linear-gradient(135deg, #F44336 0%, #D32F2F 100%)', label: 'Medical' };
+          }
+          // Generic 3D Pin
+          return { emoji: '📍', color: 'linear-gradient(135deg, #607D8B 0%, #455A64 100%)', label: 'Location' };
+        };
+
+        const details = getPlaceMarkerDetails(place.name, place.category);
+
+        // 3D Teardrop Pin with Upright Categorized Emoji
         const placeIcon = L.divIcon({
           className: '',
           html: `
-            <div style="
-              width: 22px; height: 22px;
-              background: #5D4037;
-              border: 2.5px solid #fff;
-              border-radius: 4px 4px 0 4px;
-              transform: rotate(45deg);
-              box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-              position: relative;
-            "></div>`,
-          iconSize: [22, 22],
-          iconAnchor: [11, 20],
-          popupAnchor: [0, -22],
+            <div style="position:relative; display:flex; flex-direction:column; align-items:center; width:80px;">
+              <div style="
+                width: 36px;
+                height: 36px;
+                background: ${details.color};
+                border: 2px solid #FFFFFF;
+                border-radius: 50% 50% 50% 0;
+                transform: rotate(-45deg) perspective(100px) rotateX(15deg);
+                box-shadow: -4px 6px 12px rgba(0,0,0,0.35), inset 2px 2px 4px rgba(255,255,255,0.4), inset -2px -2px 4px rgba(0,0,0,0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+              ">
+                <span style="
+                  transform: rotate(45deg);
+                  font-size: 18px;
+                  line-height: 1;
+                  display: block;
+                ">${details.emoji}</span>
+              </div>
+              <div style="
+                margin-top: 8px;
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid #EDE7E0;
+                padding: 3px 8px;
+                border-radius: 12px;
+                font-size: 10px;
+                font-weight: 700;
+                color: #1E1616;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+                white-space: nowrap;
+                z-index: 5;
+                font-family: Inter, sans-serif;
+              ">${place.name.substring(0, 15)}${place.name.length > 15 ? '...' : ''}</div>
+            </div>`,
+          iconSize: [80, 64],
+          iconAnchor: [40, 36],
+          popupAnchor: [0, -36]
         })
-
-        const categoryLabel = place.category
-          .split(' ')
-          .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
-          .join(' ')
 
         L.marker([place.latitude, place.longitude], { icon: placeIcon })
           .addTo(layer)
           .bindPopup(`
             <div style="padding:10px;min-width:190px;font-family:Inter,sans-serif;">
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
-                <span style="background:#F5F2EE;color:#5D4037;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:capitalize;">${categoryLabel}</span>
+                <span style="background:#F5F2EE;color:#5D4037;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:capitalize;">${details.label}</span>
               </div>
               <strong style="color:#1A0F0A;font-size:13px;display:block;margin-bottom:4px;">${place.name}</strong>
               ${place.description ? `<p style="color:#795548;font-size:11px;margin:0 0 8px;line-height:1.5;">${place.description.substring(0, 100)}${place.description.length > 100 ? '…' : ''}</p>` : ''}

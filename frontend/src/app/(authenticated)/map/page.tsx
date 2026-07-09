@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import { DiscoverAPI } from '@/lib/api'
 import { MapPin, Zap, User, School, Building, Heart } from 'lucide-react'
@@ -148,7 +148,15 @@ export default function MapPage() {
           <h2 className="text-xl font-semibold text-text-primary">📍 Interactive Map</h2>
           <span className="text-sm text-text-muted">Click on markers to see user details</span>
         </div>
-        <MapView users={mapUsers} className="" />
+        <Suspense fallback={
+          <div className="card-surface p-8">
+            <div className="flex items-center justify-center h-[500px]">
+              <p className="text-text-muted">Loading map viewport...</p>
+            </div>
+          </div>
+        }>
+          <MapView users={mapUsers} className="" />
+        </Suspense>
       </div>
 
       {/* User Stats */}

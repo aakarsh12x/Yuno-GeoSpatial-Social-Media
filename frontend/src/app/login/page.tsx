@@ -3,9 +3,13 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, Mail, Lock, Eye, EyeOff, MapPin, Compass } from 'lucide-react'
-import { VintageSparkle } from '@/components/VintageIcons'
+import { ArrowRight, Mail, Lock, Eye, EyeOff, Compass } from 'lucide-react'
+import { VintageSparkle, AstrolabeIcon, CelestialStar } from '@/components/VintageIcons'
 import Image from 'next/image'
+import Squares from '@/components/ui/Squares'
+import ShinyText from '@/components/ui/ShinyText'
+import Magnet from '@/components/ui/Magnet'
+import Aurora from '@/components/ui/Aurora'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('user123@example.com')
@@ -48,44 +52,52 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFAF6] bg-[radial-gradient(#EDE7E0_1px,transparent_1px)] [background-size:24px_24px] relative overflow-hidden flex items-center justify-center">
+    <div className="min-h-screen bg-[#0F0A07] relative overflow-hidden flex items-center justify-center">
       
-      {/* Antique circular frame overlays */}
-      <div className="absolute -left-20 top-1/4 w-48 h-48 border border-[#EDE7E0]/40 rounded-full pointer-events-none flex items-center justify-center">
-        <div className="w-36 h-36 border border-dashed border-[#EDE7E0]/30 rounded-full" />
+      {/* Aurora Background */}
+      <Aurora blend={0.6} speed={0.7} />
+
+      {/* Squares animated grid background */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.14]">
+        <Squares speed={0.35} squareSize={36} borderColor="rgba(212, 69, 58, 0.15)" hoverFillColor="rgba(212, 69, 58, 0.05)" />
       </div>
-      <div className="absolute -right-24 bottom-1/4 w-64 h-64 border border-[#EDE7E0]/35 rounded-full pointer-events-none flex items-center justify-center">
-        <div className="w-48 h-48 border border-dashed border-[#EDE7E0]/25 rounded-full" />
+
+      {/* Antique circular frame overlays */}
+      <div className="absolute -left-20 top-1/4 w-48 h-48 border border-white/[0.04] rounded-full pointer-events-none flex items-center justify-center">
+        <div className="w-36 h-36 border border-dashed border-white/[0.02] rounded-full" />
+      </div>
+      <div className="absolute -right-24 bottom-1/4 w-64 h-64 border border-white/[0.04] rounded-full pointer-events-none flex items-center justify-center">
+        <div className="w-48 h-48 border border-dashed border-white/[0.02] rounded-full" />
       </div>
 
       {/* Floating Interactive Badge Panels */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block z-0">
         {/* Active Quest Vibe card */}
         <div
-          className="absolute top-[20%] right-[10%] bg-[#FDFAF6] border border-[#EDE7E0] rounded-2xl p-4 shadow-[0_4px_20px_-2px_rgba(30,22,22,0.06)]"
+          className="absolute top-[20%] right-[10%] bg-[#18110D]/80 border border-white/[0.06] rounded-2xl p-4 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-md"
           style={{ animation: 'float-card 6s ease-in-out infinite', width: '190px' }}
         >
           <div className="flex items-center gap-2 mb-1.5">
-            <div className="w-6 h-6 rounded-lg bg-[#EDE7E0] flex items-center justify-center border border-[#D4C3B3]/40">
+            <div className="w-6 h-6 rounded-lg bg-white/[0.03] flex items-center justify-center border border-white/[0.05]">
               <Compass className="w-3.5 h-3.5 text-[#D4453A]" />
             </div>
-            <span className="text-[#1E1616] text-[10px] font-mono uppercase tracking-wider font-bold">Active Quest</span>
+            <ShinyText text="Active Quest" className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#A08878]" />
           </div>
-          <p className="text-[#8B7E74] text-[9.5px] leading-relaxed">Golghar Granary Quest is 1.8km nearby!</p>
+          <p className="text-[#A08878]/70 text-[9.5px] leading-relaxed font-mono">Golghar Granary Quest is 1.8km nearby!</p>
         </div>
 
         {/* User Spark Vibe Card */}
         <div
-          className="absolute bottom-[20%] left-[8%] bg-[#FDFAF6] border border-[#EDE7E0] rounded-2xl p-4 shadow-[0_4px_20px_-2px_rgba(30,22,22,0.06)]"
+          className="absolute bottom-[20%] left-[8%] bg-[#18110D]/80 border border-white/[0.06] rounded-2xl p-4 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-md"
           style={{ animation: 'float-card 8s ease-in-out infinite 2s', width: '180px' }}
         >
           <div className="flex items-center gap-2 mb-1.5">
-            <div className="w-6 h-6 rounded-lg bg-[#EDE7E0] flex items-center justify-center border border-[#D4C3B3]/40">
-              <VintageSparkle size={14} className="text-[#D4AF37]" />
+            <div className="w-6 h-6 rounded-lg bg-white/[0.03] flex items-center justify-center border border-white/[0.05]">
+              <VintageSparkle size={14} className="text-[#EEB68A]" />
             </div>
-            <span className="text-[#1E1616] text-[10px] font-mono uppercase tracking-wider font-bold">Spark Alert</span>
+            <ShinyText text="Spark Alert" className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#A08878]" />
           </div>
-          <p className="text-[#8B7E74] text-[9.5px] leading-relaxed">You both love Himalayan Trekking.</p>
+          <p className="text-[#A08878]/70 text-[9.5px] leading-relaxed font-mono">You both love Himalayan Trekking.</p>
         </div>
       </div>
 
@@ -97,55 +109,58 @@ export default function LoginPage() {
       >
         {/* Logo and Seal header */}
         <div className="text-center mb-6">
-          <div className="relative w-28 h-28 mx-auto mb-2 select-none hover:rotate-3 transition-transform duration-300">
+          <div className="relative w-24 h-24 mx-auto mb-2 select-none hover:rotate-3 transition-transform duration-300">
             <Image
               src="/logo.png"
               alt="Yuno Logo"
               fill
-              className="object-contain"
-              sizes="112px"
+              className="object-contain filter brightness-125"
+              sizes="96px"
               priority
             />
           </div>
-          <p className="text-[#8B7E74] text-xs font-mono uppercase tracking-widest italic">
+          <p className="text-[#A08878]/60 text-xs font-mono uppercase tracking-widest italic">
             &ldquo;Shared paths draw us closer&rdquo;
           </p>
         </div>
 
         {/* Paper Form Card */}
-        <div className="bg-[#FDFAF6] border border-[#EDE7E0] rounded-3xl p-8 shadow-[0_12px_40px_-8px_rgba(30,22,22,0.08),0_2px_8px_rgba(30,22,22,0.03)] relative overflow-hidden">
+        <div className="bg-[#18110D]/80 border border-white/[0.06] rounded-3xl p-8 shadow-[0_30px_100px_rgba(0,0,0,0.7),inset 0 1px 1px rgba(255,255,255,0.05)] backdrop-blur-2xl relative overflow-hidden">
           {/* Top border compass coordinate line */}
-          <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-[#D4453A]/40 to-transparent" />
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#D4453A]/40 to-transparent" />
+
+          {/* Card corner accent sparkles */}
+          <div className="absolute top-4 right-4 text-[#D4453A]/25 pointer-events-none">
+            <CelestialStar size={16} />
+          </div>
 
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#D4453A] animate-pulse" />
-              <span className="text-[9px] font-mono uppercase tracking-widest text-[#D4453A] font-bold">
-                Agentic Logbook Verification
-              </span>
+              <span className="w-2 h-2 rounded-full bg-[#D4453A] animate-pulse" />
+              <ShinyText text="Agentic Logbook Verification" className="text-[9px] font-mono uppercase tracking-widest font-bold text-[#A08878]" />
             </div>
-            <h2 className="text-[#1E1616] text-3xl font-serif font-bold tracking-tight">
+            <h2 className="text-white text-3xl font-serif font-bold tracking-tight">
               Sign In
             </h2>
-            <p className="text-[#8B7E74] text-xs mt-1.5 leading-relaxed">
+            <p className="text-[#A08878]/70 text-xs mt-1.5 leading-relaxed font-light">
               Verify your coordinates to initialize the AI weather vibe agent, landmark quest engine, and matching graph.
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             {/* Email input field */}
-            <div>
-              <label htmlFor="email" className="block text-[9px] font-mono font-bold text-[#D4453A] uppercase tracking-widest mb-1.5 pl-0.5">
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="block text-[10px] font-mono uppercase tracking-widest text-[#A08878] font-semibold pl-1">
                 Email Coordinates
               </label>
               <div className="relative group">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[16px] h-[16px] text-[#8B7E74] group-focus-within:text-[#D4453A] transition-colors duration-300" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A08878]/40 group-focus-within:text-[#D4453A]/80 transition-colors duration-300" />
                 <input
                   type="email"
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#FDFAF6] border border-[#EDE7E0] rounded-xl text-[#1E1616] text-xs placeholder:text-[#8B7E74]/60 focus:outline-none focus:border-[#D4453A] focus:bg-[#FDFAF6] focus:shadow-[0_0_0_3px_rgba(212,69,58,0.06)] transition-all duration-300 font-mono"
+                  className="w-full pl-10 pr-4 py-3 bg-[#0F0A07]/60 border border-white/[0.05] rounded-xl text-white text-sm placeholder:text-[#A08878]/40 focus:outline-none focus:border-[#D4453A]/60 focus:bg-[#0F0A07]/90 focus:shadow-[0_0_15px_rgba(212,69,58,0.1)] transition-all duration-300 font-mono"
                   placeholder="you@example.com"
                   required
                 />
@@ -153,25 +168,25 @@ export default function LoginPage() {
             </div>
 
             {/* Password input field */}
-            <div>
-              <label htmlFor="password" className="block text-[9px] font-mono font-bold text-[#D4453A] uppercase tracking-widest mb-1.5 pl-0.5">
+            <div className="space-y-1.5">
+              <label htmlFor="password" className="block text-[10px] font-mono uppercase tracking-widest text-[#A08878] font-semibold pl-1">
                 Verification Key
               </label>
               <div className="relative group">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[16px] h-[16px] text-[#8B7E74] group-focus-within:text-[#D4453A] transition-colors duration-300" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A08878]/40 group-focus-within:text-[#D4453A]/80 transition-colors duration-300" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 bg-[#FDFAF6] border border-[#EDE7E0] rounded-xl text-[#1E1616] text-xs placeholder:text-[#8B7E74]/60 focus:outline-none focus:border-[#D4453A] focus:bg-[#FDFAF6] focus:shadow-[0_0_0_3px_rgba(212,69,58,0.06)] transition-all duration-300 font-mono"
+                  className="w-full pl-10 pr-10 py-3 bg-[#0F0A07]/60 border border-white/[0.05] rounded-xl text-white text-sm placeholder:text-[#A08878]/40 focus:outline-none focus:border-[#D4453A]/60 focus:bg-[#0F0A07]/90 focus:shadow-[0_0_15px_rgba(212,69,58,0.1)] transition-all duration-300 font-mono"
                   placeholder="Enter your key"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8B7E74] hover:text-[#D4453A] transition-colors duration-200"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#A08878]/40 hover:text-white transition-colors duration-200"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -179,45 +194,53 @@ export default function LoginPage() {
             </div>
 
             {/* Error messaging */}
-            {error && (
-              <div
-                className="flex items-start gap-2 px-4 py-2.5 rounded-xl bg-red-50 border border-red-100"
-                style={{ animation: 'field-appear 0.3s ease-out' }}
-              >
-                <div className="w-1.5 h-1.5 rounded-full bg-[#D4453A] shrink-0 mt-1.5 animate-ping"></div>
-                <p className="text-[#D4453A] text-xs leading-relaxed font-mono">{error}</p>
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-[#D4453A] hover:bg-[#1E1616] text-[#FDFAF6] border border-[#1E1616]/20 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] mt-2 font-mono text-xs uppercase tracking-widest font-bold"
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-3.5 h-3.5 border-2 border-[#FDFAF6]/30 border-t-[#FDFAF6] rounded-full animate-spin"></div>
-                  <span>Verifying...</span>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center gap-2">
-                  <span>Acknowledge Logbook</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            <div className="min-h-[24px] flex items-center">
+              {error && (
+                <div className="w-full flex items-start gap-2 px-3 py-1.5 rounded-lg bg-red-950/40 border border-red-900/40 animate-[field-appear_0.25s_ease-out]">
+                  <div className="w-1 h-1 rounded-full bg-[#D4453A] shrink-0 mt-[6px] animate-ping"></div>
+                  <p className="text-[#FF8A80] text-[11px] leading-[1.3] font-mono">{error}</p>
                 </div>
               )}
-            </button>
+            </div>
+
+            {/* Submit Button */}
+            <div className="w-full pt-1">
+              <Magnet className="w-full" strength={8}>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full relative group/btn text-white py-3.5 text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] overflow-hidden"
+                  style={{
+                    background: 'linear-gradient(135deg, #D4453A 0%, #B52820 100%)',
+                    boxShadow: '0 4px 20px -2px rgba(212,69,58,0.4)',
+                  }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+                  {isLoading ? (
+                    <div className="flex items-center justify-center gap-2 relative z-10">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Verifying...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center gap-2 relative z-10">
+                      <span>Acknowledge Logbook</span>
+                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                    </div>
+                  )}
+                </button>
+              </Magnet>
+            </div>
           </form>
 
           {/* Demo Credentials Panel */}
-          <div className="mt-5 pt-4 border-t border-[#EDE7E0] flex items-center justify-center gap-2">
-            <span className="text-[10px] font-mono text-[#8B7E74]">DEMO CREDENTIALS:</span>
-            <code className="text-[10px] font-mono text-[#D4453A] bg-[#EDE7E0]/45 px-1.5 py-0.5 rounded border border-[#EDE7E0]">user123@example.com / user</code>
+          <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-center gap-2">
+            <span className="text-[10px] font-mono text-[#A08878]/60">DEMO:</span>
+            <code className="text-[9.5px] font-mono text-[#EEB68A] bg-white/[0.03] px-2 py-0.5 rounded border border-white/[0.05]">user123@example.com / user</code>
           </div>
         </div>
 
         {/* Copyright notice */}
-        <p className="text-center text-[#8B7E74]/60 text-[10px] mt-6 font-mono uppercase tracking-wider">
+        <p className="text-center text-[#A08878]/30 font-mono text-[9px] uppercase tracking-widest mt-8">
           © 2026 Yuno · Map the paths, find the sparks
         </p>
       </div>
@@ -230,7 +253,7 @@ export default function LoginPage() {
         @keyframes field-appear {
           from {
             opacity: 0;
-            transform: translateY(6px);
+            transform: translateY(8px);
           }
           to {
             opacity: 1;

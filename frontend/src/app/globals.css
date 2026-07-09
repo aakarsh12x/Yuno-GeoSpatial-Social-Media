@@ -39,6 +39,19 @@
   animation: slideUp 1.5s ease-out 0.6s both;
 }
 
+@keyframes shine {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
+.animate-shine {
+  animation: shine 6s linear infinite;
+}
+
 /* City Pulse: pulsing ring for AI event pin markers on the map */
 @keyframes cityPulsePing {
   0%   { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.6); }
