@@ -87,3 +87,8 @@ tmp/
 temp/
 
 .vercel
+
+# Local IDE and Agent configs
+.cursor/
+.gemini/
+.impeccable/
