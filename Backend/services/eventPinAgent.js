@@ -1,17 +1,13 @@
 const axios = require('axios');
 const { query } = require('../database/connection');
-const redditService = require('./redditService');
-
+const osmEventsService = require('./osmEventsService');
 // Nominatim rate-limit: 1 req/sec — enforce with a simple delay
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-const NVIDIA_API_URL = 'https://integrate.api.nvidia.com/v1/chat/completions';
-const MODEL = 'meta/llama-3.1-8b-instruct';
 const PIN_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 class EventPinAgent {
   constructor() {
-    // Simple in-process geocode cache to avoid redundant Nominatim calls
     this._geocodeCache = new Map();
   }
 
@@ -24,31 +20,36 @@ class EventPinAgent {
     try {
       console.log(`[EventPinAgent] ▶ Pipeline start: ${city}`);
 
-      // 1. Pull Reddit posts (reuse existing service, max 20 posts to keep NIM tokens low)
-      const posts = await redditService.fetchLocalActivities(city, 20);
-      if (!posts.length) {
-        console.log(`[EventPinAgent] No posts for ${city}`);
-        return;
-      }
+      // ── 1. Try OSM Overpass (free, no key) ──────────────────────────
+      let events = await this._fetchOsmEvents(city);
+      console.log(`[EventPinAgent] OSM returned ${events.length} candidate events for ${city}`);
 
-      // 2. Ask NIM to extract events with location hints
-      const events = await this._extractEvents(posts, city);
       if (!events.length) {
-        console.log(`[EventPinAgent] No events extracted for ${city}`);
+        console.log(`[EventPinAgent] No events found for ${city}`);
         return;
       }
 
-      // 3. Geocode + persist + broadcast
+      // ── 3. Persist + broadcast ────────────────────────────────────────────
       for (const event of events) {
-        const coords = await this._geocode(event.locationHint, city);
-        if (!coords) continue;
+        if (!event.latitude || !event.longitude) {
+          // If the event has no coords (e.g. from Reddit), geocode the location hint
+          if (event.locationHint) {
+            const coords = await this._geocode(event.locationHint, city);
+            if (!coords) continue;
+            event.latitude = coords.latitude;
+            event.longitude = coords.longitude;
+            event.location_name = coords.location_name;
+          } else {
+            continue;
+          }
+        }
 
-        const pin = await this._savePin(event, coords, city, posts);
+        const pin = await this._savePin(event, city);
         if (pin && io) {
           io.emit('new_event_pin', pin);
         }
 
-        await sleep(1100); // Nominatim: max 1 req/sec
+        await sleep(200); // small throttle
       }
 
       console.log(`[EventPinAgent] ✅ Done: ${city}`);
@@ -60,59 +61,36 @@ class EventPinAgent {
   // ─── Private ──────────────────────────────────────────────────────────────
 
   /**
-   * NIM call: extract events with location hints from raw Reddit posts.
-   * Prompt is intentionally terse to minimise token usage.
+   * Pull event-like spots from OSM Overpass for a city.
+   * Returns an array of event-shaped objects with lat/lng already set.
    */
-  async _extractEvents(posts, city) {
-    const postList = posts
-      .map((p, i) => `${i + 1}. "${p.title}"${p.selftext ? ' — ' + p.selftext.substring(0, 120) : ''}`)
-      .join('\n');
-
-    const userPrompt =
-      `City: ${city}. Extract events/activities with a real physical location from these Reddit posts.\n\n` +
-      postList +
-      `\n\nReturn ONLY a JSON array. Each object: ` +
-      `{"title":"<60 chars>","description":"<2 sentences>","category":"event|food|culture|outdoors|nightlife|community|tech|sports","vibe":"chill|energetic|intellectual|social|adventurous|cozy","locationHint":"<neighbourhood or place name, or null>","sourceIndex":<1-based int>}. ` +
-      `Skip posts with no clear location. Return [] if none qualify.`;
-
-    const raw = await this._nimCall(userPrompt);
-    if (!raw) return [];
-
-    const match = raw.match(/\[[\s\S]*\]/);
-    if (!match) return [];
-
+  async _fetchOsmEvents(city) {
     try {
-      const parsed = JSON.parse(match[0]);
-      return parsed.filter((e) => e.locationHint && e.title && e.category);
-    } catch {
+      const activities = await osmEventsService.fetchActivitiesByCity(city, 12);
+      return activities.map(a => ({
+        title: a.title,
+        description: a.description,
+        category: a.category,
+        vibe: a.vibe,
+        source_url: a.permalink || null,
+        subreddit: null,
+        reddit_score: 0,
+        latitude: a.latitude,
+        longitude: a.longitude,
+        location_name: a.location_name || a.title,
+      })).filter(e => e.latitude && e.longitude);
+    } catch (err) {
+      console.warn('[EventPinAgent] OSM fetch failed:', err.message);
       return [];
     }
   }
 
-  /** Hit NVIDIA NIM with a single user message. Returns content string or null. */
-  async _nimCall(userMessage) {
-    try {
-      const resp = await axios.post(
-        NVIDIA_API_URL,
-        {
-          model: MODEL,
-          messages: [{ role: 'user', content: userMessage }],
-          temperature: 0.2,
-          max_tokens: 1024,
-        },
-        {
-          headers: { Authorization: `Bearer ${process.env.NVIDIA_KEY}` },
-          timeout: 60000,
-        }
-      );
-      return resp.data.choices[0].message.content;
-    } catch (err) {
-      console.error('[EventPinAgent] NIM error:', err.response?.data?.detail || err.message);
-      return null;
-    }
-  }
+  /**
+   * NIM call: extract events with location hints from raw Reddit posts.
+   */
 
-  /** Geocode a location hint via Nominatim (free, no key). Returns {lat, lng, display_name} or null. */
+
+  /** Geocode a location hint via Nominatim (free, no key). */
   async _geocode(locationHint, city) {
     const cacheKey = `${locationHint}|${city}`.toLowerCase();
     if (this._geocodeCache.has(cacheKey)) return this._geocodeCache.get(cacheKey);
@@ -136,6 +114,7 @@ class EventPinAgent {
         location_name: display_name,
       };
       this._geocodeCache.set(cacheKey, result);
+      await sleep(1100); // Nominatim: max 1 req/sec
       return result;
     } catch (err) {
       console.error('[EventPinAgent] Geocode error:', err.message);
@@ -144,17 +123,19 @@ class EventPinAgent {
   }
 
   /** Persist a pin to the DB. Returns the saved row or null on failure. */
-  async _savePin(event, coords, city, posts) {
-    const source = posts[event.sourceIndex - 1];
+  async _savePin(event, city) {
     const expiresAt = new Date(Date.now() + PIN_TTL_MS);
 
-    // Avoid duplicate pins for the same source URL within the TTL window
-    if (source?.permalink) {
+    // Avoid duplicates: same title + coords in active window
+    try {
       const exists = await query(
-        `SELECT id FROM event_pins WHERE source_url = $1 AND expires_at > NOW() LIMIT 1`,
-        [source.permalink]
+        `SELECT id FROM event_pins
+         WHERE title = $1 AND city = $2 AND expires_at > NOW() LIMIT 1`,
+        [event.title.substring(0, 120), city]
       );
       if (exists.rows.length) return null;
+    } catch (err) {
+      // Non-fatal — proceed to insert
     }
 
     try {
@@ -169,12 +150,12 @@ class EventPinAgent {
           event.description.substring(0, 300),
           event.category,
           event.vibe,
-          source?.permalink || null,
-          source?.subreddit || null,
-          source?.score || 0,
-          coords.latitude,
-          coords.longitude,
-          coords.location_name,
+          event.source_url || null,
+          event.subreddit || null,
+          event.reddit_score || 0,
+          event.latitude,
+          event.longitude,
+          event.location_name,
           city,
           expiresAt,
         ]

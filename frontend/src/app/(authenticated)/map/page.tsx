@@ -10,11 +10,11 @@ import { useAuth } from '@/context/AuthContext'
 const MapView = dynamic(() => import('@/components/MapView'), { 
   ssr: false,
   loading: () => (
-    <div className="card-surface p-8">
+    <div className="yuno-card p-8">
       <div className="flex items-center justify-center h-[500px]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-text-muted">Loading map...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#b5511b] mx-auto mb-4"></div>
+          <p className="text-[#54433a]/80">Loading map...</p>
         </div>
       </div>
     </div>
@@ -71,6 +71,7 @@ export default function MapPage() {
       }
     }
     
+    // Load once immediately when component mounts or dependencies change
     loadUsers()
   }, [radius, user])
 
@@ -96,29 +97,29 @@ export default function MapPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold mb-2 text-text-primary tracking-tight">
+          <h1 className="text-3xl mb-2 text-[#231b15] tracking-tight font-display italic font-medium">
             Discover Nearby Connections
           </h1>
-          <p className="text-text-muted font-medium">Find people near you and see what you have in common</p>
+          <p className="text-[#54433a]/80 font-medium">Find people near you and see what you have in common</p>
         </div>
         
         {/* Radius Filter */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           <div className="flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-primary" />
-            <span className="text-sm text-text-muted">Search Radius:</span>
+            <MapPin className="w-5 h-5 text-[#b5511b]" />
+            <span className="text-sm text-[#54433a]/80">Search Radius:</span>
           </div>
-          <div className="flex gap-2 bg-hover-light p-1 rounded-xl border border-border-light">
+          <div className="flex gap-2 bg-white/80 p-1 rounded-xl border border-[#e0d7d0] backdrop-blur-md">
             {radiusOptions.map((r) => (
               <button
                 key={r}
                 onClick={() => setRadius(r)}
-                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                className={`px-3 py-1 rounded-lg text-sm transition-colors font-medium ${
                   r === radius 
-                    ? 'bg-primary text-white' 
-                    : 'text-text-secondary hover:bg-hover-medium'
+                    ? 'bg-[#b5511b] text-white shadow-sm' 
+                    : 'text-[#54433a] hover:bg-white/15'
                 }`}
               >
                 {r}km
@@ -131,27 +132,27 @@ export default function MapPage() {
       {/* Status Messages */}
       {loading && (
         <div className="text-center py-4">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
-          <p className="text-text-muted">Loading nearby users...</p>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#b5511b] mx-auto mb-2"></div>
+          <p className="text-[#54433a]/80">Loading nearby users...</p>
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-          <p className="text-red-600">{error}</p>
+        <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl">
+          <p className="text-red-700 text-sm font-medium">{error}</p>
         </div>
       )}
 
       {/* Map Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <h2 className="text-xl font-semibold text-text-primary">📍 Interactive Map</h2>
-          <span className="text-sm text-text-muted">Click on markers to see user details</span>
+          <h2 className="text-xl text-[#231b15] font-display italic font-medium">📍 Interactive Map</h2>
+          <span className="text-sm text-[#54433a]/70">Click on markers to see user details</span>
         </div>
         <Suspense fallback={
-          <div className="card-surface p-8">
+          <div className="yuno-card p-8">
             <div className="flex items-center justify-center h-[500px]">
-              <p className="text-text-muted">Loading map viewport...</p>
+              <p className="text-[#54433a]/80">Loading map viewport...</p>
             </div>
           </div>
         }>
@@ -161,29 +162,29 @@ export default function MapPage() {
 
       {/* User Stats */}
       {!loading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="card-surface p-4">
-            <div className="text-2xl font-bold text-primary">{users.length}</div>
-            <div className="text-sm text-text-muted">Nearby Users</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="yuno-card p-4">
+            <div className="text-2xl font-bold text-[#b5511b]">{users.length}</div>
+            <div className="text-sm text-[#54433a]/80">Nearby Users</div>
           </div>
           
-          <div className="card-surface p-4">
-            <div className="text-2xl font-bold text-accent">
+          <div className="yuno-card p-4">
+            <div className="text-2xl font-bold text-[#b5511b]">
               {users.filter(u => u.commonalities && (u.commonalities.attributes.length > 0 || u.commonalities.interests.length > 0)).length}
             </div>
-            <div className="text-sm text-text-muted">With Commonalities</div>
+            <div className="text-sm text-[#54433a]/80">With Commonalities</div>
           </div>
           
-          <div className="card-surface p-4">
-            <div className="text-2xl font-bold text-text-primary">{radius}km</div>
-            <div className="text-sm text-text-muted">Search Radius</div>
+          <div className="yuno-card p-4">
+            <div className="text-2xl font-bold text-[#231b15]">{radius}km</div>
+            <div className="text-sm text-[#54433a]/80">Search Radius</div>
           </div>
-
-          <div className="card-surface p-4">
-            <div className="text-2xl font-bold text-green-600">
+ 
+          <div className="yuno-card p-4">
+            <div className="text-2xl font-bold text-green-700">
               {users.length > 0 ? Math.round((users.reduce((sum, u) => sum + (u.distance?.km || 0), 0) / users.length) * 100) / 100 : 0}
             </div>
-            <div className="text-sm text-text-muted">Avg Distance (km)</div>
+            <div className="text-sm text-[#54433a]/80">Avg Distance (km)</div>
           </div>
         </div>
       )}
@@ -192,8 +193,8 @@ export default function MapPage() {
       {!loading && !error && (
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <h2 className="text-xl font-semibold text-text-primary">👥 Nearby People</h2>
-            <span className="text-sm text-text-muted">{users.length} people found within {radius}km</span>
+            <h2 className="text-xl text-[#231b15] font-display italic font-medium">👥 Nearby People</h2>
+            <span className="text-sm text-[#54433a]/80">{users.length} people found within {radius}km</span>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -206,13 +207,13 @@ export default function MapPage() {
 
       {/* Empty State */}
       {!loading && !error && users.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">🔍</div>
-          <h3 className="text-xl font-semibold mb-2 text-text-primary">No nearby users found</h3>
-          <p className="text-text-muted mb-4">Try increasing the search radius or check back later</p>
+        <div className="text-center py-12 yuno-card p-8 max-w-md mx-auto">
+          <div className="text-5xl mb-4">🔍</div>
+          <h3 className="text-lg font-bold mb-2 text-[#231b15]">No nearby users found</h3>
+          <p className="text-xs text-[#54433a]/80 mb-6">Try increasing the search radius or check back later</p>
           <button 
             onClick={() => setRadius(Math.min(radius + 5, 50))}
-            className="btn-primary"
+            className="inline-flex items-center gap-2 bg-[#b5511b] hover:bg-[#943b0d] text-white px-5 py-2.5 rounded-lg text-xs font-mono uppercase tracking-wider font-bold transition-all"
           >
             Increase Radius
           </button>
@@ -228,88 +229,90 @@ function ProfileCard({ user }: { user: User }) {
   const hasCommonalities = commonAttributes.length > 0 || commonInterests.length > 0
 
   return (
-    <div className="card-surface p-6 border-border-medium hover:border-primary transition-all duration-300 shadow-soft hover:shadow-elegant">
-      <div className="flex items-center gap-4 mb-4">
-        <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-lg font-bold text-white shadow-soft">
-          {user.name?.[0] || '?'}
+    <div className="yuno-card p-5 flex flex-col justify-between">
+      <div>
+        <div className="flex items-center gap-4 mb-4">
+          <div className="h-12 w-12 rounded-full bg-[#b5511b]/20 border border-[#b5511b]/35 flex items-center justify-center text-base font-bold text-[#b5511b] shadow-sm shrink-0">
+            {user.name?.[0] || '?'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-bold text-[#231b15] truncate">{user.name}</h3>
+              {user?.distance?.km != null && (
+                <div className="flex items-center gap-1 text-[10px] text-[#54433a]/90 bg-white/60 border border-[#e0d7d0] px-2 py-0.5 rounded-full shrink-0">
+                  <MapPin className="w-2.5 h-2.5" />
+                  <span>{user.distance.km} km</span>
+                </div>
+              )}
+            </div>
+            <div className="text-xs text-[#54433a]/80 truncate">{user.city || 'Unknown location'}</div>
+          </div>
         </div>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="text-lg font-medium text-text-primary">{user.name}</h3>
-            {user?.distance?.km != null && (
-              <div className="flex items-center gap-1 text-xs text-text-muted bg-hover-light px-2 py-1 rounded-full">
-                <MapPin className="w-3 h-3" />
-                <span>{user.distance.km} km</span>
+        
+        {/* User Details */}
+        <div className="space-y-1.5 mb-4">
+          {user.school && (
+            <div className="flex items-center gap-2 text-xs text-[#54433a]/80">
+              <School className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{user.school}</span>
+            </div>
+          )}
+          {user.workplace && (
+            <div className="flex items-center gap-2 text-xs text-[#54433a]/80">
+              <Building className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{user.workplace}</span>
+            </div>
+          )}
+          {user.interests && user.interests.length > 0 && (
+            <div className="flex items-center gap-2 text-xs text-[#54433a]/80">
+              <Heart className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{user.interests.slice(0, 3).join(', ')}</span>
+            </div>
+          )}
+        </div>
+        
+        {/* Things you have in common */}
+        {hasCommonalities && (
+          <div className="border-t border-[#5d4037]/10 pt-4 mb-4">
+            <div className="text-xs font-bold text-[#231b15] mb-3 flex items-center gap-2">
+              <Zap className="w-3.5 h-3.5 text-[#b5511b]" />
+              Things you have in common
+            </div>
+            
+            {/* Common Attributes */}
+            {commonAttributes.length > 0 && (
+              <div className="mb-3">
+                <div className="text-[10px] text-[#54433a]/75 mb-1.5 font-mono uppercase">Same attributes:</div>
+                <div className="flex flex-wrap gap-1">
+                  {commonAttributes.map((attr, idx) => (
+                    <span key={idx} className="px-2 py-0.5 rounded-md bg-[#b5511b]/10 border border-[#b5511b]/20 text-[#b5511b] text-[9px] font-bold uppercase tracking-wider font-mono">
+                      {attr}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Common Interests */}
+            {commonInterests.length > 0 && (
+              <div>
+                <div className="text-[10px] text-[#54433a]/75 mb-1.5 font-mono uppercase">Shared interests:</div>
+                <div className="flex flex-wrap gap-1">
+                  {commonInterests.map((interest, idx) => (
+                    <span key={idx} className="px-2 py-0.5 rounded-md bg-[#b5511b] text-white text-[9px] font-bold uppercase tracking-wider font-mono">
+                      {interest}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
           </div>
-          <div className="text-sm text-text-muted">{user.city || 'Unknown location'}</div>
-        </div>
-      </div>
-      
-      {/* User Details */}
-      <div className="space-y-2 mb-4">
-        {user.school && (
-          <div className="flex items-center gap-2 text-sm text-text-muted">
-            <School className="w-4 h-4" />
-            <span>{user.school}</span>
-          </div>
-        )}
-        {user.workplace && (
-          <div className="flex items-center gap-2 text-sm text-text-muted">
-            <Building className="w-4 h-4" />
-            <span>{user.workplace}</span>
-          </div>
-        )}
-        {user.interests && user.interests.length > 0 && (
-          <div className="flex items-center gap-2 text-sm text-text-muted">
-            <Heart className="w-4 h-4" />
-            <span>{user.interests.slice(0, 3).join(', ')}</span>
-          </div>
         )}
       </div>
       
-      {/* Things you have in common */}
-      {hasCommonalities && (
-        <div className="border-t border-border-light pt-4">
-          <div className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
-            <Zap className="w-4 h-4 text-primary" />
-            Things you have in common
-          </div>
-          
-          {/* Common Attributes */}
-          {commonAttributes.length > 0 && (
-            <div className="mb-3">
-              <div className="text-xs text-text-muted mb-2">Same attributes:</div>
-              <div className="flex flex-wrap gap-1.5">
-                {commonAttributes.map((attr, idx) => (
-                  <span key={idx} className="px-2.5 py-1 rounded-md bg-hover-light border border-border-medium text-primary text-[11px] font-bold uppercase tracking-wider">
-                    {attr}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {/* Common Interests */}
-          {commonInterests.length > 0 && (
-            <div>
-              <div className="text-xs text-text-muted mb-2">Shared interests:</div>
-              <div className="flex flex-wrap gap-1.5">
-                {commonInterests.map((interest, idx) => (
-                  <span key={idx} className="px-2.5 py-1 rounded-md bg-primary text-white text-[11px] font-bold uppercase tracking-wider">
-                    {interest}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-      
-      <div className="mt-5">
-        <button className="btn-primary w-full gap-2">
-          <Zap className="w-4 h-4" />
+      <div className="mt-auto pt-2">
+        <button className="w-full flex items-center justify-center gap-2 py-2 bg-[#b5511b] hover:bg-[#943b0d] text-white rounded-lg text-xs font-mono uppercase tracking-wider font-bold transition-all duration-200">
+          <Zap className="w-3.5 h-3.5" />
           Send Spark
         </button>
       </div>

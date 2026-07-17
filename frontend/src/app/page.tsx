@@ -3,25 +3,25 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, Mail, Lock, Eye, EyeOff, User } from 'lucide-react'
 import Image from 'next/image'
-import Squares from '@/components/ui/Squares'
-import SplitText from '@/components/ui/SplitText'
-import ShinyText from '@/components/ui/ShinyText'
-import Magnet from '@/components/ui/Magnet'
-import Aurora from '@/components/ui/Aurora'
-import { AstrolabeIcon, CelestialStar, VintageSparkle } from '@/components/VintageIcons'
+import Link from 'next/link'
+import { gsap } from 'gsap'
+import {
+  Compass,
+  MapPin,
+  MessageSquare,
+  Zap,
+  ArrowRight,
+  Menu,
+  X
+} from 'lucide-react'
+import GeospatialBackground from '@/components/GeospatialBackground'
+import GlassSurface from '@/components/ui/GlassSurface'
 
-export default function LoginPage() {
-  const [isSignup, setIsSignup] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
+export default function LandingPage() {
   const [mounted, setMounted] = useState(false)
-  const { login, isAuthenticated, loading } = useAuth()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { isAuthenticated, loading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
@@ -34,327 +34,393 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, loading, router])
 
+  useEffect(() => {
+    if (!mounted) return
+
+    // GSAP load-in animations with prefers-reduced-motion check
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.set('.gsap-hero-badge, .gsap-hero-title, .gsap-hero-text, .gsap-hero-ctas, .gsap-hero-visual', { opacity: 1, y: 0, scale: 1 })
+      return
+    }
+
+    const tl = gsap.timeline()
+    tl.fromTo('.gsap-hero-badge', 
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
+    )
+    .fromTo('.gsap-hero-title', 
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 1, ease: 'power3.out' },
+      '-=0.55'
+    )
+    .fromTo('.gsap-hero-text', 
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' },
+      '-=0.6'
+    )
+    .fromTo('.gsap-hero-ctas', 
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' },
+      '-=0.6'
+    )
+    .fromTo('.gsap-hero-visual', 
+      { opacity: 0, scale: 0.96, y: 10 },
+      { opacity: 1, scale: 1, y: 0, duration: 1.2, ease: 'power4.out' },
+      '-=0.9'
+    )
+  }, [mounted])
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#110A07] flex items-center justify-center relative overflow-hidden">
-        <Aurora blend={0.65} speed={1.2} />
+      <div className="min-h-screen bg-[#faf9f6] flex items-center justify-center relative overflow-hidden">
         <div className="relative z-10 flex flex-col items-center gap-4">
-          <AstrolabeIcon className="w-16 h-16 text-[#D4453A] animate-spin [animation-duration:10s]" />
-          <p className="text-[#A08878] text-xs font-mono tracking-widest uppercase animate-pulse">Initializing Astrolabe...</p>
+          <Compass className="w-10 h-10 text-[#b5511b] animate-spin [animation-duration:6s]" />
+          <p className="text-[#b5511b] text-xs font-mono tracking-widest uppercase animate-pulse">
+            Resolving Coordinates...
+          </p>
         </div>
       </div>
     )
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
-
-    if (isSignup) {
-      if (!name.trim()) return setError('Name is required'), setIsLoading(false)
-      if (!email.trim()) return setError('Email is required'), setIsLoading(false)
-      if (!password.trim()) return setError('Password is required'), setIsLoading(false)
-      if (password.length < 6) return setError('Password must be at least 6 characters long'), setIsLoading(false)
-    } else {
-      if (!email.trim()) return setError('Email is required'), setIsLoading(false)
-      if (!password.trim()) return setError('Password is required'), setIsLoading(false)
-    }
-
-    try {
-      if (isSignup) {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: name.trim(), email: email.trim(), password: password.trim() }),
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          setError(errorData.message || 'Registration failed')
-          return
-        }
-
-        const data = await response.json()
-        if (data.success) {
-          const loginSuccess = await login(email, password)
-          if (loginSuccess) router.push('/home')
-        } else {
-          setError(data.message || 'Registration failed.')
-        }
-      } else {
-        const success = await login(email, password)
-        if (success) router.push('/home')
-        else setError('Login failed. Please check your credentials.')
-      }
-    } catch (err) {
-      setError('An error occurred. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
-    <div className="min-h-screen bg-[#0F0A07] flex flex-col lg:flex-row overflow-hidden relative">
-      
-      {/* Universal Background Layer */}
-      <div className="absolute inset-0 z-0 pointer-events-none select-none">
-        <Aurora blend={0.6} speed={0.7} />
-      </div>
-      
-      {/* Squares animated grid coordinates overlay */}
-      <div className="absolute inset-0 opacity-[0.14] pointer-events-none z-0">
-        <Squares speed={0.3} squareSize={44} borderColor="rgba(212, 69, 58, 0.15)" hoverFillColor="rgba(212, 69, 58, 0.05)" />
-      </div>
-
-      {/* ─── Left Panel — Editorial & Brand Astrolabe ────────────────── */}
-      <div className="hidden lg:flex lg:w-[50%] relative z-10 flex-col justify-between p-12 xl:p-16 border-r border-white/[0.04]">
-        {/* Rotating Celestial Astrolabe background element */}
-        <div className="absolute -top-24 -left-24 w-[600px] h-[600px] opacity-[0.03] text-white pointer-events-none select-none">
-          <AstrolabeIcon className="w-full h-full animate-[spin_180s_linear_infinite]" />
-        </div>
-
-        {/* Top — Logo and Brand */}
-        <div className="flex items-center gap-3">
-          <div className="relative w-12 h-12">
-            <Image src="/logo.png" alt="Yuno Logo" fill className="object-contain filter brightness-125" sizes="48px" priority />
-          </div>
-          <div>
-            <span className="font-serif text-white text-lg font-bold tracking-wider">yuno</span>
-            <span className="block font-mono text-[9px] text-[#A08878]/60 uppercase tracking-widest">GeoSpatial Social Graph</span>
-          </div>
-        </div>
-
-        {/* Middle — Headline */}
-        <div className="flex-1 flex flex-col justify-center max-w-lg relative">
-          <div className="absolute -right-12 top-0 text-white/5 pointer-events-none">
-            <CelestialStar size={120} />
-          </div>
-          
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md">
-              <VintageSparkle className="w-3.5 h-3.5 text-[#D4453A] animate-pulse" />
-              <ShinyText text="System V2.5 Active" className="text-[10px] font-mono uppercase tracking-widest text-[#A08878] font-bold" />
-            </div>
-            
-            <h1 className="text-white text-4xl xl:text-5xl font-serif font-bold leading-[1.15] tracking-tight">
-              Find your people.
-              <br />
-              <span className="bg-gradient-to-r from-[#D4453A] to-[#EEB68A] bg-clip-text text-transparent">
-                Right where you are.
-              </span>
-            </h1>
-            
-            <p className="text-[#A08878]/80 text-base font-light leading-relaxed max-w-md">
-              Connect with nearby explorers, engage with live AI weather vibes, embark on historical landmark quests, and start conversations that matter.
-            </p>
-          </div>
-        </div>
-
-        {/* Bottom — Metadata & Location Info */}
-        <div className="pt-8 border-t border-white/[0.08] flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <p className="text-[#A08878]/55 text-xs leading-relaxed max-w-xs font-light">
-            An agentic location-based social graph integrating real-time weather metrics, OSM landmark quests, and LLM matching.
-          </p>
-          <div className="shrink-0 text-left md:text-right font-mono text-[10px] tracking-widest">
-            <span className="text-[#D4453A]/80 font-bold">LOC // 18.9724° N, 72.8258° E</span>
-            <br />
-            <span className="text-[#A08878]/40">REF // CARTOGRAPHERS_HEARTH</span>
-          </div>
-        </div>
+    <div className="min-h-[100dvh] relative overflow-x-hidden font-sans text-[#231b15] selection:bg-[#fcead2] selection:text-[#54433a] pb-12">
+      {/* Fullscreen Background Image with Tint Filter */}
+      <div className="fixed inset-0 w-full h-full z-0 overflow-hidden bg-[#f8f6f0]">
+        <Image
+          src="/images/login_glass_bg.png"
+          alt="Yuno Background Refraction"
+          fill
+          priority
+          className="object-cover opacity-60 filter saturate-[0.9] brightness-[0.85]"
+        />
+        {/* Soft, beautiful warm terracotta and cream gradient overlay tint */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#f8f6f0]/95 via-[#f8f6f0]/60 to-[#b5511b]/20 mix-blend-multiply z-0" />
+        {/* Subtle blur */}
+        <div className="absolute inset-0 bg-[#f8f6f0]/30 backdrop-blur-[4px] z-0" />
+        
+        {/* Sub-grid overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.02] z-0"
+          style={{
+            backgroundImage: `
+              radial-gradient(#8b7d75 1px, transparent 1px),
+              linear-gradient(to right, rgba(139, 125, 117, 0.1) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(139, 125, 117, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '32px 32px, 160px 160px, 160px 160px',
+            backgroundPosition: 'center center',
+          }}
+        />
       </div>
 
-      {/* ─── Right Panel — Floating Glassmorphic Login Console ────────── */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 lg:py-16 relative z-10 overflow-y-auto">
-        <div className={`w-full max-w-[420px] transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          
-          {/* Mobile Logo */}
-          <div className="lg:hidden text-center mb-8">
-            <div className="relative w-20 h-20 mx-auto mb-2">
-              <Image src="/logo.png" alt="Yuno Logo" fill className="object-contain filter brightness-125" sizes="80px" priority />
-            </div>
-            <h1 className="font-serif text-white text-2xl font-bold tracking-wider">yuno</h1>
-            <p className="text-[#A08878] text-xs font-mono uppercase tracking-widest mt-1">GeoSpatial Social Graph</p>
-          </div>
-
-          {/* Glassmorphic Login Card */}
-          <div className="bg-[#18110D]/75 backdrop-blur-2xl rounded-3xl border border-white/[0.06] shadow-[0_30px_100px_rgba(0,0,0,0.7),inset 0 1px 1px rgba(255,255,255,0.05)] p-8 lg:p-10 relative overflow-hidden group">
-            
-            {/* Card corner accent sparkles */}
-            <div className="absolute top-4 right-4 text-[#D4453A]/20 pointer-events-none group-hover:text-[#D4453A]/50 transition-colors duration-500">
-              <CelestialStar size={16} />
-            </div>
-            
-            {/* Design header */}
-            <div className="mb-8">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-[2px] bg-[#D4453A]"></div>
-                <div className="w-2 h-[2px] bg-[#D4453A]/30"></div>
-                <span className="font-mono text-[9px] tracking-widest text-[#D4453A] uppercase font-bold">Logbook Entry</span>
-              </div>
-              
-              <h2 className="text-white text-3xl font-serif font-bold tracking-tight">
-                {isSignup ? 'Initialize Account' : 'Acknowledge Key'}
-              </h2>
-              <p className="text-[#A08878]/70 text-xs mt-2 font-light leading-relaxed">
-                {isSignup
-                  ? 'Join the local social graph to start mapping your path.'
-                  : 'Enter your coordinates to sync with the geospatial network.'}
-              </p>
+      {/* Floating Header Navigation using GlassSurface */}
+      <div className="fixed top-4 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex justify-center">
+        <GlassSurface
+          width="100%"
+          height="auto"
+          borderRadius={24}
+          borderWidth={0.06}
+          brightness={99}
+          opacity={0.05}
+          blur={15}
+          backgroundOpacity={0.05}
+          className="border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.7),0_8px_32px_rgba(84,67,58,0.06)]"
+        >
+          <div className="px-6 h-16 flex items-center justify-between">
+            {/* Logo */}
+            <div className="flex items-center">
+              <Link href="/" className="hover:opacity-90 transition-opacity">
+                <Image
+                  src="/logo.png"
+                  alt="Yuno Logo"
+                  width={85}
+                  height={50}
+                  className="object-contain"
+                  priority
+                />
+              </Link>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Name (Signup only) */}
-              {isSignup && (
-                <div className="space-y-1.5 animate-[field-appear_0.3s_ease-out]">
-                  <label htmlFor="name" className="block text-[10px] font-mono uppercase tracking-widest text-[#A08878] font-semibold pl-1">
-                    Explorer Name
-                  </label>
-                  <div className="relative group">
-                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A08878]/40 group-focus-within:text-[#D4453A]/80 transition-colors duration-300" />
-                    <input
-                      type="text"
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 bg-[#0F0A07]/60 border border-white/[0.05] rounded-xl text-white text-sm placeholder:text-[#A08878]/40 focus:outline-none focus:border-[#D4453A]/60 focus:bg-[#0F0A07]/90 focus:shadow-[0_0_15px_rgba(212,69,58,0.1)] transition-all duration-300 font-mono"
-                      placeholder="e.g. Vasco Da Gama"
-                      required={isSignup}
-                    />
-                  </div>
-                </div>
-              )}
+            {/* Navigation Items (Single Line) */}
+            <nav className="hidden md:flex items-center gap-8">
+              <a href="#features" className="text-xs font-mono uppercase tracking-wider text-[#54433a] hover:text-[#b5511b] transition-colors duration-200">
+                Features
+              </a>
+              <a href="#about" className="text-xs font-mono uppercase tracking-wider text-[#54433a] hover:text-[#b5511b] transition-colors duration-200">
+                About
+              </a>
+              <a href="#technology" className="text-xs font-mono uppercase tracking-wider text-[#54433a] hover:text-[#b5511b] transition-colors duration-200">
+                Technology
+              </a>
+            </nav>
 
-              {/* Email */}
-              <div className="space-y-1.5">
-                <label htmlFor="email" className="block text-[10px] font-mono uppercase tracking-widest text-[#A08878] font-semibold pl-1">
-                  Email Coordinates
-                </label>
-                <div className="relative group">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A08878]/40 group-focus-within:text-[#D4453A]/80 transition-colors duration-300" />
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-[#0F0A07]/60 border border-white/[0.05] rounded-xl text-white text-sm placeholder:text-[#A08878]/40 focus:outline-none focus:border-[#D4453A]/60 focus:bg-[#0F0A07]/90 focus:shadow-[0_0_15px_rgba(212,69,58,0.1)] transition-all duration-300 font-mono"
-                    placeholder="you@example.com"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="space-y-1.5">
-                <label htmlFor="password" className="block text-[10px] font-mono uppercase tracking-widest text-[#A08878] font-semibold pl-1">
-                  Verification Key
-                </label>
-                <div className="relative group">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A08878]/40 group-focus-within:text-[#D4453A]/80 transition-colors duration-300" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-10 py-3 bg-[#0F0A07]/60 border border-white/[0.05] rounded-xl text-white text-sm placeholder:text-[#A08878]/40 focus:outline-none focus:border-[#D4453A]/60 focus:bg-[#0F0A07]/90 focus:shadow-[0_0_15px_rgba(212,69,58,0.1)] transition-all duration-300 font-mono"
-                    placeholder="••••••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#A08878]/40 hover:text-white transition-colors duration-200"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Fixed height slot for error */}
-              <div className="min-h-[24px] flex items-center">
-                {error && (
-                  <div className="w-full flex items-start gap-2 px-3 py-1.5 rounded-lg bg-red-950/40 border border-red-900/40 animate-[field-appear_0.25s_ease-out]">
-                    <div className="w-1 h-1 rounded-full bg-[#D4453A] shrink-0 mt-[6px] animate-ping"></div>
-                    <p className="text-[#FF8A80] text-[11px] leading-[1.3] font-mono">{error}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Submit */}
-              <div className="w-full pt-1">
-                <Magnet className="w-full" strength={8}>
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full relative group/btn text-white py-3.5 text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] overflow-hidden"
-                    style={{
-                      background: 'linear-gradient(135deg, #D4453A 0%, #B52820 100%)',
-                      boxShadow: '0 4px 20px -2px rgba(212,69,58,0.4)',
-                    }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
-                    {isLoading ? (
-                      <div className="flex items-center justify-center gap-2 relative z-10">
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        <span>Initializing...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center gap-2 relative z-10">
-                        <span>{isSignup ? 'Register Key' : 'Acknowledge Key'}</span>
-                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                      </div>
-                    )}
-                  </button>
-                </Magnet>
-              </div>
-            </form>
-
-            <div className="flex items-center gap-3 my-6">
-              <div className="flex-1 h-px bg-white/[0.06]"></div>
-              <span className="text-[#A08878]/30 font-mono text-[9px] uppercase tracking-widest">Verification</span>
-              <div className="flex-1 h-px bg-white/[0.06]"></div>
-            </div>
-
-            {/* Toggle signup/login */}
-            <div className="text-center">
-              <p className="text-[#A08878]/60 text-xs mb-2 font-light">
-                {isSignup ? 'Already registered your key?' : 'New explorer coordinate?'}
-              </p>
+            {/* CTAs */}
+            <div className="hidden md:flex items-center gap-4">
               <button
-                type="button"
-                onClick={() => {
-                  setIsSignup(!isSignup)
-                  setError('')
-                  setEmail('')
-                  setPassword('')
-                  setName('')
-                }}
-                className="text-[#D4453A] font-mono font-bold text-xs uppercase tracking-widest hover:text-[#EEB68A] transition-colors duration-200 inline-flex items-center gap-1.5 group/toggle"
+                onClick={() => router.push('/login')}
+                className="text-xs font-mono uppercase tracking-wider text-[#54433a] hover:text-[#b5511b] transition-all duration-200 font-bold active:scale-[0.98]"
               >
-                {isSignup ? 'Access Logbook' : 'Establish Key'}
-                <ArrowRight className="w-3.5 h-3.5 group-hover/toggle:translate-x-0.5 transition-transform duration-200" />
+                Sign In
+              </button>
+              <button
+                onClick={() => router.push('/login?mode=signup')}
+                className="px-4 py-2 bg-white/20 hover:bg-[#b5511b] hover:text-white border border-white/30 hover:border-[#b5511b] rounded-full text-xs font-mono uppercase tracking-widest font-bold transition-all duration-200 flex items-center gap-1.5 shadow-sm active:scale-[0.98]"
+              >
+                Join Yuno
+              </button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button 
+              className="md:hidden text-[#54433a] focus:outline-none"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </GlassSurface>
+
+        {/* Mobile Navigation Dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-20 left-4 right-4 bg-[#faf9f6]/95 backdrop-blur-xl border border-[#ebdcd0] p-6 rounded-2xl space-y-4 shadow-lg animate-in fade-in slide-in-from-top-4 duration-200 z-50">
+            <a 
+              href="#features" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-sm font-mono uppercase tracking-wider text-[#54433a]"
+            >
+              Features
+            </a>
+            <a 
+              href="#about" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-sm font-mono uppercase tracking-wider text-[#54433a]"
+            >
+              About
+            </a>
+            <a 
+              href="#technology" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-sm font-mono uppercase tracking-wider text-[#54433a]"
+            >
+              Technology
+            </a>
+            <hr className="border-[#ebdcd0]" />
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => { setMobileMenuOpen(false); router.push('/login'); }}
+                className="w-full py-2.5 text-center text-xs font-mono uppercase tracking-wider text-[#54433a] font-bold border border-[#ebdcd0] rounded-full"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => { setMobileMenuOpen(false); router.push('/login?mode=signup'); }}
+                className="w-full py-2.5 text-center text-xs font-mono uppercase tracking-wider bg-[#b5511b] hover:bg-[#943b0d] text-white font-bold rounded-full"
+              >
+                Join Yuno
               </button>
             </div>
           </div>
-
-          <p className="text-center text-[#A08878]/30 font-mono text-[9px] uppercase tracking-widest mt-8">
-            © 2026 Yuno · Map the paths, find the sparks
-          </p>
-        </div>
+        )}
       </div>
-      
-      <style jsx>{`
-        @keyframes field-appear {
-          from {
-            opacity: 0;
-            transform: translateY(8px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
+
+      {/* Hero Section */}
+      <main className="relative z-10">
+        <section className="max-w-7xl mx-auto px-6 min-h-[calc(100dvh-96px)] flex items-center pt-28 pb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
+            
+            {/* Left Column: Headline & Value Proposition */}
+            <div className="lg:col-span-6 space-y-8">
+              {/* Live Signal Badge */}
+              <div className="gsap-hero-badge inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_2px_12px_rgba(181,81,27,0.03)]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#b5511b] animate-pulse" />
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#b5511b] font-bold">
+                  Geospatial Pulse Live
+                </span>
+              </div>
+
+              {/* Serif Display Font Pairing (Fraunces) */}
+              <h1 className="gsap-hero-title text-[#231b15] text-4xl sm:text-5xl lg:text-[62px] font-display italic font-medium tracking-tight leading-[1.08] text-balance">
+                The city is alive. <br />
+                Step onto the map.
+              </h1>
+
+              {/* Strict subtext length constraint: max 20 words, capped line length (max-w-[55ch]) */}
+              <p className="gsap-hero-text text-[#54433a] text-base leading-relaxed max-w-[55ch] font-sans">
+                A geospatial social network replacing algorithms with live location coordinates, community signals, and spontaneous real-world gatherings.
+              </p>
+
+              <div className="gsap-hero-ctas flex items-center gap-4">
+                <button
+                  onClick={() => router.push('/login?mode=signup')}
+                  className="px-6 py-3.5 bg-[#b5511b] hover:bg-[#943b0d] text-white rounded-full text-xs font-mono uppercase tracking-widest font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(181,81,27,0.12)] hover:shadow-[0_4px_20px_rgba(148,59,13,0.22)] active:scale-[0.98]"
+                >
+                  Join Yuno
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => router.push('/login')}
+                  className="px-6 py-3.5 border border-[#ebdcd0] hover:border-[#b5511b] rounded-full text-xs font-mono uppercase tracking-widest font-bold text-[#54433a] hover:text-[#b5511b] transition-all duration-300 flex items-center justify-center gap-2 bg-white/40 backdrop-blur-sm active:scale-[0.98]"
+                >
+                  Sign In
+                </button>
+              </div>
+            </div>
+
+            {/* Right Column: Premium Custom 3D Glass Topographic Map */}
+            <div className="gsap-hero-visual lg:col-span-6 flex justify-center lg:justify-end">
+              <div className="relative w-full max-w-[480px] aspect-square yuno-card p-4 overflow-hidden group">
+                <div className="absolute inset-2 border border-white/20 rounded-[20px] pointer-events-none" />
+                
+                {/* Main 3D glass topographic visualization */}
+                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white/40 border border-[#ebdcd0]/40 flex items-center justify-center shadow-inner">
+                  <img 
+                    src="/images/hero_glass_map.png" 
+                    alt="Tactile 3D Glass Topographic Map representation" 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent pointer-events-none" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Technical Protocol & Features Section */}
+        <section id="features" className="relative z-10 py-16">
+          <div className="max-w-7xl mx-auto px-6 space-y-12">
+            
+            {/* Header: Centered, Editorial */}
+            <div className="text-center max-w-2xl mx-auto space-y-3">
+              <h2 className="text-[#1a0f0a] text-4xl sm:text-5xl font-display italic font-medium tracking-tight leading-[1.1]">
+                The Proximity Protocol
+              </h2>
+              <p className="text-[#3e2723] text-xs sm:text-sm leading-relaxed">
+                Yuno maps human presence purely through spontaneous coordinate logs, secure peer grouping, and client-side privacy caches.
+              </p>
+            </div>
+
+            {/* 3-Column Grid of Technical Modules */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+              
+              {/* Module 1: Signal Decay */}
+              <div className="yuno-card p-6 space-y-6 flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <h3 className="text-base font-bold text-[#1a0f0a] font-sans">
+                      Spontaneous Proximity Signals
+                    </h3>
+                    <p className="text-[#54433a] text-xs leading-relaxed font-sans">
+                      Coordinates fade automatically after 30 minutes. By design, Yuno has no scrollable backlog, no past histories, and no recommendations—showing only active, spontaneous coordinates in your immediate neighborhood.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Clean list of active tags instead of terminal logs */}
+                <div className="space-y-2 mt-4 text-[#54433a]/90 font-serif italic text-xs border-l-2 border-[#b5511b]/30 pl-4 py-1">
+                  <div>• Ambient Listening Session (12m ago)</div>
+                  <div>• Sunset Park Yoga Group (28m ago)</div>
+                  <div>• Local Cartography Fair (44m ago)</div>
+                </div>
+              </div>
+
+              {/* Module 2: Vibe Chats */}
+              <div className="yuno-card p-6 space-y-6 flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <h3 className="text-base font-bold text-[#1a0f0a] font-sans">
+                      Vibe-Cluster Matchmaking
+                    </h3>
+                    <p className="text-[#54433a] text-xs leading-relaxed font-sans">
+                      Yuno groups coordinate clusters that share corresponding tags. The system initiates localized group rooms directly on the map interface, facilitating spontaneous real-world check-ins.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Clean conversational bubbles mockup instead of node metadata */}
+                <div className="space-y-3 mt-4">
+                  <div className="bg-white/10 border border-white/20 rounded-2xl p-3 text-xs text-[#54433a] inline-block max-w-[85%] font-sans">
+                    "Setting up the listening table at the library vinyl corner. Who's nearby?"
+                  </div>
+                  <div className="text-right">
+                    <div className="bg-[#b5511b] text-white rounded-2xl p-3 text-xs inline-block max-w-[85%] text-left font-sans shadow-sm">
+                      "Just walked into the shop. Be right there."
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Module 3: Cache Performance */}
+              <div className="yuno-card p-6 space-y-6 flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <h3 className="text-base font-bold text-[#1a0f0a] font-sans">
+                      OSM Geodata Caching
+                    </h3>
+                    <p className="text-[#54433a] text-xs leading-relaxed font-sans">
+                      By caching OpenStreetMap layers locally on-device and querying them with client-side filters, we drastically reduce battery consumption and network latency.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Clean quote card instead of latency numbers comparison table */}
+                <div className="bg-white/10 border border-white/20 rounded-2xl p-4 mt-4 text-[#54433a] space-y-2">
+                  <p className="text-xs italic font-serif leading-relaxed">
+                    "By loading map coordinate layers to client storage, Yuno resolves your immediate neighborhood feed instantly, with zero remote server hops on subsequent searches."
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* Asymmetrical Editorial Invite CTA */}
+        <section className="relative z-10 py-24 bg-transparent">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="yuno-card p-8 sm:p-12 flex flex-col md:flex-row items-stretch justify-between gap-8 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-[#b5511b]/5 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
+              
+              {/* Left Column */}
+              <div className="space-y-6 max-w-xl flex-1 flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-[#b5511b] font-bold flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#b5511b]" />
+                    YUNO NETWORK
+                  </div>
+                  <h2 className="text-[#1a0f0a] text-3xl sm:text-4xl font-display italic font-medium tracking-tight">
+                    Your neighborhood is active. Join the network.
+                  </h2>
+                  <p className="text-[#54433a] text-xs sm:text-sm leading-relaxed max-w-[45ch]">
+                    Create your profile coordinate node, map local activities, and explore the live signal feed instantly.
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Column: CTA action container */}
+              <div className="flex flex-col justify-end items-start md:items-end gap-6 md:min-w-[200px]">
+                <button
+                  onClick={() => router.push('/login?mode=signup')}
+                  className="px-8 py-4 bg-[#b5511b] hover:bg-[#943b0d] text-white rounded-full text-xs font-mono uppercase tracking-widest font-bold transition-all duration-300 shadow-[0_4px_20px_rgba(181,81,27,0.12)] hover:shadow-[0_4px_24px_rgba(148,59,13,0.22)] active:scale-[0.98] w-full md:w-auto text-center"
+                >
+                  Join Yuno
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-[#ebdcd0]/20 bg-[#faf9f6]/40 backdrop-blur-md py-8 text-center text-[10px] text-[#54433a]/60 font-mono tracking-wider uppercase">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <span className="font-bold text-[#54433a] flex items-center gap-1.5">
+            YUNO
+          </span>
+          <span className="normal-case tracking-normal text-xs text-[#54433a]/40">© 2026 Yuno. All rights reserved.</span>
+        </div>
+      </footer>
     </div>
   )
 }

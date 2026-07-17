@@ -108,26 +108,26 @@ export default function SettingsPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       <div className="max-w-4xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-text-primary mb-2">Settings</h1>
-          <p className="text-text-muted">Manage your account preferences and privacy</p>
+          <h1 className="text-3xl text-[#231b15] mb-2 font-display italic font-medium">Settings</h1>
+          <p className="text-[#54433a]/80 text-sm">Manage your account preferences and privacy</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-1 mb-8 bg-card-surface rounded-lg p-1">
+        <div className="flex space-x-1.5 mb-8 bg-white/60 border border-[#e0d7d0] rounded-xl p-1 shadow-sm">
           {tabs.map((tab) => {
             const Icon = tab.icon
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200 ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all duration-200 ${
                   activeTab === tab.id
-                    ? 'bg-primary text-white shadow-sm'
-                    : 'text-text-muted hover:text-text-primary hover:bg-card-surface/50'
+                    ? 'bg-[#b5511b] text-white shadow-sm font-bold'
+                    : 'text-[#54433a] hover:text-[#231b15] hover:bg-[#5d4037]/5'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -138,19 +138,19 @@ export default function SettingsPage() {
         </div>
 
         {/* Settings Content */}
-        <div className="bg-card-surface rounded-lg p-6 shadow-elegant">
+        <div className="yuno-card p-6">
 
           {activeTab === 'privacy' && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">Privacy Settings</h2>
+              <h2 className="text-xl text-[#231b15] mb-4 font-display italic font-medium">Privacy Settings</h2>
               
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-[#5d4037]/10 rounded-xl bg-white/40">
                   <div className="flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-primary" />
+                    <MapPin className="w-5 h-5 text-[#b5511b]" />
                     <div>
-                      <h3 className="font-medium text-text-primary">Show Location</h3>
-                      <p className="text-sm text-text-muted">Allow others to see your approximate location</p>
+                      <h3 className="font-bold text-[#231b15] text-sm">Show Location</h3>
+                      <p className="text-xs text-[#54433a]/75">Allow others to see your approximate location</p>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -160,16 +160,16 @@ export default function SettingsPage() {
                       onChange={(e) => handleSettingChange('showLocation', e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-white/40 border border-[#e0d7d0] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#b5511b]"></div>
                   </label>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-[#5d4037]/10 rounded-xl bg-white/40">
                   <div className="flex items-center gap-3">
-                    <Eye className="w-5 h-5 text-primary" />
+                    <Eye className="w-5 h-5 text-[#b5511b]" />
                     <div>
-                      <h3 className="font-medium text-text-primary">Public Profile</h3>
-                      <p className="text-sm text-text-muted">Make your profile visible to everyone</p>
+                      <h3 className="font-bold text-[#231b15] text-sm">Public Profile</h3>
+                      <p className="text-xs text-[#54433a]/75">Make your profile visible to everyone</p>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -179,16 +179,16 @@ export default function SettingsPage() {
                       onChange={(e) => handleSettingChange('showProfile', e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-white/40 border border-[#e0d7d0] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#b5511b]"></div>
                   </label>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-[#5d4037]/10 rounded-xl bg-white/40">
                   <div className="flex items-center gap-3">
-                    <Shield className="w-5 h-5 text-primary" />
+                    <Shield className="w-5 h-5 text-[#b5511b]" />
                     <div>
-                      <h3 className="font-medium text-text-primary">Allow Sparks</h3>
-                      <p className="text-sm text-text-muted">Let others send you friend requests</p>
+                      <h3 className="font-bold text-[#231b15] text-sm">Allow Sparks</h3>
+                      <p className="text-xs text-[#54433a]/75">Let others send you friend requests</p>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -198,16 +198,16 @@ export default function SettingsPage() {
                       onChange={(e) => handleSettingChange('allowSparks', e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-white/40 border border-[#e0d7d0] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#b5511b]"></div>
                   </label>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-[#5d4037]/10 rounded-xl bg-white/40">
                   <div className="flex items-center gap-3">
-                    <Bell className="w-5 h-5 text-primary" />
+                    <Bell className="w-5 h-5 text-[#b5511b]" />
                     <div>
-                      <h3 className="font-medium text-text-primary">Online Status</h3>
-                      <p className="text-sm text-text-muted">Show when you're online</p>
+                      <h3 className="font-bold text-[#231b15] text-sm">Online Status</h3>
+                      <p className="text-xs text-[#54433a]/75">Show when you're online</p>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -217,7 +217,7 @@ export default function SettingsPage() {
                       onChange={(e) => handleSettingChange('showOnlineStatus', e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-white/40 border border-[#e0d7d0] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#b5511b]"></div>
                   </label>
                 </div>
               </div>
@@ -226,15 +226,15 @@ export default function SettingsPage() {
 
           {activeTab === 'notifications' && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">Notification Settings</h2>
+              <h2 className="text-xl text-[#231b15] mb-4 font-display italic font-medium">Notification Settings</h2>
               
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-[#5d4037]/10 rounded-xl bg-white/40">
                   <div className="flex items-center gap-3">
-                    <Bell className="w-5 h-5 text-primary" />
+                    <Bell className="w-5 h-5 text-[#b5511b]" />
                     <div>
-                      <h3 className="font-medium text-text-primary">Email Notifications</h3>
-                      <p className="text-sm text-text-muted">Receive notifications via email</p>
+                      <h3 className="font-bold text-[#231b15] text-sm">Email Notifications</h3>
+                      <p className="text-xs text-[#54433a]/75">Receive notifications via email</p>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -244,16 +244,16 @@ export default function SettingsPage() {
                       onChange={(e) => handleSettingChange('emailNotifications', e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-white/40 border border-[#e0d7d0] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#b5511b]"></div>
                   </label>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-[#5d4037]/10 rounded-xl bg-white/40">
                   <div className="flex items-center gap-3">
-                    <Bell className="w-5 h-5 text-primary" />
+                    <Bell className="w-5 h-5 text-[#b5511b]" />
                     <div>
-                      <h3 className="font-medium text-text-primary">Push Notifications</h3>
-                      <p className="text-sm text-text-muted">Receive push notifications on your device</p>
+                      <h3 className="font-bold text-[#231b15] text-sm">Push Notifications</h3>
+                      <p className="text-xs text-[#54433a]/75">Receive push notifications on your device</p>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -263,16 +263,16 @@ export default function SettingsPage() {
                       onChange={(e) => handleSettingChange('pushNotifications', e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-white/40 border border-[#e0d7d0] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#b5511b]"></div>
                   </label>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-[#5d4037]/10 rounded-xl bg-white/40">
                   <div className="flex items-center gap-3">
-                    <Bell className="w-5 h-5 text-primary" />
+                    <Bell className="w-5 h-5 text-[#b5511b]" />
                     <div>
-                      <h3 className="font-medium text-text-primary">Spark Notifications</h3>
-                      <p className="text-sm text-text-muted">Get notified when someone sends you a spark</p>
+                      <h3 className="font-bold text-[#231b15] text-sm">Spark Notifications</h3>
+                      <p className="text-xs text-[#54433a]/75">Get notified when someone sends you a spark</p>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -282,16 +282,16 @@ export default function SettingsPage() {
                       onChange={(e) => handleSettingChange('sparkNotifications', e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-white/40 border border-[#e0d7d0] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#b5511b]"></div>
                   </label>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-[#5d4037]/10 rounded-xl bg-white/40">
                   <div className="flex items-center gap-3">
-                    <Bell className="w-5 h-5 text-primary" />
+                    <Bell className="w-5 h-5 text-[#b5511b]" />
                     <div>
-                      <h3 className="font-medium text-text-primary">Chat Notifications</h3>
-                      <p className="text-sm text-text-muted">Get notified for new messages</p>
+                      <h3 className="font-bold text-[#231b15] text-sm">Chat Notifications</h3>
+                      <p className="text-xs text-[#54433a]/75">Get notified for new messages</p>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -301,7 +301,7 @@ export default function SettingsPage() {
                       onChange={(e) => handleSettingChange('chatNotifications', e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-white/40 border border-[#e0d7d0] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#b5511b]"></div>
                   </label>
                 </div>
               </div>
@@ -310,15 +310,15 @@ export default function SettingsPage() {
 
           {activeTab === 'app' && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">App Settings</h2>
+              <h2 className="text-xl text-[#231b15] mb-4 font-display italic font-medium">App Settings</h2>
               
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-[#5d4037]/10 rounded-xl bg-white/40">
                   <div className="flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-primary" />
+                    <MapPin className="w-5 h-5 text-[#b5511b]" />
                     <div>
-                      <h3 className="font-medium text-text-primary">Auto Location</h3>
-                      <p className="text-sm text-text-muted">Automatically update your location</p>
+                      <h3 className="font-bold text-[#231b15] text-sm">Auto Location</h3>
+                      <p className="text-xs text-[#54433a]/75">Automatically update your location</p>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -328,12 +328,12 @@ export default function SettingsPage() {
                       onChange={(e) => handleSettingChange('autoLocation', e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-white/40 border border-[#e0d7d0] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#b5511b]"></div>
                   </label>
                 </div>
 
-                <div className="p-4 border border-border rounded-lg">
-                  <label className="block text-sm font-medium text-text-primary mb-2">
+                <div className="p-4 border border-[#5d4037]/10 rounded-xl bg-white/40">
+                  <label className="block text-xs font-bold text-[#231b15] uppercase tracking-wider mb-2">
                     Discovery Radius ({settings.discoveryRadius}km)
                   </label>
                   <input
@@ -342,28 +342,28 @@ export default function SettingsPage() {
                     max="50"
                     value={settings.discoveryRadius}
                     onChange={(e) => handleSettingChange('discoveryRadius', parseInt(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    className="w-full h-1.5 bg-white/40 border border-[#e0d7d0] rounded-lg appearance-none cursor-pointer accent-[#b5511b]"
                   />
-                  <div className="flex justify-between text-xs text-text-muted mt-1">
+                  <div className="flex justify-between text-[10px] text-[#54433a]/70 font-mono mt-1">
                     <span>1km</span>
                     <span>50km</span>
                   </div>
                 </div>
 
-                <div className="p-4 border border-border rounded-lg">
-                  <label className="block text-sm font-medium text-text-primary mb-2">
+                <div className="p-4 border border-[#5d4037]/10 rounded-xl bg-white/40">
+                  <label className="block text-xs font-bold text-[#231b15] uppercase tracking-wider mb-2">
                     Language
                   </label>
                   <select
                     value={settings.language}
                     onChange={(e) => handleSettingChange('language', e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-md bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 border border-[#e0d7d0] rounded-lg bg-white/60 text-[#231b15] focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 text-sm"
                   >
-                    <option value="English">English</option>
-                    <option value="Spanish">Spanish</option>
-                    <option value="French">French</option>
-                    <option value="German">German</option>
-                    <option value="Hindi">Hindi</option>
+                    <option value="English" className="bg-white text-[#231b15]">English</option>
+                    <option value="Spanish" className="bg-white text-[#231b15]">Spanish</option>
+                    <option value="French" className="bg-white text-[#231b15]">French</option>
+                    <option value="German" className="bg-white text-[#231b15]">German</option>
+                    <option value="Hindi" className="bg-white text-[#231b15]">Hindi</option>
                   </select>
                 </div>
               </div>
@@ -376,40 +376,40 @@ export default function SettingsPage() {
           <button
             onClick={handleSaveSettings}
             disabled={isLoading}
-            className="btn-primary flex items-center gap-2 px-6 py-3"
+            className="flex items-center gap-2 px-6 py-2.5 bg-[#b5511b] hover:bg-[#943b0d] text-white text-xs font-mono uppercase tracking-wider font-bold rounded-lg transition-all shadow-sm"
           >
             <Save className="w-4 h-4" />
-            {isLoading ? 'Saving...' : 'Save Settings'}
+            <span>{isLoading ? 'Saving...' : 'Save Settings'}</span>
           </button>
 
           <button
             onClick={handleLogout}
-            className="btn-secondary flex items-center gap-2 px-6 py-3"
+            className="flex items-center gap-2 px-6 py-2.5 border border-[#e0d7d0] text-[#231b15] hover:bg-[#5d4037]/5 bg-white/45 text-xs font-mono uppercase tracking-wider font-bold rounded-lg transition-all"
           >
             <LogOut className="w-4 h-4" />
-            Logout
+            <span>Logout</span>
           </button>
 
           <button
             onClick={handleDeleteAccount}
-            className="btn-danger flex items-center gap-2 px-6 py-3"
+            className="flex items-center gap-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-mono uppercase tracking-wider font-bold rounded-lg transition-all shadow-sm"
           >
             <Trash2 className="w-4 h-4" />
-            Delete Account
+            <span>Delete Account</span>
           </button>
         </div>
 
         {/* Data Export/Import */}
-        <div className="mt-8 p-4 border border-border rounded-lg bg-card-surface">
-          <h3 className="text-lg font-semibold text-text-primary mb-4">Data Management</h3>
+        <div className="mt-8 p-6 yuno-card">
+          <h3 className="text-lg text-[#231b15] mb-4 font-display italic font-medium">Data Management</h3>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button className="btn-secondary flex items-center gap-2 px-4 py-2">
-              <Download className="w-4 h-4" />
-              Export Data
+            <button className="flex items-center gap-2 px-4 py-2 border border-[#e0d7d0] text-[#231b15] hover:bg-[#5d4037]/5 bg-white/45 text-xs font-mono uppercase tracking-wider font-bold rounded-lg transition-all">
+              <Download className="w-4 h-4 text-[#b5511b]" />
+              <span>Export Data</span>
             </button>
-            <button className="btn-secondary flex items-center gap-2 px-4 py-2">
-              <Upload className="w-4 h-4" />
-              Import Data
+            <button className="flex items-center gap-2 px-4 py-2 border border-[#e0d7d0] text-[#231b15] hover:bg-[#5d4037]/5 bg-white/45 text-xs font-mono uppercase tracking-wider font-bold rounded-lg transition-all">
+              <Upload className="w-4 h-4 text-[#b5511b]" />
+              <span>Import Data</span>
             </button>
           </div>
         </div>

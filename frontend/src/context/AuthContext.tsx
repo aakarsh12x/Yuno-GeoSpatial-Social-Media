@@ -28,7 +28,7 @@ interface User {
 interface AuthContextType {
   user: User | null
   token: string | null
-  login: (email: string, password: string) => Promise<boolean>
+  login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>
   logout: () => void
   updateUser: (updates: Partial<User>) => void
   isAuthenticated: boolean
@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false)
   }, [])
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; message?: string }> => {
     try {
       console.log('Login attempt for:', email)
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
@@ -88,10 +88,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ email, password }),
       })
 
-      const data = await response.json()
+      let data;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        data = { success: false, message: text || `Server error: ${response.status} ${response.statusText}` };
+      }
       console.log('Login response:', data)
 
-      if (data.success && data.data.tokens.accessToken) {
+      if (data.success && data.data?.tokens?.accessToken) {
         const accessToken = data.data.tokens.accessToken
         const userData = data.data.user
 
@@ -106,14 +113,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('user', JSON.stringify(userData))
 
         console.log('Authentication state updated successfully')
-        return true
+        return { success: true }
       } else {
-        console.error('Login failed:', data.message)
-        return false
+        console.error('Login failed:', data.message || 'Unknown error')
+        return { success: false, message: data.message || 'Login failed. Please check your credentials.' }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error)
-      return false
+      return { success: false, message: error.message || 'An error occurred during login.' }
     }
   }
 

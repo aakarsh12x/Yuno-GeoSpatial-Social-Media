@@ -1,266 +1,396 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { useRouter } from 'next/navigation'
-import { ArrowRight, Mail, Lock, Eye, EyeOff, Compass } from 'lucide-react'
-import { VintageSparkle, AstrolabeIcon, CelestialStar } from '@/components/VintageIcons'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { motion } from 'framer-motion'
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  User,
+  Compass,
+  ArrowLeft,
+  ArrowRight
+} from 'lucide-react'
+import GeospatialBackground from '@/components/GeospatialBackground'
+import GlassSurface from '@/components/ui/GlassSurface'
 import Image from 'next/image'
-import Squares from '@/components/ui/Squares'
-import ShinyText from '@/components/ui/ShinyText'
-import Magnet from '@/components/ui/Magnet'
-import Aurora from '@/components/ui/Aurora'
+import Link from 'next/link'
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('user123@example.com')
-  const [password, setPassword] = useState('user')
+function AuthForm() {
+  const searchParams = useSearchParams()
+  const initialMode = searchParams.get('mode') === 'signup'
+
+  const [isSignup, setIsSignup] = useState(initialMode)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const { login, isAuthenticated } = useAuth()
+
+  const { login, isAuthenticated, loading } = useAuth()
   const router = useRouter()
+  const emailInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!loading && isAuthenticated) {
       router.push('/home')
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, loading, router])
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setEmail('')
+    setPassword('')
+    setName('')
+    setError('')
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
 
+    if (isSignup) {
+      if (!name.trim()) { setError('Name is required'); setIsLoading(false); return }
+      if (!email.trim()) { setError('Email is required'); setIsLoading(false); return }
+      if (!password.trim()) { setError('Password is required'); setIsLoading(false); return }
+      if (password.length < 6) { setError('Password must be at least 6 characters'); setIsLoading(false); return }
+    } else {
+      if (!email.trim()) { setError('Email is required'); setIsLoading(false); return }
+      if (!password.trim()) { setError('Password is required'); setIsLoading(false); return }
+    }
+
     try {
-      const success = await login(email, password)
-      if (success) {
-        router.push('/home')
+      if (isSignup) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name.trim(),
+            email: email.trim(),
+            password: password.trim(),
+          }),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          setError(errorData.message || 'Registration failed')
+          return
+        }
+
+        const data = await response.json()
+        if (data.success) {
+          const loginResult = await login(email, password)
+          if (loginResult.success) router.push('/home')
+          else setError(loginResult.message || 'Login failed.')
+        } else {
+          setError(data.message || 'Registration failed.')
+        }
       } else {
-        setError('Login failed. Please check your credentials.')
+        const loginResult = await login(email, password)
+        if (loginResult.success) router.push('/home')
+        else setError(loginResult.message || 'Login failed. Please check your credentials.')
       }
-    } catch (err) {
-      setError('An error occurred during login.')
+    } catch {
+      setError('An error occurred. Please try again.')
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#0F0A07] relative overflow-hidden flex items-center justify-center">
-      
-      {/* Aurora Background */}
-      <Aurora blend={0.6} speed={0.7} />
-
-      {/* Squares animated grid background */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.14]">
-        <Squares speed={0.35} squareSize={36} borderColor="rgba(212, 69, 58, 0.15)" hoverFillColor="rgba(212, 69, 58, 0.05)" />
+    <div className="min-h-[100dvh] relative overflow-hidden font-sans text-[#231b15] flex flex-col justify-between selection:bg-[#fcead2] selection:text-[#54433a]">
+      {/* Fullscreen Background Image with Tint Filter */}
+      <div className="fixed inset-0 w-full h-full z-0 overflow-hidden bg-[#f8f6f0]">
+        <Image
+          src="/images/login_glass_bg.png"
+          alt="Yuno Background Refraction"
+          fill
+          priority
+          className="object-cover opacity-60 filter saturate-[0.9] brightness-[0.85]"
+        />
+        {/* Soft, beautiful warm terracotta and cream gradient overlay tint */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#f8f6f0]/95 via-[#f8f6f0]/60 to-[#b5511b]/20 mix-blend-multiply z-0" />
+        {/* Subtle blur to make form readable */}
+        <div className="absolute inset-0 bg-[#f8f6f0]/30 backdrop-blur-[4px] z-0" />
+        
+        {/* Sub-grid overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.02] z-0"
+          style={{
+            backgroundImage: `
+              radial-gradient(#8b7d75 1px, transparent 1px),
+              linear-gradient(to right, rgba(139, 125, 117, 0.1) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(139, 125, 117, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '32px 32px, 160px 160px, 160px 160px',
+            backgroundPosition: 'center center',
+          }}
+        />
       </div>
 
-      {/* Antique circular frame overlays */}
-      <div className="absolute -left-20 top-1/4 w-48 h-48 border border-white/[0.04] rounded-full pointer-events-none flex items-center justify-center">
-        <div className="w-36 h-36 border border-dashed border-white/[0.02] rounded-full" />
-      </div>
-      <div className="absolute -right-24 bottom-1/4 w-64 h-64 border border-white/[0.04] rounded-full pointer-events-none flex items-center justify-center">
-        <div className="w-48 h-48 border border-dashed border-white/[0.02] rounded-full" />
-      </div>
-
-      {/* Floating Interactive Badge Panels */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block z-0">
-        {/* Active Quest Vibe card */}
-        <div
-          className="absolute top-[20%] right-[10%] bg-[#18110D]/80 border border-white/[0.06] rounded-2xl p-4 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-md"
-          style={{ animation: 'float-card 6s ease-in-out infinite', width: '190px' }}
+      {/* Floating Header Navigation using GlassSurface */}
+      <div className="fixed top-4 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex justify-center pointer-events-auto">
+        <GlassSurface
+          width="100%"
+          height="auto"
+          borderRadius={24}
+          borderWidth={0.06}
+          brightness={99}
+          opacity={0.05}
+          blur={15}
+          backgroundOpacity={0.05}
+          className="border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.7),0_8px_32px_rgba(181,81,27,0.06)]"
         >
-          <div className="flex items-center gap-2 mb-1.5">
-            <div className="w-6 h-6 rounded-lg bg-white/[0.03] flex items-center justify-center border border-white/[0.05]">
-              <Compass className="w-3.5 h-3.5 text-[#D4453A]" />
-            </div>
-            <ShinyText text="Active Quest" className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#A08878]" />
-          </div>
-          <p className="text-[#A08878]/70 text-[9.5px] leading-relaxed font-mono">Golghar Granary Quest is 1.8km nearby!</p>
-        </div>
+          <div className="px-6 h-16 flex items-center justify-between">
+            {/* Back button */}
+            <button
+              onClick={() => router.push('/')}
+              className="flex items-center gap-1.5 text-xs text-[#54433a] hover:text-[#b5511b] font-mono uppercase tracking-wider transition-colors duration-200 group font-bold"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-200" />
+              Back
+            </button>
 
-        {/* User Spark Vibe Card */}
-        <div
-          className="absolute bottom-[20%] left-[8%] bg-[#18110D]/80 border border-white/[0.06] rounded-2xl p-4 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-md"
-          style={{ animation: 'float-card 8s ease-in-out infinite 2s', width: '180px' }}
-        >
-          <div className="flex items-center gap-2 mb-1.5">
-            <div className="w-6 h-6 rounded-lg bg-white/[0.03] flex items-center justify-center border border-white/[0.05]">
-              <VintageSparkle size={14} className="text-[#EEB68A]" />
+            {/* Logo */}
+            <div className="flex items-center">
+              <Link href="/" className="hover:opacity-90 transition-opacity">
+                <Image
+                  src="/logo.png"
+                  alt="Yuno Logo"
+                  width={85}
+                  height={50}
+                  className="object-contain"
+                  priority
+                />
+              </Link>
             </div>
-            <ShinyText text="Spark Alert" className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#A08878]" />
+
+            {/* Balance spacing element */}
+            <div className="w-12" />
           </div>
-          <p className="text-[#A08878]/70 text-[9.5px] leading-relaxed font-mono">You both love Himalayan Trekking.</p>
-        </div>
+        </GlassSurface>
       </div>
 
-      {/* Main card panel */}
-      <div
-        className={`w-full max-w-[440px] px-6 py-12 relative z-10 transition-all duration-700 ${
-          mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}
-      >
-        {/* Logo and Seal header */}
-        <div className="text-center mb-6">
-          <div className="relative w-24 h-24 mx-auto mb-2 select-none hover:rotate-3 transition-transform duration-300">
-            <Image
-              src="/logo.png"
-              alt="Yuno Logo"
-              fill
-              className="object-contain filter brightness-125"
-              sizes="96px"
-              priority
-            />
-          </div>
-          <p className="text-[#A08878]/60 text-xs font-mono uppercase tracking-widest italic">
-            &ldquo;Shared paths draw us closer&rdquo;
-          </p>
-        </div>
-
-        {/* Paper Form Card */}
-        <div className="bg-[#18110D]/80 border border-white/[0.06] rounded-3xl p-8 shadow-[0_30px_100px_rgba(0,0,0,0.7),inset 0 1px 1px rgba(255,255,255,0.05)] backdrop-blur-2xl relative overflow-hidden">
-          {/* Top border compass coordinate line */}
-          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#D4453A]/40 to-transparent" />
-
-          {/* Card corner accent sparkles */}
-          <div className="absolute top-4 right-4 text-[#D4453A]/25 pointer-events-none">
-            <CelestialStar size={16} />
-          </div>
-
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-2 h-2 rounded-full bg-[#D4453A] animate-pulse" />
-              <ShinyText text="Agentic Logbook Verification" className="text-[9px] font-mono uppercase tracking-widest font-bold text-[#A08878]" />
-            </div>
-            <h2 className="text-white text-3xl font-serif font-bold tracking-tight">
-              Sign In
-            </h2>
-            <p className="text-[#A08878]/70 text-xs mt-1.5 leading-relaxed font-light">
-              Verify your coordinates to initialize the AI weather vibe agent, landmark quest engine, and matching graph.
-            </p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            {/* Email input field */}
-            <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-[10px] font-mono uppercase tracking-widest text-[#A08878] font-semibold pl-1">
-                Email Coordinates
-              </label>
-              <div className="relative group">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A08878]/40 group-focus-within:text-[#D4453A]/80 transition-colors duration-300" />
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-[#0F0A07]/60 border border-white/[0.05] rounded-xl text-white text-sm placeholder:text-[#A08878]/40 focus:outline-none focus:border-[#D4453A]/60 focus:bg-[#0F0A07]/90 focus:shadow-[0_0_15px_rgba(212,69,58,0.1)] transition-all duration-300 font-mono"
-                  placeholder="you@example.com"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Password input field */}
-            <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-[10px] font-mono uppercase tracking-widest text-[#A08878] font-semibold pl-1">
-                Verification Key
-              </label>
-              <div className="relative group">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A08878]/40 group-focus-within:text-[#D4453A]/80 transition-colors duration-300" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-3 bg-[#0F0A07]/60 border border-white/[0.05] rounded-xl text-white text-sm placeholder:text-[#A08878]/40 focus:outline-none focus:border-[#D4453A]/60 focus:bg-[#0F0A07]/90 focus:shadow-[0_0_15px_rgba(212,69,58,0.1)] transition-all duration-300 font-mono"
-                  placeholder="Enter your key"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#A08878]/40 hover:text-white transition-colors duration-200"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Error messaging */}
-            <div className="min-h-[24px] flex items-center">
-              {error && (
-                <div className="w-full flex items-start gap-2 px-3 py-1.5 rounded-lg bg-red-950/40 border border-red-900/40 animate-[field-appear_0.25s_ease-out]">
-                  <div className="w-1 h-1 rounded-full bg-[#D4453A] shrink-0 mt-[6px] animate-ping"></div>
-                  <p className="text-[#FF8A80] text-[11px] leading-[1.3] font-mono">{error}</p>
-                </div>
+      {/* Main Content */}
+      <main className="relative z-10 flex-1 flex items-center justify-center px-6 pt-28 pb-12">
+        <div className="w-full max-w-[1000px] grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          {/* Left Column: Glass Visual & Description */}
+          <div className="lg:col-span-6 space-y-6 lg:pr-6 hidden lg:block text-[#231b15]">
+            <motion.h1 
+              className="text-[#1a0f0a] text-4xl lg:text-5xl font-display italic font-medium tracking-tight leading-[1.1]"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              {isSignup ? (
+                <>
+                  Step onto the grid. <br />
+                  Initialize your node.
+                </>
+              ) : (
+                <>
+                  Resolve location. <br />
+                  Access the index.
+                </>
               )}
-            </div>
+            </motion.h1>
 
-            {/* Submit Button */}
-            <div className="w-full pt-1">
-              <Magnet className="w-full" strength={8}>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full relative group/btn text-white py-3.5 text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(135deg, #D4453A 0%, #B52820 100%)',
-                    boxShadow: '0 4px 20px -2px rgba(212,69,58,0.4)',
-                  }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
-                  {isLoading ? (
-                    <div className="flex items-center justify-center gap-2 relative z-10">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span>Verifying...</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center gap-2 relative z-10">
-                      <span>Acknowledge Logbook</span>
-                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                    </div>
-                  )}
-                </button>
-              </Magnet>
-            </div>
-          </form>
-
-          {/* Demo Credentials Panel */}
-          <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-center gap-2">
-            <span className="text-[10px] font-mono text-[#A08878]/60">DEMO:</span>
-            <code className="text-[9.5px] font-mono text-[#EEB68A] bg-white/[0.03] px-2 py-0.5 rounded border border-white/[0.05]">user123@example.com / user</code>
+            <motion.p 
+              className="text-[#54433a] text-sm leading-relaxed max-w-sm"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              {isSignup
+                ? 'Join Yuno to catalog live local coordinates, connect with other user nodes, and sync field notes instantly.'
+                : 'Sign in to access your dashboard coordinates. The geospatial city pulse updates in real time.'}
+            </motion.p>
           </div>
+
+          {/* Right Column: Floating Frosted Glass Login Card */}
+          <motion.div 
+            className="lg:col-span-6 flex justify-center lg:justify-end"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="w-full max-w-[420px] yuno-card p-8 text-[#231b15] relative overflow-hidden group">
+              
+              {/* Header */}
+              <div className="mb-8 border-b border-[#ebdcd0]/30 pb-4">
+                <div className="flex items-center justify-between text-[9px] font-mono text-[#54433a]/60">
+                  <span>WELCOME TO YUNO</span>
+                  <span>PORTAL</span>
+                </div>
+                <h2 className="text-[#1a0f0a] text-xl font-display italic font-medium tracking-tight mt-3">
+                  {isSignup ? 'Create Account' : 'Sign In'}
+                </h2>
+              </div>
+
+              {/* Input Form */}
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+                
+                {/* Full Name (Sign up only) */}
+                {isSignup && (
+                  <div className="space-y-1.5">
+                    <label
+                      htmlFor="name"
+                      className="block text-[10px] font-mono uppercase tracking-wider text-[#54433a] font-bold"
+                    >
+                      Full Name
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#54433a]/40" />
+                      <input
+                        type="text"
+                        id="name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-white/80 border border-[#e0d7d0] hover:border-[#5d4037] focus:border-[#5d4037] rounded-xl text-[#231b15] text-xs placeholder:text-[#54433a]/40 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/15 transition-all duration-200 shadow-sm"
+                        placeholder="Your Name"
+                        autoComplete="name"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Email */}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="email"
+                    className="block text-[10px] font-mono uppercase tracking-wider text-[#54433a] font-bold"
+                  >
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#54433a]/40" />
+                    <input
+                      ref={emailInputRef}
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2.5 bg-white/80 border border-[#e0d7d0] hover:border-[#5d4037] focus:border-[#5d4037] rounded-xl text-[#231b15] text-xs placeholder:text-[#54433a]/40 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/15 transition-all duration-200 shadow-sm"
+                      placeholder="you@domain.com"
+                      autoComplete="email"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Password */}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="password"
+                    className="block text-[10px] font-mono uppercase tracking-wider text-[#54433a] font-bold"
+                  >
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#54433a]/40" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      id="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full pl-10 pr-10 py-2.5 bg-white/80 border border-[#e0d7d0] hover:border-[#5d4037] focus:border-[#5d4037] rounded-xl text-[#231b15] text-xs placeholder:text-[#54433a]/40 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/15 transition-all duration-200 shadow-sm"
+                      placeholder="••••••••"
+                      autoComplete={isSignup ? 'new-password' : 'current-password'}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#54433a]/40 hover:text-[#231b15] transition-colors duration-200"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Error Banner */}
+                {error && (
+                  <div className="p-3 rounded-xl bg-red-50/80 border border-red-200/50 backdrop-blur-sm">
+                    <p className="text-red-800 text-[10px] leading-[1.4] font-mono">{error}</p>
+                  </div>
+                )}
+
+                {/* Submit button */}
+                <div className="pt-4">
+                  <button
+                    id="auth-submit-btn"
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-3 bg-[#b5511b] hover:bg-[#943b0d] text-white text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.99] flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(181,81,27,0.12)] hover:shadow-[0_4px_16px_rgba(148,59,13,0.15)]"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Please wait...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{isSignup ? 'Create Account' : 'Sign In'}</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+
+              {/* Option Switcher Divider */}
+              <div className="flex items-center gap-3 my-6">
+                <div className="flex-1 h-px bg-[#ebdcd0]/30" />
+                <span className="text-[#54433a]/40 font-mono text-[9px] uppercase tracking-widest">or</span>
+                <div className="flex-1 h-px bg-[#ebdcd0]/30" />
+              </div>
+
+              {/* Form toggle link */}
+              <div className="text-center space-y-1">
+                <p className="text-[#54433a]/70 text-xs font-light">
+                  {isSignup ? 'Already have an account?' : "Don't have an account?"}
+                </p>
+                <button
+                  id="auth-toggle-btn"
+                  type="button"
+                  onClick={() => {
+                    setIsSignup(!isSignup)
+                    resetForm()
+                  }}
+                  className="text-[#b5511b] font-mono font-bold text-xs uppercase tracking-widest hover:text-[#54433a] transition-colors duration-200 inline-flex items-center gap-1 group"
+                >
+                  {isSignup ? 'Sign In' : 'Create Account'}
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-200" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
         </div>
+      </main>
 
-        {/* Copyright notice */}
-        <p className="text-center text-[#A08878]/30 font-mono text-[9px] uppercase tracking-widest mt-8">
-          © 2026 Yuno · Map the paths, find the sparks
-        </p>
-      </div>
-
-      <style jsx>{`
-        @keyframes float-card {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-10px) rotate(1.5deg); }
-        }
-        @keyframes field-appear {
-          from {
-            opacity: 0;
-            transform: translateY(8px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </div>
+  )
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#faf9f6] flex items-center justify-center">
+        <Compass className="w-10 h-10 text-[#54433a] animate-spin [animation-duration:6s]" />
+      </div>
+    }>
+      <AuthForm />
+    </Suspense>
   )
 }

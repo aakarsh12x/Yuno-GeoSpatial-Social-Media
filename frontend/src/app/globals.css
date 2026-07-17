@@ -7,6 +7,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -17,6 +18,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -43,6 +45,7 @@
   0% {
     background-position: 200% center;
   }
+
   100% {
     background-position: -200% center;
   }
@@ -54,9 +57,41 @@
 
 /* City Pulse: pulsing ring for AI event pin markers on the map */
 @keyframes cityPulsePing {
-  0%   { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.6); }
-  70%  { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.6);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(249, 115, 22, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
+  }
+}
+
+@keyframes yunoSignalPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(242, 193, 78, 0.58), 0 14px 30px rgba(12, 31, 28, 0.24);
+  }
+
+  70% {
+    box-shadow: 0 0 0 14px rgba(242, 193, 78, 0), 0 14px 30px rgba(12, 31, 28, 0.24);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(242, 193, 78, 0), 0 14px 30px rgba(12, 31, 28, 0.24);
+  }
+}
+
+@keyframes yunoSweep {
+  from {
+    transform: translateX(-100%) rotate(12deg);
+  }
+
+  to {
+    transform: translateX(100%) rotate(12deg);
+  }
 }
 
 /* Leaflet CSS */
@@ -91,9 +126,11 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
   }
+
   html {
     @apply scroll-smooth;
   }
+
   body {
     @apply bg-background text-text-primary font-sans;
   }
@@ -105,19 +142,19 @@
   .btn-primary {
     @apply bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors font-medium inline-flex items-center justify-center;
   }
-  
+
   .btn-secondary {
     @apply bg-accent hover:bg-accent/90 text-text-primary px-4 py-2 rounded-lg transition-colors font-medium;
   }
-  
+
   .btn-danger {
     @apply bg-destructive hover:bg-destructive/90 text-white px-4 py-2 rounded-lg transition-colors font-medium inline-flex items-center justify-center;
   }
-  
+
   .card-surface {
     @apply bg-white border border-border-light rounded-xl shadow-soft;
   }
-  
+
   .text-premium {
     @apply text-text-primary font-bold;
   }
@@ -125,33 +162,251 @@
   .font-serif {
     font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   }
-  
+
   /* Ensure navbar stays above Leaflet map elements */
   nav {
     z-index: 9999 !important;
   }
-  
+
   /* Limit Leaflet map z-index */
   .leaflet-container {
     z-index: 1 !important;
   }
-  
+
   .leaflet-control {
     z-index: 2 !important;
   }
-  
+
   .leaflet-popup {
     z-index: 3 !important;
   }
-  
+
+  .yuno-signal-map {
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, rgba(8, 30, 42, 0.92), rgba(13, 42, 37, 0.86)),
+      #10251f;
+  }
+
+  .yuno-signal-map::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(238, 245, 237, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(238, 245, 237, 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mix-blend-mode: screen;
+  }
+
+  .yuno-signal-map::after {
+    content: "";
+    position: absolute;
+    inset: -35% auto -35% 48%;
+    z-index: 2;
+    width: 72px;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(242, 193, 78, 0.16), transparent);
+    animation: yunoSweep 9s linear infinite;
+  }
+
+  .yuno-map-tiles {
+    filter: grayscale(0.86) saturate(0.42) hue-rotate(145deg) contrast(1.1) brightness(0.82);
+  }
+
+  .yuno-map-shell .leaflet-control-zoom a,
+  .yuno-map-shell .leaflet-control-attribution,
+  .yuno-map-shell .leaflet-control-layers {
+    background: rgba(235, 242, 232, 0.92) !important;
+    color: #0c1f1c !important;
+    border-color: rgba(12, 31, 28, 0.18) !important;
+    box-shadow: none !important;
+  }
+
+  .yuno-map-shell .leaflet-control-attribution {
+    font-size: 10px;
+  }
+
+  .yuno-map-shell .leaflet-popup-content-wrapper {
+    background: #edf4e9;
+    color: #0c1f1c;
+    border: 1px solid rgba(12, 31, 28, 0.18);
+    border-radius: 8px;
+    box-shadow: 0 16px 36px rgba(6, 20, 18, 0.22);
+  }
+
+  .yuno-map-shell .leaflet-popup-tip {
+    background: #edf4e9;
+  }
+
+  .yuno-map-shell .leaflet-popup-content p[style*="#795548"],
+  .yuno-map-shell .leaflet-popup-content a[style*="#D4453A"],
+  .yuno-map-shell .leaflet-popup-content span[style*="#9ca3af"],
+  .yuno-map-shell .leaflet-popup-content a[style*="#f97316"] {
+    display: none !important;
+  }
+
+  .yuno-person-marker,
+  .yuno-event-marker,
+  .yuno-place-marker {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .yuno-person-marker {
+    width: 46px;
+    height: 46px;
+  }
+
+  .yuno-person-core {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #edf4e9;
+    background: #163b45;
+    color: #edf4e9;
+    font-size: 14px;
+    font-weight: 800;
+    border-radius: 8px;
+    transform: rotate(45deg);
+    box-shadow: 0 12px 24px rgba(6, 20, 18, 0.24);
+  }
+
+  .yuno-person-core span {
+    transform: rotate(-45deg);
+  }
+
+  .yuno-person-marker--self .yuno-person-core {
+    background: #f2c14e;
+    color: #0c1f1c;
+  }
+
+  .yuno-person-label,
+  .yuno-event-label,
+  .yuno-place-label {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 4px);
+    transform: translateX(-50%);
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 1px solid rgba(237, 244, 233, 0.36);
+    background: rgba(12, 31, 28, 0.9);
+    color: #edf4e9;
+    border-radius: 4px;
+    padding: 3px 7px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1;
+  }
+
+  .yuno-event-marker {
+    width: 54px;
+    height: 54px;
+  }
+
+  .yuno-event-core {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border: 2px solid #0c1f1c;
+    background: #f2c14e;
+    color: #0c1f1c;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+    animation: yunoSignalPulse 1.9s ease-out infinite;
+  }
+
+  .yuno-event-core::after {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border: 2px solid currentColor;
+    border-radius: 999px;
+  }
+
+  .yuno-event-label {
+    color: #f2c14e;
+  }
+
+  .yuno-place-marker {
+    width: 76px;
+    height: 62px;
+  }
+
+  .yuno-place-core {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 2px solid #edf4e9;
+    background: #5f4b8b;
+    color: white;
+    border-radius: 10px 10px 10px 2px;
+    transform: rotate(-45deg);
+    box-shadow: 0 10px 24px rgba(6, 20, 18, 0.24);
+  }
+
+  .yuno-place-code {
+    transform: rotate(45deg);
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+  .yuno-place-marker--food .yuno-place-core {
+    background: #9a5a32;
+  }
+
+  .yuno-place-marker--worship .yuno-place-core {
+    background: #7b6651;
+  }
+
+  .yuno-place-marker--retail .yuno-place-core {
+    background: #8f3f5d;
+  }
+
+  .yuno-place-marker--green .yuno-place-core {
+    background: #3f6f59;
+  }
+
+  .yuno-place-marker--culture .yuno-place-core {
+    background: #5f4b8b;
+  }
+
+  .yuno-place-marker--learn .yuno-place-core {
+    background: #1f6b7a;
+  }
+
+  .yuno-place-marker--care .yuno-place-core {
+    background: #9b3d3d;
+  }
+
+  .yuno-place-marker--other .yuno-place-core {
+    background: #55615d;
+  }
+
   /* Generic animations only - no gradients */
-  
+
   /* Slider styles */
   .slider {
     -webkit-appearance: none;
     appearance: none;
   }
-  
+
   .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -163,7 +418,7 @@
     border: 2px solid white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
-  
+
   .slider::-moz-range-thumb {
     width: 20px;
     height: 20px;
@@ -173,17 +428,61 @@
     border: 2px solid white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
-  
+
   /* Toggle switch styles */
-  .peer:checked ~ div {
+  .peer:checked~div {
     background-color: hsl(var(--primary));
   }
-  
-  .peer:checked ~ div::after {
+
+  .peer:checked~div::after {
     transform: translateX(100%);
   }
 }
 
+.bg-warm-gradient {
+  background: radial-gradient(at 0% 0%, #fdf9f4 0px, transparent 60%),
+              radial-gradient(at 100% 0%, #faecd8 0px, transparent 60%),
+              radial-gradient(at 100% 100%, #f4dcd0 0px, transparent 60%),
+              radial-gradient(at 0% 100%, #edf1f7 0px, transparent 50%),
+              #fbf7f0;
+}
 
+.yuno-card {
+  background-color: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(93, 64, 55, 0.12);
+  border-radius: 16px;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 8px 30px rgba(93, 64, 55, 0.05),
+    0 1px 3px rgba(93, 64, 55, 0.03);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
+.yuno-card:hover {
+  border-color: rgba(93, 64, 55, 0.22);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 16px 40px rgba(93, 64, 55, 0.09),
+    0 2px 6px rgba(93, 64, 55, 0.04);
+  transform: translateY(-2px);
+}
 
+.yuno-sidebar {
+  background-color: rgba(251, 247, 240, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(93, 64, 55, 0.12);
+  box-shadow: 0 4px 20px rgba(93, 64, 55, 0.03);
+}
+
+.yuno-navbar-dropdown {
+  background-color: rgba(255, 253, 249, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(93, 64, 55, 0.14);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 12px 40px rgba(93, 64, 55, 0.1);
+}

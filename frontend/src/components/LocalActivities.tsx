@@ -6,9 +6,8 @@ import { useAuth } from '@/context/AuthContext'
 import { 
   Utensils, Calendar, Palette, Trees, Moon, Users, 
   Cpu, Trophy, ShoppingBag, Newspaper, ExternalLink,
-  RefreshCw, TrendingUp, Flame
+  RefreshCw, TrendingUp, Flame, Sparkles
 } from 'lucide-react'
-import { CelestialStar } from './VintageIcons'
 
 interface Activity {
   title: string
@@ -23,16 +22,16 @@ interface Activity {
 }
 
 const categoryConfig: Record<string, { icon: any; color: string; bg: string }> = {
-  food: { icon: Utensils, color: 'text-orange-700', bg: 'bg-orange-50' },
-  event: { icon: Calendar, color: 'text-blue-700', bg: 'bg-blue-50' },
-  culture: { icon: Palette, color: 'text-purple-700', bg: 'bg-purple-50' },
-  outdoors: { icon: Trees, color: 'text-green-700', bg: 'bg-green-50' },
-  nightlife: { icon: Moon, color: 'text-indigo-700', bg: 'bg-indigo-50' },
-  community: { icon: Users, color: 'text-teal-700', bg: 'bg-teal-50' },
-  tech: { icon: Cpu, color: 'text-sky-700', bg: 'bg-sky-50' },
-  sports: { icon: Trophy, color: 'text-amber-700', bg: 'bg-amber-50' },
-  shopping: { icon: ShoppingBag, color: 'text-pink-700', bg: 'bg-pink-50' },
-  news: { icon: Newspaper, color: 'text-slate-700', bg: 'bg-slate-50' },
+  food: { icon: Utensils, color: 'text-[#b5511b]', bg: 'bg-[#f5f2ee] border border-[#e0d7d0]' },
+  event: { icon: Calendar, color: 'text-[#506680]', bg: 'bg-[#f5f2ee] border border-[#e0d7d0]' },
+  culture: { icon: Palette, color: 'text-[#8b5a2b]', bg: 'bg-[#f5f2ee] border border-[#e0d7d0]' },
+  outdoors: { icon: Trees, color: 'text-[#4e6b52]', bg: 'bg-[#f5f2ee] border border-[#e0d7d0]' },
+  nightlife: { icon: Moon, color: 'text-[#483d8b]', bg: 'bg-[#f5f2ee] border border-[#e0d7d0]' },
+  community: { icon: Users, color: 'text-[#a0522d]', bg: 'bg-[#f5f2ee] border border-[#e0d7d0]' },
+  tech: { icon: Cpu, color: 'text-[#5f9ea0]', bg: 'bg-[#f5f2ee] border border-[#e0d7d0]' },
+  sports: { icon: Trophy, color: 'text-[#b8860b]', bg: 'bg-[#f5f2ee] border border-[#e0d7d0]' },
+  shopping: { icon: ShoppingBag, color: 'text-[#bc8f8f]', bg: 'bg-[#f5f2ee] border border-[#e0d7d0]' },
+  news: { icon: Newspaper, color: 'text-[#5d4037]', bg: 'bg-[#f5f2ee] border border-[#e0d7d0]' },
 }
 
 const vibeLabels: Record<string, string> = {
@@ -44,18 +43,58 @@ const vibeLabels: Record<string, string> = {
   cozy: '☕ Cozy',
 }
 
+const ACTIVITIES_CACHE_KEY = 'yuno_cached_activities'
+const ACTIVITIES_CACHE_TTL = 30 * 60 * 1000 // 30 minutes
+
+function readCache(): { activities: Activity[]; city: string } | null {
+  try {
+    const raw = localStorage.getItem(ACTIVITIES_CACHE_KEY)
+    if (!raw) return null
+    const { activities, city, ts } = JSON.parse(raw)
+    if (Date.now() - ts > ACTIVITIES_CACHE_TTL) return null // stale
+    return { activities, city }
+  } catch {
+    return null
+  }
+}
+
+function writeCache(activities: Activity[], city: string) {
+  try {
+    localStorage.setItem(
+      ACTIVITIES_CACHE_KEY,
+      JSON.stringify({ activities, city, ts: Date.now() })
+    )
+  } catch {}
+}
+
 export default function LocalActivities() {
   const { user, updateUser } = useAuth()
-  const [activities, setActivities] = useState<Activity[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [city, setCity] = useState('')
 
-  const fetchActivities = async () => {
+  // Seed state from cache immediately — no flicker / spinner on revisit
+  const cached = typeof window !== 'undefined' ? readCache() : null
+  const [activities, setActivities] = useState<Activity[]>(cached?.activities ?? [])
+  const [loading, setLoading] = useState(!cached) // skip loading if cache hit
+  const [error, setError] = useState('')
+  const [city, setCity] = useState(cached?.city ?? '')
+
+  const fetchActivities = async (force = false) => {
+    // If not forced (manual refresh), check cache first
+    if (!force) {
+      const hit = readCache()
+      if (hit) {
+        setActivities(hit.activities)
+        setCity(hit.city)
+        setLoading(false)
+        return
+      }
+    }
+
     setLoading(true)
     setError('')
     try {
-      let resolvedCity = '';
+      let resolvedCity = ''
+      let resolvedLat: number | undefined
+      let resolvedLng: number | undefined
 
       // 1. Try to get geolocation
       if ('geolocation' in navigator) {
@@ -67,7 +106,10 @@ export default function LocalActivities() {
               { timeout: 6000, enableHighAccuracy: false }
             );
           });
-          
+
+          resolvedLat = coords.latitude
+          resolvedLng = coords.longitude
+
           // 2. Reverse geocode via Nominatim
           const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.latitude}&lon=${coords.longitude}&zoom=10`;
           const geoRes = await fetch(geoUrl, { headers: { 'User-Agent': 'YunoApp/1.0' } });
@@ -77,7 +119,6 @@ export default function LocalActivities() {
             resolvedCity = parsedCity;
             localStorage.setItem('yuno_cached_city', parsedCity);
             updateUser({ city: parsedCity });
-            // Dynamic update user profile in background
             UserAPI.updateProfile({ city: parsedCity }).catch(() => {});
           }
         } catch (e) {
@@ -92,10 +133,13 @@ export default function LocalActivities() {
 
       setCity(resolvedCity);
 
-      const { data } = await ActivitiesAPI.getLocal(resolvedCity)
+      const { data } = await ActivitiesAPI.getLocal(resolvedCity, resolvedLat, resolvedLng)
       if (data.success) {
-        setActivities(data.data.activities || [])
-        setCity(data.data.city || resolvedCity)
+        const fetched = data.data.activities || []
+        const finalCity = data.data.city || resolvedCity
+        setActivities(fetched)
+        setCity(finalCity)
+        writeCache(fetched, finalCity) // persist for next visit
       }
     } catch (err: any) {
       console.error('Error loading activities:', err)
@@ -106,28 +150,29 @@ export default function LocalActivities() {
   }
 
   useEffect(() => {
-    if (user) fetchActivities()
+    if (user) fetchActivities() // uses cache if fresh
   }, [user])
+
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 font-sans">
         <div className="flex items-center gap-3">
-          <CelestialStar className="w-5 h-5 text-[#D4453A]" />
-          <h2 className="text-xl font-bold text-text-primary">What's Happening Nearby</h2>
+          <Sparkles className="w-5 h-5 text-[#b5511b]" />
+          <h2 className="text-xl text-[#231b15] font-display italic font-medium">What's Happening Nearby</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="card-surface p-5 animate-pulse">
+            <div key={i} className="yuno-card p-5 animate-pulse">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-hover-light" />
+                <div className="w-8 h-8 rounded-lg bg-white/30" />
                 <div className="flex-1">
-                  <div className="h-3 bg-hover-light rounded w-3/4 mb-2" />
-                  <div className="h-2 bg-hover-light rounded w-1/2" />
+                  <div className="h-3 bg-white/20 rounded w-3/4 mb-2" />
+                  <div className="h-2 bg-white/20 rounded w-1/2" />
                 </div>
               </div>
-              <div className="h-2 bg-hover-light rounded w-full mb-1.5" />
-              <div className="h-2 bg-hover-light rounded w-2/3" />
+              <div className="h-2 bg-white/20 rounded w-full mb-1.5" />
+              <div className="h-2 bg-white/20 rounded w-2/3" />
             </div>
           ))}
         </div>
@@ -137,9 +182,9 @@ export default function LocalActivities() {
 
   if (error) {
     return (
-      <div className="card-surface p-6 text-center">
-        <p className="text-text-muted text-sm mb-3">{error}</p>
-        <button onClick={fetchActivities} className="text-primary text-sm font-semibold hover:underline">
+      <div className="yuno-card p-6 text-center">
+        <p className="text-[#54433a]/80 text-sm mb-3">{error}</p>
+        <button onClick={() => fetchActivities(true)} className="text-[#b5511b] text-sm font-semibold hover:underline">
           Try again
         </button>
       </div>
@@ -152,27 +197,27 @@ export default function LocalActivities() {
     <div className="space-y-4">
       {/* Section Header */}
       <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-[#EDE7E0] border border-[#D4C3B3]/45 rounded-lg flex items-center justify-center">
-            <CelestialStar className="w-5 h-5 text-[#D4453A]" />
+        <div className="flex items-center gap-3 font-sans">
+          <div className="p-2 bg-white/80 border border-[#e0d7d0] rounded-lg flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-[#b5511b]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold text-text-primary tracking-tight">What's Happening Nearby</h2>
-              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[9px] font-bold uppercase tracking-wider">
+              <h2 className="text-2xl text-[#231b15] tracking-tight font-display italic font-medium">What's Happening Nearby</h2>
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#b5511b]/10 border border-[#b5511b]/20 text-[#b5511b] text-[9px] font-bold uppercase tracking-wider">
                 <Flame className="w-3 h-3" />
                 Live Feed
               </span>
             </div>
-            <p className="text-sm text-text-muted mt-0.5 font-medium">
+            <p className="text-sm text-[#54433a]/80 mt-0.5 font-medium">
               Daily curated briefing for {city} · Discover local culture and conversations
             </p>
           </div>
         </div>
         <button 
-          onClick={fetchActivities}
-          className="p-2.5 text-text-muted hover:text-primary hover:bg-hover-light rounded-xl transition-all border border-border-light hover:border-primary/20 bg-white shadow-sm"
-          title="Refresh activities"
+          onClick={() => fetchActivities(true)}
+          className="p-2.5 text-[#54433a] hover:text-[#5d4037] hover:bg-[#5d4037]/5 rounded-xl transition-all border border-[#e0d7d0] bg-white/80 shadow-sm"
+          title="Refresh activities (force fetch)"
         >
           <RefreshCw className="w-4 h-4" />
         </button>
@@ -187,47 +232,51 @@ export default function LocalActivities() {
           return (
             <div
               key={idx}
-              className={`bg-white border border-border-light rounded-xl p-5 hover:border-border-medium hover:shadow-soft transition-all duration-300 group flex flex-col justify-between ${
-                isFeatured ? 'md:col-span-2 shadow-soft border-border-medium/80 min-h-[180px]' : 'min-h-[160px]'
+              className={`yuno-card p-5 group flex flex-col justify-between ${
+                isFeatured ? 'md:col-span-2 shadow-md min-h-[180px]' : 'min-h-[160px]'
               }`}
             >
               <div>
                 {/* Top Row: Category + Vibe */}
                 <div className="flex items-center justify-between mb-3">
-                  <div className={`flex items-center gap-2 px-2.5 py-1 rounded-md ${config.bg}`}>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#f5f2ee] border border-[#e0d7d0]">
                     <Icon className={`w-3.5 h-3.5 ${config.color}`} />
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${config.color}`}>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#3e2723] font-bold">
                       {activity.category}
                     </span>
                   </div>
-                  <span className="text-[11px] text-text-muted">
+                  <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#5d4037]/5 border border-[#5d4037]/10 text-[#5d4037] text-[10px] font-medium font-sans">
                     {vibeLabels[activity.vibe] || activity.vibe}
-                  </span>
+                  </div>
                 </div>
 
                 {/* Title */}
-                <h3 className={`font-bold text-text-primary leading-snug mb-2 line-clamp-2 ${
+                <h3 className={`font-bold text-[#231b15] leading-snug mb-2 line-clamp-2 ${
                   isFeatured ? 'text-base md:text-lg' : 'text-sm'
                 }`}>
                   {activity.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-xs text-text-muted leading-relaxed mb-4 line-clamp-2">
+                <p className="text-xs text-[#54433a]/80 leading-relaxed mb-4 line-clamp-2">
                   {activity.description}
                 </p>
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-between pt-2 border-t border-border-light mt-auto">
+              <div className="flex items-center justify-between pt-2 border-t border-white/10 mt-auto">
                 <div className="flex items-center gap-3">
-                  {activity.subreddit && (
-                    <span className="text-[10px] text-text-muted font-medium">
+                  {activity.subreddit ? (
+                    <span className="text-[10px] text-[#54433a]/60 font-medium">
                       r/{activity.subreddit}
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 text-[10px] text-green-600 font-semibold bg-green-500/10 border border-green-500/20 px-1.5 py-0.5 rounded">
+                      📍 Nearby
                     </span>
                   )}
                   {activity.score > 0 && (
-                    <span className="flex items-center gap-1 text-[10px] text-text-muted">
+                    <span className="flex items-center gap-1 text-[10px] text-[#54433a]/60">
                       <TrendingUp className="w-3 h-3" />
                       {activity.score > 999 ? `${(activity.score / 1000).toFixed(1)}k` : activity.score} trending
                     </span>
@@ -238,9 +287,13 @@ export default function LocalActivities() {
                     href={activity.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-text-muted hover:text-primary transition-colors inline-flex items-center gap-1 text-xs"
+                    className="text-[#54433a] hover:text-[#b5511b] transition-colors inline-flex items-center gap-1 text-xs"
                   >
-                    {isFeatured && <span className="font-medium">View thread</span>}
+                    {isFeatured && (
+                      <span className="font-medium">
+                        {activity.subreddit ? 'View thread' : 'Visit site'}
+                      </span>
+                    )}
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 )}

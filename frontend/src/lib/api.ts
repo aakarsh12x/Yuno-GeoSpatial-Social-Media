@@ -56,7 +56,13 @@ export const DiscoverAPI = {
 };
 
 export const ActivitiesAPI = {
-  getLocal: (city?: string) => api.get('/activities', { params: city ? { city } : {} }),
+  getLocal: (city?: string, lat?: number, lng?: number) =>
+    api.get('/activities', {
+      params: {
+        ...(city ? { city } : {}),
+        ...(lat != null && lng != null ? { lat, lng } : {}),
+      },
+    }),
 };
 
 export const EventsAPI = {

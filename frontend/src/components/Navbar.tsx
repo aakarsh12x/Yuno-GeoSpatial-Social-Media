@@ -11,6 +11,7 @@ import {
   VintageMenu, VintageBell, VintageUser, 
   VintageSettings, VintageLogout 
 } from './VintageIcons'
+import GlassSurface from '@/components/ui/GlassSurface'
 
 export default function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
@@ -40,9 +41,19 @@ export default function Navbar() {
   ]
 
   return (
-    <nav className="bg-[#FDFAF6]/90 backdrop-blur-md border-b border-[#EDE7E0] sticky top-0 z-[9999]">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14">
+    <div className="fixed top-4 left-0 right-0 z-[9999] px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex justify-center pointer-events-auto">
+      <GlassSurface
+        width="100%"
+        height="auto"
+        borderRadius={24}
+        borderWidth={0.06}
+        brightness={99}
+        opacity={0.55}
+        blur={15}
+        backgroundOpacity={0.55}
+        className="!overflow-visible border border-white/30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.7),0_8px_32px_rgba(84,67,58,0.06)]"
+      >
+        <div className="px-4 sm:px-6 h-14 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="hover:opacity-90 transition-opacity">
@@ -58,17 +69,17 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1.5">
+          <div className="hidden md:flex items-center gap-1 bg-[#5d4037]/5 border border-[#5d4037]/10 rounded-full p-1">
             {navLinks.map((link) => {
               const active = isActive(link.href)
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all duration-200 ${
+                  className={`px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all duration-200 ${
                     active
-                      ? 'text-[#1E1616] bg-[#EDE7E0] border border-[#D4C3B3]/40 shadow-sm'
-                      : 'text-[#8B7E74] hover:text-[#1E1616] hover:bg-[#F5EFE6]/60'
+                      ? 'text-[#5d4037] bg-white border border-[#e0d7d0]/80 shadow-[0_1px_2px_rgba(93,64,55,0.05)] font-bold'
+                      : 'text-[#54433a] hover:text-[#5d4037] hover:bg-white/40'
                   }`}
                 >
                   {link.name}
@@ -97,38 +108,38 @@ export default function Navbar() {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center gap-2 p-1 pr-3 border border-[#EDE7E0] hover:border-[#D4C3B3] rounded-full bg-[#FDFAF6] transition-all hover:shadow-sm"
+                className="flex items-center gap-2 p-1 pr-3 border border-[#e0d7d0] hover:border-[#5d4037] rounded-full bg-white/80 backdrop-blur-md transition-all hover:shadow-sm"
               >
-                <div className="w-7 h-7 bg-[#EDE7E0] text-[#D4453A] rounded-full flex items-center justify-center font-bold text-xs border border-[#D4C3B3]/25">
+                <div className="w-7 h-7 bg-[#5d4037]/10 text-[#5d4037] rounded-full flex items-center justify-center font-bold text-xs border border-[#5d4037]/15">
                   {user?.name?.[0]?.toUpperCase() || <VintageUser className="w-3.5 h-3.5" />}
                 </div>
-                <span className="text-xs font-mono uppercase tracking-wider text-[#1E1616] hidden sm:block font-medium">
+                <span className="text-xs font-mono uppercase tracking-wider text-[#231b15] hidden sm:block font-medium">
                   {user?.name?.split(' ')[0] || 'User'}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-[#8B7E74] transition-transform duration-200" style={{ transform: isProfileOpen ? 'rotate(180deg)' : 'none' }} />
+                <ChevronDown className="w-3.5 h-3.5 text-[#54433a] transition-transform duration-200" style={{ transform: isProfileOpen ? 'rotate(180deg)' : 'none' }} />
               </button>
 
               {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-[#FDFAF6] border border-[#EDE7E0] rounded-xl shadow-[0_4px_20px_-2px_rgba(30,22,22,0.12)] py-1.5 z-50 overflow-hidden" style={{ animation: 'field-appear 0.2s ease-out' }}>
+                <div className="absolute right-0 mt-2 w-48 yuno-card p-1.5 border-[#e0d7d0]/80 shadow-lg z-50 overflow-hidden" style={{ animation: 'field-appear 0.2s ease-out' }}>
                   <Link 
                     href="/profile" 
-                    className="flex items-center gap-2 px-4 py-2 text-xs font-mono uppercase tracking-wider text-[#8B7E74] hover:text-[#1E1616] hover:bg-[#EDE7E0]/40 transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-[#54433a] hover:text-[#231b15] hover:bg-[#5d4037]/5 transition-colors"
                     onClick={() => setIsProfileOpen(false)}
                   >
-                    <VintageUser className="w-4 h-4 text-[#D4453A]" />
+                    <VintageUser className="w-4 h-4 text-[#b5511b]" />
                     <span>View Profile</span>
                   </Link>
                   <Link 
                     href="/settings" 
-                    className="flex items-center gap-2 px-4 py-2 text-xs font-mono uppercase tracking-wider text-[#8B7E74] hover:text-[#1E1616] hover:bg-[#EDE7E0]/40 transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-[#54433a] hover:text-[#231b15] hover:bg-[#5d4037]/5 transition-colors"
                     onClick={() => setIsProfileOpen(false)}
                   >
-                    <VintageSettings className="w-4 h-4 text-[#D4453A]" />
+                    <VintageSettings className="w-4 h-4 text-[#b5511b]" />
                     <span>Settings</span>
                   </Link>
-                  <hr className="border-[#EDE7E0] my-1.5" />
+                  <hr className="border-[#e0d7d0]/50 my-1" />
                   <button 
-                    className="flex items-center gap-2 w-full text-left px-4 py-2 text-xs font-mono uppercase tracking-wider text-red-600 hover:bg-red-50/60 transition-colors"
+                    className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-red-600 hover:bg-red-500/5 transition-colors"
                     onClick={() => {
                       logout()
                       setIsProfileOpen(false)
@@ -143,7 +154,7 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </GlassSurface>
+    </div>
   )
 }

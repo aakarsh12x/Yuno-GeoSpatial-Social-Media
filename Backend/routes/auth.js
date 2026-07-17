@@ -10,11 +10,13 @@ const router = express.Router();
 // Stricter rate limit for authentication routes
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 login/register attempts per 15 minutes
+  max: process.env.NODE_ENV === 'production' ? 5 : 100000, // Limit each IP to 5 login/register attempts per 15 minutes in production, relaxed in development
   message: {
     success: false,
     message: 'Too many authentication attempts, please try again after 15 minutes.'
-  }
+  },
+  standardHeaders: true,
+  legacyHeaders: false
 });
 
 /**

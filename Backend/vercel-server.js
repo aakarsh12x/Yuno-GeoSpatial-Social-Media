@@ -33,7 +33,15 @@ if (process.env.NODE_ENV !== 'production') {
 // Rate limiting
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100 // limit each IP to 100 requests per windowMs
+  max: process.env.NODE_ENV === 'production' 
+    ? (parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100)
+    : 100000, // limit each IP to 100 requests in production, relaxed in development
+  message: {
+    success: false,
+    message: 'Too many requests, please try again later.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false
 });
 
 // Middleware

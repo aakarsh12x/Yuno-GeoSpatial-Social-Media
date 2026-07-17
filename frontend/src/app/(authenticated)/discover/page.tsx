@@ -163,12 +163,12 @@ export default function DiscoverPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-semibold">Discover</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <h1 className="text-2xl text-[#231b15] font-display italic font-medium">Discover</h1>
           <Link
             href="/map"
-            className="inline-flex items-center gap-2 px-3 py-1 bg-accent/20 hover:bg-accent/30 text-accent rounded-lg text-sm transition-colors"
+            className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#b5511b]/10 border border-[#b5511b]/20 hover:bg-[#b5511b]/20 text-[#b5511b] rounded-lg text-sm transition-all font-semibold shadow-sm"
           >
             <Map className="w-4 h-4" />
             Map View
@@ -176,32 +176,34 @@ export default function DiscoverPage() {
 
           <div className="flex items-center gap-2">
             {isRealTime ? (
-              <div className="flex items-center gap-1 text-green-500">
-                <Wifi className="w-4 h-4" />
-                <span className="text-sm">Live</span>
+              <div className="flex items-center gap-1.5 text-green-600 bg-green-500/10 border border-green-500/20 px-2.5 py-0.5 rounded-full text-xs font-semibold">
+                <Wifi className="w-3.5 h-3.5" />
+                <span>Live</span>
               </div>
             ) : (
-              <div className="flex items-center gap-1 text-gray-500">
-                <WifiOff className="w-4 h-4" />
-                <span className="text-sm">Offline</span>
+              <div className="flex items-center gap-1.5 text-[#54433a]/60 bg-white/10 border border-white/15 px-2.5 py-0.5 rounded-full text-xs font-semibold">
+                <WifiOff className="w-3.5 h-3.5" />
+                <span>Offline</span>
               </div>
             )}
             {locationPermission === 'denied' && (
-              <div className="flex items-center gap-1 text-red-500">
-                <MapPin className="w-4 h-4" />
-                <span className="text-sm">Location Denied</span>
+              <div className="flex items-center gap-1.5 text-red-600 bg-red-500/10 border border-red-500/20 px-2.5 py-0.5 rounded-full text-xs font-semibold">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>Location Denied</span>
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex gap-2 bg-white/5 p-1 rounded-xl border border-white/10">
+        <div className="flex gap-1.5 bg-white/80 p-1 rounded-xl border border-[#e0d7d0] shadow-sm self-start sm:self-auto">
           {radiusOptions.map((r) => (
             <button
               key={r}
               onClick={() => setRadius(r)}
-              className={`px-3 py-1 rounded-lg text-sm ${
-                r === radius ? 'bg-primary text-white' : 'text-gray-300 hover:bg-white/5'
+              className={`px-3 py-1 rounded-lg text-xs transition-all ${
+                r === radius 
+                  ? 'bg-[#b5511b] text-white shadow-sm font-semibold' 
+                  : 'text-[#54433a] hover:bg-white/10'
               }`}
             >
               {r}km
@@ -210,8 +212,15 @@ export default function DiscoverPage() {
         </div>
       </div>
 
-      {loading && <div className="text-gray-400">Loading nearby users...</div>}
-      {error && <div className="text-red-400">{error}</div>}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#b5511b] mx-auto mb-3"></div>
+            <p className="text-[#54433a]/80 text-sm font-medium">Finding nearby people...</p>
+          </div>
+        </div>
+      )}
+      {error && <div className="text-red-500 text-sm font-medium bg-red-500/10 border border-red-500/20 p-3 rounded-lg">{error}</div>}
 
       {notification && (
         <RealTimeNotification
@@ -233,50 +242,55 @@ export default function DiscoverPage() {
           return (
             <div
               key={u.id}
-              className="bg-surface/60 backdrop-blur rounded-2xl p-5 border border-white/10 hover:shadow-glow transition-shadow"
+              className="yuno-card p-5 hover:scale-[1.01] flex flex-col justify-between"
             >
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-accent grid place-items-center text-lg font-semibold text-white">
-                  {u.name?.[0] || '?'}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-medium">{u.name}</h3>
-                    {u?.distance?.km != null && (
-                      <div className="flex items-center gap-1 text-xs text-gray-400">
-                        <span>{u.distance.km} km</span>
-                      </div>
-                    )}
+              <div>
+                <div className="flex items-center gap-4">
+                  <div className="h-14 w-14 rounded-full bg-[#b5511b]/20 border border-[#b5511b]/35 grid place-items-center text-lg font-bold text-[#b5511b] shadow-sm shrink-0">
+                    {u.name?.[0] || '?'}
                   </div>
-                  <div className="text-sm text-gray-400">{u.city || 'Unknown'}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-bold text-[#231b15] truncate">{u.name}</h3>
+                      {u?.distance?.km != null && (
+                        <div className="flex items-center gap-1 text-[10px] text-[#54433a]/90 bg-white/60 border border-[#e0d7d0] px-2 py-0.5 rounded-full shrink-0 font-medium">
+                          <span>{u.distance.km.toFixed(1)} km</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-sm text-[#54433a]/80 truncate">{u.city || 'Unknown'}</div>
+                  </div>
                 </div>
-              </div>
 
-              {highlights.length > 0 && (
-                <div className="mt-4">
-                  <div className="text-sm text-gray-300 mb-2">You both have</div>
-                  <div className="flex flex-wrap gap-2">
-                    {highlights.map((h, idx) => (
-                      <span key={idx} className="px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-xs">
-                        {h}
-                      </span>
-                    ))}
+                {highlights.length > 0 && (
+                  <div className="mt-4 border-t border-[#5d4037]/10 pt-3">
+                    <div className="text-xs font-bold text-[#231b15] mb-2 flex items-center gap-1.5">
+                      <Zap className="w-3.5 h-3.5 text-[#b5511b]" />
+                      <span>Shared details</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {highlights.map((h, idx) => (
+                        <span key={idx} className="px-2 py-0.5 rounded-md bg-[#b5511b]/15 border border-[#b5511b]/25 text-[#b5511b] text-[9px] font-bold uppercase tracking-wider font-mono">
+                          {h}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
               <div className="mt-5">
                 {alreadySent ? (
-                  <div className="w-full text-center py-2 rounded-xl bg-green-500/15 text-green-400 text-sm font-medium border border-green-500/20">
+                  <div className="w-full text-center py-2 rounded-xl bg-green-500/10 text-green-700 border border-green-500/20 text-xs font-bold uppercase tracking-wide">
                     ⚡ Spark Sent!
                   </div>
                 ) : (
                   <button
                     onClick={() => setSparkTarget(u)}
-                    className="btn-primary w-full gap-2"
+                    className="w-full py-2 bg-[#b5511b] hover:bg-[#943b0d] text-white text-xs font-mono uppercase tracking-wider font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
                   >
                     <Zap className="w-4 h-4" />
-                    Send Spark
+                    <span>Send Spark</span>
                   </button>
                 )}
               </div>
@@ -287,36 +301,36 @@ export default function DiscoverPage() {
 
       {/* Send Spark Modal */}
       {sparkTarget && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-surface border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-[#fffdfb]/95 border border-[#e0d7d0] rounded-2xl p-6 max-w-sm w-full shadow-[0_12px_40px_rgba(93,64,55,0.12)]">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-accent grid place-items-center text-lg font-semibold text-white">
+                <div className="h-12 w-12 rounded-full bg-[#b5511b]/20 border border-[#b5511b]/35 grid place-items-center text-lg font-bold text-[#b5511b]">
                   {sparkTarget.name?.[0]}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-text-primary">{sparkTarget.name}</h3>
-                  <p className="text-sm text-text-muted">{sparkTarget.city || 'Nearby'}</p>
+                  <h3 className="font-bold text-[#231b15]">{sparkTarget.name}</h3>
+                  <p className="text-xs text-[#54433a]/80">{sparkTarget.city || 'Nearby'}</p>
                 </div>
               </div>
               <button
                 onClick={() => { setSparkTarget(null); setSparkMessage('') }}
-                className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-text-muted"
+                className="p-1.5 rounded-lg hover:bg-black/5 transition-colors text-[#54433a]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-text-primary mb-2">
-                Message <span className="text-text-muted font-normal">(optional)</span>
+              <label className="block text-xs font-bold text-[#231b15] uppercase tracking-wider mb-2">
+                Message <span className="text-[#54433a]/65 font-normal">(optional)</span>
               </label>
               <textarea
                 value={sparkMessage}
                 onChange={(e) => setSparkMessage(e.target.value)}
                 placeholder="Say hello and introduce yourself..."
-                className="w-full px-3 py-2 bg-background border border-border-medium rounded-lg text-text-primary placeholder-text-muted focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm"
+                className="w-full px-3 py-2 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 resize-none text-sm"
                 rows={3}
                 disabled={sparkSending}
               />
@@ -326,24 +340,24 @@ export default function DiscoverPage() {
               <button
                 onClick={() => { setSparkTarget(null); setSparkMessage('') }}
                 disabled={sparkSending}
-                className="flex-1 px-4 py-2 border border-border-medium text-text-primary rounded-lg hover:bg-hover-light transition-colors text-sm"
+                className="flex-1 px-4 py-2 border border-[#e0d7d0] text-[#231b15] hover:bg-[#5d4037]/5 bg-white/40 rounded-lg transition-colors font-mono uppercase tracking-wider text-xs font-bold"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSendSpark}
                 disabled={sparkSending}
-                className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-60"
+                className="flex-1 px-4 py-2 bg-[#b5511b] hover:bg-[#943b0d] text-white rounded-lg transition-colors flex items-center justify-center gap-2 text-xs font-mono uppercase tracking-wider font-bold shadow-sm disabled:opacity-60"
               >
                 {sparkSending ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Sending...
+                    <span>Sending...</span>
                   </>
                 ) : (
                   <>
                     <Zap className="w-4 h-4" />
-                    Send Spark
+                    <span>Send Spark</span>
                   </>
                 )}
               </button>
@@ -354,3 +368,4 @@ export default function DiscoverPage() {
     </div>
   )
 }
+

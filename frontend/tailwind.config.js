@@ -10,6 +10,7 @@ module.exports = {
   	extend: {
   		fontFamily: {
   			sans: [
+  				'var(--font-sans)',
   				'Inter',
   				'ui-sans-serif',
   				'system-ui',
@@ -21,17 +22,34 @@ module.exports = {
   				'Apple Color Emoji',
   				'Segoe UI Emoji',
   				'Segoe UI Symbol'
+  			],
+  			display: [
+  				'var(--font-display)',
+  				'Fraunces',
+  				'Georgia',
+  				'serif'
+  			],
+  			mono: [
+  				'var(--font-mono)',
+  				'ui-monospace',
+  				'SFMono-Regular',
+  				'Menlo',
+  				'Monaco',
+  				'Consolas',
+  				'Liberation Mono',
+  				'Courier New',
+  				'monospace'
   			]
   		},
   		colors: {
   			background: '#F8F6F0',
   			surface: '#FFFFFF',
   			primary: {
-  				DEFAULT: '#5D4037', // Deep sophisticated brown
+  				DEFAULT: '#b5511b', // Tasteful terracotta orange
   				foreground: '#FFFFFF'
   			},
   			accent: {
-  				DEFAULT: '#8B4513', // Rich leather brown
+  				DEFAULT: '#943b0d', // Rich dark terracotta orange
   				foreground: '#FFFFFF'
   			},
   			'text-primary': '#1A0F0A', // Almost black-brown

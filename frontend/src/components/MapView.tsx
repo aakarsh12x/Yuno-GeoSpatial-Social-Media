@@ -118,8 +118,8 @@ export default function MapView({ users, className = '' }: MapViewProps) {
         
         if (cachedLoc && lastFetch) {
           const timePassed = Date.now() - Number(lastFetch);
-          // If fetched within 5 minutes, reuse location and cached pins without refetching
-          if (timePassed < 5 * 60 * 1000) {
+          // If fetched within 30 minutes, reuse location and cached pins without refetching
+          if (timePassed < 30 * 60 * 1000) {
             const locCoords = JSON.parse(cachedLoc);
             console.log('⚡ Using cached user location and pins:', locCoords);
             setUserLocation(locCoords);

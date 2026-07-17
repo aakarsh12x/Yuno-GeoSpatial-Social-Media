@@ -190,49 +190,49 @@ export default function ProfilePage() {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      <h2 className="text-2xl font-bold text-text-primary mb-6 flex items-center gap-3">
-        <User className="w-6 h-6 text-primary" />
+      <h2 className="text-2xl text-[#231b15] mb-6 flex items-center gap-3 font-display italic font-medium">
+        <User className="w-6 h-6 text-[#b5511b]" />
         Basic Information
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             Full Name *
           </label>
           <input
             type="text"
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="Enter your full name"
             required
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             Username *
           </label>
           <input
             type="text"
             value={formData.username}
             onChange={(e) => handleInputChange('username', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="Choose a username"
             required
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             Age *
           </label>
           <input
             type="number"
             value={formData.age}
             onChange={(e) => handleInputChange('age', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="Enter your age"
             min="13"
             max="100"
@@ -241,22 +241,22 @@ export default function ProfilePage() {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             City *
           </label>
           <input
             type="text"
             value={formData.city}
             onChange={(e) => handleInputChange('city', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="Enter your city"
             required
           />
         </div>
       </div>
       
-      <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
-        <div className="flex items-center gap-2 text-sm text-primary">
+      <div className="bg-[#5d4037]/5 p-4 rounded-lg border border-[#5d4037]/15">
+        <div className="flex items-center gap-2 text-sm text-[#5d4037] font-medium">
           <MapPin className="w-4 h-4" />
           <span>Location detected automatically for nearby radius matching</span>
         </div>
@@ -271,54 +271,54 @@ export default function ProfilePage() {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      <h2 className="text-2xl font-bold text-text-primary mb-6 flex items-center gap-3">
-        <Heart className="w-6 h-6 text-primary" />
+      <h2 className="text-2xl text-[#231b15] mb-6 flex items-center gap-3 font-display italic font-medium">
+        <Heart className="w-6 h-6 text-[#b5511b]" />
         Core Matching Information
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             School/College
           </label>
           <input
             type="text"
             value={formData.school}
             onChange={(e) => handleInputChange('school', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="Where do you study?"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             Workplace
           </label>
           <input
             type="text"
             value={formData.workplace}
             onChange={(e) => handleInputChange('workplace', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="Where do you work?"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             Profession
           </label>
           <input
             type="text"
             value={formData.profession}
             onChange={(e) => handleInputChange('profession', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="What do you do?"
           />
         </div>
       </div>
       
       <div>
-        <label className="block text-sm font-medium text-text-secondary mb-3">
+        <label className="block text-sm font-semibold text-[#54433a]/85 mb-3">
           Hobbies & Interests *
         </label>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -327,10 +327,10 @@ export default function ProfilePage() {
               key={hobby}
               type="button"
               onClick={() => handleHobbyToggle(hobby)}
-              className={`p-3 rounded-lg border transition-all ${
+              className={`p-3 rounded-lg border text-sm font-medium transition-all ${
                 formData.hobbies.includes(hobby)
-                  ? 'bg-primary text-white border-primary'
-                  : 'bg-surface border-border-medium text-text-secondary hover:border-primary/50'
+                  ? 'bg-[#b5511b] text-white border-[#b5511b] shadow-sm'
+                  : 'bg-white/60 border-[#e0d7d0] text-[#54433a]/80 hover:bg-white hover:border-[#5d4037]/35'
               }`}
             >
               {hobby}
@@ -340,14 +340,14 @@ export default function ProfilePage() {
       </div>
       
       <div>
-        <label className="block text-sm font-medium text-text-secondary mb-2">
+        <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
           Bio *
         </label>
         <textarea
           value={formData.bio}
           onChange={(e) => handleInputChange('bio', e.target.value)}
           rows={4}
-          className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+          className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all resize-none"
           placeholder="Tell us about yourself in a few words..."
           required
         />
@@ -362,47 +362,47 @@ export default function ProfilePage() {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      <h2 className="text-2xl font-bold text-text-primary mb-6 flex items-center gap-3">
-        <Award className="w-6 h-6 text-primary" />
+      <h2 className="text-2xl text-[#231b15] mb-6 flex items-center gap-3 font-display italic font-medium">
+        <Award className="w-6 h-6 text-[#b5511b]" />
         Additional Information (Optional)
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             Languages
           </label>
           <input
             type="text"
             value={formData.languages}
             onChange={(e) => handleInputChange('languages', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="e.g., English, Spanish, French"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             Skills / Field of Study
           </label>
           <input
             type="text"
             value={formData.skills}
             onChange={(e) => handleInputChange('skills', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="e.g., Programming, Marketing, Medicine"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             Clubs / Societies
           </label>
           <input
             type="text"
             value={formData.clubs}
             onChange={(e) => handleInputChange('clubs', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="e.g., Chess Club, Debate Team"
           />
         </div>
@@ -410,40 +410,40 @@ export default function ProfilePage() {
       
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             Favorite Shows
           </label>
           <input
             type="text"
             value={formData.favoriteShows}
             onChange={(e) => handleInputChange('favoriteShows', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="e.g., Breaking Bad, Friends, The Office"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             Favorite Movies
           </label>
           <input
             type="text"
             value={formData.favoriteMovies}
             onChange={(e) => handleInputChange('favoriteMovies', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="e.g., Inception, The Godfather, Pulp Fiction"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-semibold text-[#54433a]/85 mb-2">
             Favorite Music
           </label>
           <input
             type="text"
             value={formData.favoriteMusic}
             onChange={(e) => handleInputChange('favoriteMusic', e.target.value)}
-            className="w-full px-4 py-3 border border-border-medium rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-white/60 border border-[#e0d7d0] rounded-lg text-[#231b15] placeholder-[#54433a]/60 focus:outline-none focus:ring-1 focus:ring-[#5d4037]/45 transition-all"
             placeholder="e.g., Rock, Pop, Jazz, Hip-Hop"
           />
         </div>
@@ -459,14 +459,14 @@ export default function ProfilePage() {
     >
       <div className="flex flex-col md:flex-row gap-8 items-start">
         {/* Left Column: Avatar & Basic Info */}
-        <div className="w-full md:w-1/3 flex flex-col items-center p-6 bg-surface border border-border-medium rounded-2xl">
-          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-4xl font-bold text-white mb-4">
+        <div className="w-full md:w-1/3 flex flex-col items-center p-6 yuno-card">
+          <div className="w-32 h-32 rounded-full bg-[#b5511b]/20 border border-[#b5511b]/35 flex items-center justify-center text-4xl font-bold text-[#b5511b] mb-4 shadow-sm">
             {formData.name.charAt(0) || '?'}
           </div>
-          <h2 className="text-2xl font-bold text-text-primary text-center">{formData.name}</h2>
-          {formData.username && <p className="text-primary mt-1">@{formData.username}</p>}
+          <h2 className="text-2xl text-[#231b15] text-center font-display italic font-medium">{formData.name}</h2>
+          {formData.username && <p className="text-[#b5511b] font-mono mt-1">@{formData.username}</p>}
           {(formData.age || formData.city) && (
-            <p className="text-text-secondary mt-2 flex justify-center items-center gap-1">
+            <p className="text-[#54433a]/85 mt-2 flex justify-center items-center gap-1 text-sm font-medium">
               {formData.age} {formData.age && formData.city && '•'} {formData.city}
             </p>
           )}
@@ -474,7 +474,7 @@ export default function ProfilePage() {
           <button 
             type="button"
             onClick={() => setIsEditing(true)}
-            className="mt-6 w-full py-2 px-4 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium border border-primary/20"
+            className="mt-6 w-full py-2.5 px-4 rounded-lg bg-[#b5511b] text-white hover:bg-[#943b0d] font-mono uppercase tracking-wider text-xs font-bold transition-all shadow-sm"
           >
             Edit Profile
           </button>
@@ -482,56 +482,56 @@ export default function ProfilePage() {
 
         {/* Right Column: Bio & Details */}
         <div className="w-full md:w-2/3 space-y-6">
-          <div className="p-6 bg-surface border border-border-medium rounded-2xl">
-            <h3 className="text-lg font-semibold text-text-primary mb-3 flex items-center gap-2">
-              <User className="w-5 h-5 text-primary" /> About Me
+          <div className="p-6 yuno-card">
+            <h3 className="text-lg text-[#231b15] mb-3 flex items-center gap-2 font-display italic font-medium">
+              <User className="w-5 h-5 text-[#b5511b]" /> About Me
             </h3>
-            <p className="text-text-secondary whitespace-pre-wrap">{formData.bio || 'No bio provided.'}</p>
+            <p className="text-[#54433a]/95 text-sm leading-relaxed whitespace-pre-wrap">{formData.bio || 'No bio provided.'}</p>
           </div>
 
-          <div className="p-6 bg-surface border border-border-medium rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-6 yuno-card grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold text-text-primary mb-3 flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-primary" /> 
+              <h3 className="text-[#231b15] mb-3 flex items-center gap-2 font-display italic font-medium">
+                <Briefcase className="w-4 h-4 text-[#b5511b]" /> 
                 Career & Education
               </h3>
-              <ul className="space-y-2 text-sm text-text-secondary">
-                {formData.profession && <li>Profession: <span className="text-text-primary">{formData.profession}</span></li>}
-                {formData.workplace && <li>Workplace: <span className="text-text-primary">{formData.workplace}</span></li>}
-                {formData.school && <li>School: <span className="text-text-primary">{formData.school}</span></li>}
+              <ul className="space-y-2 text-sm text-[#54433a]/90">
+                {formData.profession && <li>Profession: <span className="text-[#231b15] font-medium">{formData.profession}</span></li>}
+                {formData.workplace && <li>Workplace: <span className="text-[#231b15] font-medium">{formData.workplace}</span></li>}
+                {formData.school && <li>School: <span className="text-[#231b15] font-medium">{formData.school}</span></li>}
               </ul>
-              {(!formData.profession && !formData.workplace && !formData.school) && <span className="text-sm text-text-muted">Not provided</span>}
+              {(!formData.profession && !formData.workplace && !formData.school) && <span className="text-sm text-[#54433a]/60">Not provided</span>}
             </div>
 
             <div>
-              <h3 className="font-semibold text-text-primary mb-3 flex items-center gap-2">
-                <Heart className="w-4 h-4 text-primary" /> 
+              <h3 className="text-[#231b15] mb-3 flex items-center gap-2 font-display italic font-medium">
+                <Heart className="w-4 h-4 text-[#b5511b]" /> 
                 Interests & Hobbies
               </h3>
               {formData.hobbies.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {formData.hobbies.map(h => (
-                    <span key={h} className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-xs">{h}</span>
+                    <span key={h} className="px-3 py-1 bg-white/60 border border-[#e0d7d0] rounded-lg text-xs text-[#231b15] font-medium">{h}</span>
                   ))}
                 </div>
               ) : (
-                <span className="text-sm text-text-muted">No hobbies added.</span>
+                <span className="text-sm text-[#54433a]/60">No hobbies added.</span>
               )}
             </div>
           </div>
 
           {(formData.languages || formData.skills || formData.clubs || formData.favoriteShows || formData.favoriteMovies || formData.favoriteMusic) && (
-            <div className="p-6 bg-surface border border-border-medium rounded-2xl">
-              <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-                <Award className="w-5 h-5 text-primary" /> Additional Info
+            <div className="p-6 yuno-card">
+              <h3 className="text-lg text-[#231b15] mb-4 flex items-center gap-2 font-display italic font-medium">
+                <Award className="w-5 h-5 text-[#b5511b]" /> Additional Info
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 text-sm">
-                {formData.languages && <div><span className="text-text-secondary block mb-1">Languages</span><span className="text-text-primary">{formData.languages}</span></div>}
-                {formData.skills && <div><span className="text-text-secondary block mb-1">Skills</span><span className="text-text-primary">{formData.skills}</span></div>}
-                {formData.clubs && <div><span className="text-text-secondary block mb-1">Clubs/Societies</span><span className="text-text-primary">{formData.clubs}</span></div>}
-                {formData.favoriteShows && <div><span className="text-text-secondary block mb-1">Favorite Shows</span><span className="text-text-primary">{formData.favoriteShows}</span></div>}
-                {formData.favoriteMovies && <div><span className="text-text-secondary block mb-1">Favorite Movies</span><span className="text-text-primary">{formData.favoriteMovies}</span></div>}
-                {formData.favoriteMusic && <div><span className="text-text-secondary block mb-1">Favorite Music</span><span className="text-text-primary">{formData.favoriteMusic}</span></div>}
+                {formData.languages && <div><span className="text-[#54433a]/80 block mb-1 text-xs uppercase tracking-wider font-semibold">Languages</span><span className="text-[#231b15] font-medium">{formData.languages}</span></div>}
+                {formData.skills && <div><span className="text-[#54433a]/80 block mb-1 text-xs uppercase tracking-wider font-semibold">Skills</span><span className="text-[#231b15] font-medium">{formData.skills}</span></div>}
+                {formData.clubs && <div><span className="text-[#54433a]/80 block mb-1 text-xs uppercase tracking-wider font-semibold">Clubs/Societies</span><span className="text-[#231b15] font-medium">{formData.clubs}</span></div>}
+                {formData.favoriteShows && <div><span className="text-[#54433a]/80 block mb-1 text-xs uppercase tracking-wider font-semibold">Favorite Shows</span><span className="text-[#231b15] font-medium">{formData.favoriteShows}</span></div>}
+                {formData.favoriteMovies && <div><span className="text-[#54433a]/80 block mb-1 text-xs uppercase tracking-wider font-semibold">Favorite Movies</span><span className="text-[#231b15] font-medium">{formData.favoriteMovies}</span></div>}
+                {formData.favoriteMusic && <div><span className="text-[#54433a]/80 block mb-1 text-xs uppercase tracking-wider font-semibold">Favorite Music</span><span className="text-[#231b15] font-medium">{formData.favoriteMusic}</span></div>}
               </div>
             </div>
           )}
@@ -542,29 +542,29 @@ export default function ProfilePage() {
 
   if (isLoading || authLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-[#b5511b] border-t-transparent rounded-full" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background py-8">
+    <div className="min-h-screen bg-transparent py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <Link 
             href="/"
-            className="inline-flex items-center gap-2 text-text-secondary hover:text-primary transition-colors mb-4"
+            className="inline-flex items-center gap-2 text-[#54433a]/80 hover:text-[#b5511b] transition-colors mb-4 font-semibold text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
           </Link>
           
-          <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-2">
+          <h1 className="text-4xl md:text-5xl text-[#231b15] mb-2 font-display italic font-medium">
             Complete Your Profile
           </h1>
-          <p className="text-text-secondary text-lg">
+          <p className="text-[#54433a]/80 text-lg">
             Help us find the perfect connections by sharing a bit about yourself
           </p>
         </div>
@@ -574,12 +574,12 @@ export default function ProfilePage() {
             {/* Progress Bar */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-text-secondary">Step {currentStep} of 3</span>
-                <span className="text-sm text-text-secondary">{Math.round((currentStep / 3) * 100)}% Complete</span>
+                <span className="text-sm text-[#54433a]/80 font-mono">Step {currentStep} of 3</span>
+                <span className="text-sm text-[#54433a]/80 font-mono">{Math.round((currentStep / 3) * 100)}% Complete</span>
               </div>
-              <div className="w-full bg-border-medium rounded-full h-2">
+              <div className="w-full bg-white/60 border border-[#e0d7d0] rounded-full h-2">
                 <motion.div
-                  className="bg-primary h-2 rounded-full transition-all duration-300"
+                  className="bg-[#b5511b] h-2 rounded-full transition-all duration-300 shadow-sm"
                   initial={{ width: 0 }}
                   animate={{ width: `${(currentStep / 3) * 100}%` }}
                 />
@@ -587,21 +587,21 @@ export default function ProfilePage() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="card-surface p-6 md:p-8">
+            <form onSubmit={handleSubmit} className="yuno-card p-6 md:p-8">
               {currentStep === 1 && renderStep1()}
               {currentStep === 2 && renderStep2()}
               {currentStep === 3 && renderStep3()}
 
               {/* Navigation Buttons */}
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-border-medium">
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#5d4037]/10">
                 <button
                   type="button"
                   onClick={prevStep}
                   disabled={currentStep === 1}
-                  className={`px-6 py-3 rounded-lg border transition-all ${
+                  className={`px-6 py-2.5 rounded-lg border transition-all text-xs font-mono uppercase tracking-wider font-bold ${
                     currentStep === 1
-                      ? 'border-border-medium text-text-muted cursor-not-allowed'
-                      : 'border-primary text-primary hover:bg-primary hover:text-white'
+                      ? 'border-[#e0d7d0] text-[#54433a]/40 cursor-not-allowed bg-white/10'
+                      : 'border-[#b5511b] text-[#b5511b] hover:bg-[#b5511b] hover:text-white'
                   }`}
                 >
                   Previous
@@ -611,7 +611,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={nextStep}
-                    className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all"
+                    className="px-6 py-2.5 bg-[#b5511b] text-white rounded-lg hover:bg-[#943b0d] transition-all text-xs font-mono uppercase tracking-wider font-bold shadow-sm"
                   >
                     Next
                   </button>
@@ -620,14 +620,14 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       onClick={() => setIsEditing(false)}
-                      className="px-6 py-3 border border-border-medium text-text-secondary rounded-lg hover:bg-surface transition-all"
+                      className="px-6 py-2.5 border border-[#e0d7d0] text-[#54433a] rounded-lg hover:bg-[#5d4037]/5 bg-white/45 transition-all text-xs font-mono uppercase tracking-wider font-bold"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isSaving}
-                      className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="px-8 py-2.5 bg-[#b5511b] text-white rounded-lg hover:bg-[#943b0d] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-xs font-mono uppercase tracking-wider font-bold shadow-sm"
                     >
                       {isSaving ? (
                         <>
