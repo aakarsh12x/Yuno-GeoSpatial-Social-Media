@@ -1,10 +1,10 @@
 # Yuno - Geospatial Social Media Platform
 
 ---
+## Preview
+<img width="1898" height="888" alt="image" src="https://github.com/user-attachments/assets/ae2fc1b7-68be-4980-b2cb-9a0201a38d12" />
+<img width="1919" height="911" alt="image" src="https://github.com/user-attachments/assets/d33b275c-fb9a-439c-9cd4-23beeb7de53f" />
 
-## 
-
----
 
 ## System Design
 
@@ -48,9 +48,6 @@ graph TB
 
 Live: https://frontend-nine-orcin-70.vercel.app/
 
-## Preview
-
-<img width="1902" height="907" alt="image" src="https://github.com/user-attachments/assets/d90037af-cd37-49aa-9ccf-b14d8529d846" />
 
 ## About
 
