@@ -39,19 +39,14 @@ export default function LandingPage() {
 
     // GSAP load-in animations with prefers-reduced-motion check
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      gsap.set('.gsap-hero-badge, .gsap-hero-title, .gsap-hero-text, .gsap-hero-ctas, .gsap-hero-visual', { opacity: 1, y: 0, scale: 1 })
+      gsap.set('.gsap-hero-title, .gsap-hero-text, .gsap-hero-ctas, .gsap-hero-visual', { opacity: 1, y: 0, scale: 1 })
       return
     }
 
     const tl = gsap.timeline()
-    tl.fromTo('.gsap-hero-badge', 
-      { opacity: 0, y: 15 },
-      { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
-    )
-    .fromTo('.gsap-hero-title', 
+    tl.fromTo('.gsap-hero-title', 
       { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 1, ease: 'power3.out' },
-      '-=0.55'
+      { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }
     )
     .fromTo('.gsap-hero-text', 
       { opacity: 0, y: 15 },
@@ -142,18 +137,7 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            {/* Navigation Items (Single Line) */}
-            <nav className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-xs font-mono uppercase tracking-wider text-[#54433a] hover:text-[#b5511b] transition-colors duration-200">
-                Features
-              </a>
-              <a href="#about" className="text-xs font-mono uppercase tracking-wider text-[#54433a] hover:text-[#b5511b] transition-colors duration-200">
-                About
-              </a>
-              <a href="#technology" className="text-xs font-mono uppercase tracking-wider text-[#54433a] hover:text-[#b5511b] transition-colors duration-200">
-                Technology
-              </a>
-            </nav>
+
 
             {/* CTAs */}
             <div className="hidden md:flex items-center gap-4">
@@ -184,28 +168,6 @@ export default function LandingPage() {
         {/* Mobile Navigation Dropdown */}
         {mobileMenuOpen && (
           <div className="md:hidden absolute top-20 left-4 right-4 bg-[#faf9f6]/95 backdrop-blur-xl border border-[#ebdcd0] p-6 rounded-2xl space-y-4 shadow-lg animate-in fade-in slide-in-from-top-4 duration-200 z-50">
-            <a 
-              href="#features" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-sm font-mono uppercase tracking-wider text-[#54433a]"
-            >
-              Features
-            </a>
-            <a 
-              href="#about" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-sm font-mono uppercase tracking-wider text-[#54433a]"
-            >
-              About
-            </a>
-            <a 
-              href="#technology" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-sm font-mono uppercase tracking-wider text-[#54433a]"
-            >
-              Technology
-            </a>
-            <hr className="border-[#ebdcd0]" />
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => { setMobileMenuOpen(false); router.push('/login'); }}
@@ -231,13 +193,7 @@ export default function LandingPage() {
             
             {/* Left Column: Headline & Value Proposition */}
             <div className="lg:col-span-6 space-y-8">
-              {/* Live Signal Badge */}
-              <div className="gsap-hero-badge inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_2px_12px_rgba(181,81,27,0.03)]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#b5511b] animate-pulse" />
-                <span className="text-[10px] font-mono uppercase tracking-wider text-[#b5511b] font-bold">
-                  Geospatial Pulse Live
-                </span>
-              </div>
+
 
               {/* Serif Display Font Pairing (Fraunces) */}
               <h1 className="gsap-hero-title text-[#231b15] text-4xl sm:text-5xl lg:text-[62px] font-display italic font-medium tracking-tight leading-[1.08] text-balance">
@@ -245,9 +201,9 @@ export default function LandingPage() {
                 Step onto the map.
               </h1>
 
-              {/* Strict subtext length constraint: max 20 words, capped line length (max-w-[55ch]) */}
+              {/* Strict subtext length constraint */}
               <p className="gsap-hero-text text-[#54433a] text-base leading-relaxed max-w-[55ch] font-sans">
-                A geospatial social network replacing algorithms with live location coordinates, community signals, and spontaneous real-world gatherings.
+                An agentic geospatial social media platform replacing rigid algorithms with autonomous spatial intelligence, live location coordinates, and spontaneous real-world gatherings.
               </p>
 
               <div className="gsap-hero-ctas flex items-center gap-4">
@@ -286,87 +242,87 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Technical Protocol & Features Section */}
+        {/* Features Section */}
         <section id="features" className="relative z-10 py-16">
           <div className="max-w-7xl mx-auto px-6 space-y-12">
             
-            {/* Header: Centered, Editorial */}
+            {/* Header: Centered, Friendly */}
             <div className="text-center max-w-2xl mx-auto space-y-3">
               <h2 className="text-[#1a0f0a] text-4xl sm:text-5xl font-display italic font-medium tracking-tight leading-[1.1]">
-                The Proximity Protocol
+                How Yuno Works
               </h2>
               <p className="text-[#3e2723] text-xs sm:text-sm leading-relaxed">
-                Yuno maps human presence purely through spontaneous coordinate logs, secure peer grouping, and client-side privacy caches.
+                Connect naturally with people, places, and events happening around you right now.
               </p>
             </div>
 
-            {/* 3-Column Grid of Technical Modules */}
+            {/* 3-Column Grid of Features */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
               
-              {/* Module 1: Signal Decay */}
+              {/* Feature 1: Real-Time Signals */}
               <div className="yuno-card p-6 space-y-6 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <h3 className="text-base font-bold text-[#1a0f0a] font-sans">
-                      Spontaneous Proximity Signals
+                      Real-Time Local Signals
                     </h3>
                     <p className="text-[#54433a] text-xs leading-relaxed font-sans">
-                      Coordinates fade automatically after 30 minutes. By design, Yuno has no scrollable backlog, no past histories, and no recommendations—showing only active, spontaneous coordinates in your immediate neighborhood.
+                      Posts and activities fade after 30 minutes. No endless history or addictive algorithms—just real, active events in your neighborhood.
                     </p>
                   </div>
                 </div>
 
-                {/* Clean list of active tags instead of terminal logs */}
+                {/* List of active events */}
                 <div className="space-y-2 mt-4 text-[#54433a]/90 font-serif italic text-xs border-l-2 border-[#b5511b]/30 pl-4 py-1">
-                  <div>• Ambient Listening Session (12m ago)</div>
-                  <div>• Sunset Park Yoga Group (28m ago)</div>
-                  <div>• Local Cartography Fair (44m ago)</div>
+                  <div>• Ambient Music Session (12m ago)</div>
+                  <div>• Sunset Yoga Group (28m ago)</div>
+                  <div>• Local Book Exchange (44m ago)</div>
                 </div>
               </div>
 
-              {/* Module 2: Vibe Chats */}
+              {/* Feature 2: Instant Grouping */}
               <div className="yuno-card p-6 space-y-6 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <h3 className="text-base font-bold text-[#1a0f0a] font-sans">
-                      Vibe-Cluster Matchmaking
+                      Instant Vibe Matching
                     </h3>
                     <p className="text-[#54433a] text-xs leading-relaxed font-sans">
-                      Yuno groups coordinate clusters that share corresponding tags. The system initiates localized group rooms directly on the map interface, facilitating spontaneous real-world check-ins.
+                      Find people who share your vibe. Hop into group chats right on the map to coordinate and meet up effortlessly.
                     </p>
                   </div>
                 </div>
 
-                {/* Clean conversational bubbles mockup instead of node metadata */}
+                {/* Conversational chat bubble mockup */}
                 <div className="space-y-3 mt-4">
                   <div className="bg-white/10 border border-white/20 rounded-2xl p-3 text-xs text-[#54433a] inline-block max-w-[85%] font-sans">
-                    "Setting up the listening table at the library vinyl corner. Who's nearby?"
+                    "Setting up at the vinyl corner. Who's nearby?"
                   </div>
                   <div className="text-right">
                     <div className="bg-[#b5511b] text-white rounded-2xl p-3 text-xs inline-block max-w-[85%] text-left font-sans shadow-sm">
-                      "Just walked into the shop. Be right there."
+                      "Just walked into the shop. Be right there!"
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Module 3: Cache Performance */}
+              {/* Feature 3: Fast & Private */}
               <div className="yuno-card p-6 space-y-6 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <h3 className="text-base font-bold text-[#1a0f0a] font-sans">
-                      OSM Geodata Caching
+                      Fast & Privacy-First
                     </h3>
                     <p className="text-[#54433a] text-xs leading-relaxed font-sans">
-                      By caching OpenStreetMap layers locally on-device and querying them with client-side filters, we drastically reduce battery consumption and network latency.
+                      Map data loads directly on your phone, keeping your experience smooth and saving your battery while protecting your location.
                     </p>
                   </div>
                 </div>
 
-                {/* Clean quote card instead of latency numbers comparison table */}
+                {/* Quote card */}
                 <div className="bg-white/10 border border-white/20 rounded-2xl p-4 mt-4 text-[#54433a] space-y-2">
                   <p className="text-xs italic font-serif leading-relaxed">
-                    "By loading map coordinate layers to client storage, Yuno resolves your immediate neighborhood feed instantly, with zero remote server hops on subsequent searches."
+                    "Your location data stays fast and private on your phone, giving you instant neighborhood updates without delay."
                   </p>
                 </div>
               </div>
